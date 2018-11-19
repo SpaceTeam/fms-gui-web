@@ -1,0 +1,11 @@
+{
+  "name": "fms-gui-server",
+  "version": "1.0.0",
+  "description": "Server side for the fms-gui-web",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Thomas Khlebovitch",
+  "license": "ISC"
+}

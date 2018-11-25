@@ -1,5 +1,7 @@
 const http = require('http');
+
 const config = require('./config/server-config');
+const xmlWatcher = require('./assets/xml/xml-watcher');
 
 // Create the server object
 http.createServer(function (req, res) {

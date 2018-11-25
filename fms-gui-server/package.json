@@ -9,6 +9,7 @@
   "author": "Thomas Khlebovitch",
   "license": "ISC",
   "dependencies": {
+    "chokidar": "^2.0.4",
     "js-yaml": "latest"
   }
 }

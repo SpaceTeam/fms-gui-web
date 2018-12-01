@@ -159,7 +159,6 @@
       <xs:element type="ArrayType" name="Array"/>
     </xs:sequence>
   </xs:complexType>
-  <!-- Not Done -->
   <xs:complexType name="StatusType">
     <xs:sequence>
       <xs:element type="FlagsType" name="Flags"/>

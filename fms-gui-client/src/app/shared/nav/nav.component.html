@@ -1,18 +1,17 @@
-<div style="text-align:center">
-  <h1>
-    Welcome to the {{ title }}!
-  </h1>
-  <div>
-    <p>
-      This page will contain the {{ title }}
-    </p>
-    <p>
-      Following pages are also provided:
-    </p>
-    <ul>
-      <li><a routerLink="/statuspanel">Status panel</a></li>
-      <li><a routerLink="/flightmode">Flight mode</a></li>
-      <li><a routerLink="/">Main</a></li>
+<nav class="col-md-2 d-none d-md-block bg-light sidebar">
+  <!-- Collapsible content -->
+  <div class="sidebar-sticky">
+    <ul class="nav flex-column">
+      <!-- TODO: Add a hamburger-menu -->
+      <li class="nav-item">
+        <a routerLink="/">Main</a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/statuspanel">Status panel</a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/flightmode">Flight mode</a>
+      </li>
     </ul>
   </div>
-</div>
+</nav>

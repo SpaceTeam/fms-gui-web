@@ -4,7 +4,7 @@ import {Status} from './status.model';
 
 export class FMSData {
   startingTime: Date;           // TODO: Do we need to use date, or can we just use a time type?
-  powerType: Power;
+  power: Power;
   connectionQualitySens: ConnectionQualitySens;
   status: Status;
 }

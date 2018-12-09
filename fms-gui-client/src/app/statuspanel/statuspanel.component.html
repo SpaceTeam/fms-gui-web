@@ -1,10 +1,9 @@
 <div class="text-center">
-  <h1>
-    Welcome to the {{ title }}!
-  </h1>
-  <div>
-    <p>
-      This page will contain the {{ title }}
-    </p>
+  <h1>{{ title }}</h1>
+  <div *ngIf="fmsData">
+    <p>Retrieved data at: {{ date }}</p>
+    <div>
+      {{fmsData}}
+    </div>
   </div>
 </div>

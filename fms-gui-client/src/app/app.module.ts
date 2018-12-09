@@ -7,6 +7,7 @@ import {NavComponent} from './shared/nav/nav.component';
 import {FlightmodeComponent} from './flightmode/flightmode.component';
 import {MainComponent} from './main/main.component';
 import {StatuspanelComponent} from './statuspanel/statuspanel.component';
+import {FormsModule} from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -18,9 +19,10 @@ import {StatuspanelComponent} from './statuspanel/statuspanel.component';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    FormsModule
+    // HttpClientModule
   ],
-  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

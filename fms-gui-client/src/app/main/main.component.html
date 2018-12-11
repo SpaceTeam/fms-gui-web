@@ -1,11 +1,49 @@
-<div class="text-center">
-  <h1>{{ title }}</h1>
-  <div>
-    <p>
-      This page will contain the new, web-based UI for the FMS of the <a href="https://spaceteam.at/">TU Space Team</a>
-    </p>
-    <p>
-      It'll contain the main page for the ground station.
-    </p>
-  </div>
+<div>
+  <mat-toolbar color="primary">
+    <span>{{ title }}</span>
+  </mat-toolbar>
+  <mat-card id="div-connection" *ngIf="fmsData">
+    <h2>Connection</h2>
+  </mat-card>
+  <mat-card id="div-windows" *ngIf="fmsData">
+    <h2>Windows</h2>
+  </mat-card>
+  <mat-card id="div-status" *ngIf="fmsData">
+    <h2>Status</h2>
+    <ul>
+      <li>
+        <span>Timestamp</span>{{separator}}{{space}}{{fmsData.status.localTimestamp}}
+      </li>
+      <li>
+        <span>CPU load</span>{{separator}}{{space}}{{fmsData.status.cpu_load}}
+      </li>
+      <li>
+        <span
+          [class.notLoaded]="fmsData.status.flags.adc_initialized"
+          [class.loaded]="fmsData.status.flags.adc_initialized"
+        >
+          ADC
+        </span>
+      </li>
+      <li>
+        <span
+          [class.notLoaded]="fmsData.status.flags.dac_initialized"
+          [class.loaded]="fmsData.status.flags.dac_initialized"
+        >
+          DAC
+        </span>
+      </li>
+      <li>
+        <span
+          [class.notLoaded]="fmsData.status.flags.dma_initialized"
+          [class.loaded]="fmsData.status.flags.dma_initialized"
+        >
+          DMA
+        </span>
+      </li>
+      <li>
+        <span>Flash</span>{{separator}}{{space}}{{fmsData.status.flash_adr}}% full
+      </li>
+    </ul>
+  </mat-card>
 </div>

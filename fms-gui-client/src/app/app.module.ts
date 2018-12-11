@@ -8,6 +8,8 @@ import {FlightmodeComponent} from './flightmode/flightmode.component';
 import {MainComponent} from './main/main.component';
 import {StatuspanelComponent} from './statuspanel/statuspanel.component';
 import {FormsModule} from '@angular/forms';
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {MaterialModule} from "./material.module";
 
 @NgModule({
   declarations: [
@@ -20,7 +22,9 @@ import {FormsModule} from '@angular/forms';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    FormsModule
+    FormsModule,
+    BrowserAnimationsModule,
+    MaterialModule
     // HttpClientModule
   ],
   bootstrap: [AppComponent]

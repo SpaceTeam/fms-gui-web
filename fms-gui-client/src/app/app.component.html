@@ -1,2 +1,17 @@
-<app-nav></app-nav>
-<router-outlet></router-outlet>
+<div id="div-app">
+  <mat-toolbar color="primary">
+    <button mat-icon-button (click)="sideNav.toggle()">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <h1>{{ title }}</h1>
+  </mat-toolbar>
+
+  <mat-sidenav-container>
+    <mat-sidenav mode="side" #sideNav [(opened)]="opened">
+      <app-nav></app-nav>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <router-outlet></router-outlet>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

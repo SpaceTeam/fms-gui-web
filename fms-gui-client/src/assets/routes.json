@@ -1,0 +1,16 @@
+{
+  "routes": [
+    {
+      "routerLink": "/",
+      "title": "Main"
+    },
+    {
+      "routerLink": "/statuspanel",
+      "title": "Status Panel"
+    },
+    {
+      "routerLink": "/flightmode",
+      "title": "Flight Mode"
+    }
+  ]
+}

@@ -1,17 +1,4 @@
-<nav>
+<mat-nav-list *ngIf="navItems">
   <!-- Collapsible content -->
-  <div>
-    <ul>
-      <!-- TODO: Add a hamburger-menu -->
-      <li>
-        <a routerLink="/">Main</a>
-      </li>
-      <li>
-        <a routerLink="/statuspanel">Status panel</a>
-      </li>
-      <li>
-        <a routerLink="/flightmode">Flight mode</a>
-      </li>
-    </ul>
-  </div>
-</nav>
+  <a mat-list-item *ngFor="let nav of navItems" routerLink="{{nav.routerLink}}">{{nav.title}}</a>
+</mat-nav-list>

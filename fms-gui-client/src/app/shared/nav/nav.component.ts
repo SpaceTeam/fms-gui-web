@@ -8,8 +8,10 @@ import {NavItem} from '../model/nav-item.model';
   styleUrls: ['./nav.component.scss']
 })
 export class NavComponent implements OnInit {
-  title = 'Navigation';
 
+  /**
+   * This array will contain every navigable page as a link
+   */
   navItems: NavItem[];
 
   constructor(
@@ -18,12 +20,7 @@ export class NavComponent implements OnInit {
 
   ngOnInit() {
     this.routesService.getNavItems()
-      .subscribe(navItems => {
-        this.navItems = navItems;
-        for (let i = 0; i < this.navItems.length; i++) {
-          console.log(navItems[i]);
-        }
-      });
+      .subscribe(navItems => this.navItems = navItems);
   }
 
 }

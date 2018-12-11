@@ -1,46 +1,80 @@
-<div>
-  <h1>{{ title }}</h1>
-  <mat-card id="div-connection" *ngIf="fmsData">
-    <mat-card-title>Connection</mat-card-title>
-  </mat-card>
-  <mat-card id="div-status" *ngIf="fmsData">
-    <mat-card-title>Status</mat-card-title>
-    <mat-card-content>
-      <ul>
-        <li>
-          <span>Timestamp</span>{{separator}}{{space}}{{fmsData.status.localTimestamp}}
-        </li>
-        <li>
-          <span>CPU load</span>{{separator}}{{space}}{{fmsData.status.cpu_load}}
-        </li>
-        <li>
-          <span
-            [class.notLoaded]="fmsData.status.flags.adc_initialized"
-            [class.loaded]="fmsData.status.flags.adc_initialized"
-          >
-            ADC
-          </span>
-        </li>
-        <li>
-          <span
-            [class.notLoaded]="fmsData.status.flags.dac_initialized"
-            [class.loaded]="fmsData.status.flags.dac_initialized"
-          >
-            DAC
-          </span>
-        </li>
-        <li>
-          <span
-            [class.notLoaded]="fmsData.status.flags.dma_initialized"
-            [class.loaded]="fmsData.status.flags.dma_initialized"
-          >
-            DMA
-          </span>
-        </li>
-        <li>
-          <span>Flash</span>{{separator}}{{space}}{{fmsData.status.flash_adr}}% full
-        </li>
-      </ul>
-    </mat-card-content>
-  </mat-card>
-</div>
+<main>
+  <mat-toolbar>{{ title }}</mat-toolbar>
+  <mat-grid-list cols="2" rowHeight="500px">
+    <mat-grid-tile>
+      <mat-card id="connection" *ngIf="fmsData">
+        <mat-card-header>
+          <mat-card-title>Connection</mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="block-children">
+          <button mat-button>Connect</button>
+          <button mat-button disabled>Disconnect</button>
+          <mat-form-field>
+            <mat-select placeholder="Placeholder">
+              <mat-option value="19200">19200</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-select placeholder="Placeholder port">
+              <mat-option value="usb0">/dev/ttyUSB0</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-select placeholder="Placeholder stage">
+              <mat-option value="upper-stage">Upper Stage</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-select placeholder="Placeholder 2">
+              <mat-option value="moros">Moros</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <mat-card id="status" *ngIf="fmsData">
+        <mat-card-header>
+          <mat-card-title>Status</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-list>
+            <mat-list-item>
+              <span>Timestamp</span>{{separator}}{{space}}{{fmsData.status.localTimestamp}}
+            </mat-list-item>
+            <mat-list-item>
+              <span>CPU load</span>{{separator}}{{space}}{{fmsData.status.cpu_load}}
+            </mat-list-item>
+            <mat-list-item>
+              <span
+                [class.notLoaded]="fmsData.status.flags.adc_initialized"
+                [class.loaded]="fmsData.status.flags.adc_initialized"
+              >
+                ADC
+              </span>
+            </mat-list-item>
+            <mat-list-item>
+              <span
+                [class.notLoaded]="fmsData.status.flags.dac_initialized"
+                [class.loaded]="fmsData.status.flags.dac_initialized"
+              >
+                DAC
+              </span>
+            </mat-list-item>
+            <mat-list-item>
+              <span
+                [class.notLoaded]="fmsData.status.flags.dma_initialized"
+                [class.loaded]="fmsData.status.flags.dma_initialized"
+              >
+                DMA
+              </span>
+            </mat-list-item>
+            <mat-list-item>
+              <span>Flash</span>{{separator}}{{space}}{{fmsData.status.flash_adr}}% full
+            </mat-list-item>
+          </mat-list>
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+  </mat-grid-list>
+</main>

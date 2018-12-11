@@ -1,9 +1,9 @@
-<div id="div-status-panel">
-  <h1>{{ title }}</h1>
+<main>
+  <mat-toolbar>{{ title }}</mat-toolbar>
   <div *ngIf="fmsData">
     <p>Retrieved data at: {{ date }}</p>
     <div>
-      {{fmsData}}
+      {{fmsData.startingTime}}
     </div>
   </div>
-</div>
+</main>

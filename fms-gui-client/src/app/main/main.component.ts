@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import {FMSData} from "../shared/model/fms-data.model";
-import {interval} from "rxjs";
-import {FmsDataService} from "../shared/services/fms-data/fms-data.service";
+import {FMSData} from '../shared/model/fms-data/fms-data.model';
+import {interval} from 'rxjs';
+import {FmsDataService} from '../shared/services/fms-data/fms-data.service';
 
 @Component({
   selector: 'app-main',
@@ -30,12 +30,12 @@ export class MainComponent implements OnInit {
   /**
    * The separator between labels and texts
    */
-  separator: string = ":";
+  separator = ':';
 
   /**
    * The space between a separator and the next element
    */
-  space: string = " ";
+  space = ' ';
 
   constructor(
     private fmsDataService: FmsDataService

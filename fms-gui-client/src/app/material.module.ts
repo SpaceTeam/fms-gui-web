@@ -1,15 +1,15 @@
-import { NgModule } from '@angular/core';
-
+import {DragDropModule} from '@angular/cdk/drag-drop';
+import {ScrollingModule} from '@angular/cdk/scrolling';
+import {CdkTableModule} from '@angular/cdk/table';
+import {CdkTreeModule} from '@angular/cdk/tree';
+import {NgModule} from '@angular/core';
 import {
-  MatButtonModule,
-  MatMenuModule,
-  MatToolbarModule,
-  MatIconModule,
-  MatCardModule,
   MatAutocompleteModule,
   MatBadgeModule,
   MatBottomSheetModule,
+  MatButtonModule,
   MatButtonToggleModule,
+  MatCardModule,
   MatCheckboxModule,
   MatChipsModule,
   MatDatepickerModule,
@@ -17,8 +17,10 @@ import {
   MatDividerModule,
   MatExpansionModule,
   MatGridListModule,
+  MatIconModule,
   MatInputModule,
   MatListModule,
+  MatMenuModule,
   MatNativeDateModule,
   MatPaginatorModule,
   MatProgressBarModule,
@@ -31,15 +33,13 @@ import {
   MatSlideToggleModule,
   MatSnackBarModule,
   MatSortModule,
+  MatStepperModule,
   MatTableModule,
   MatTabsModule,
+  MatToolbarModule,
   MatTooltipModule,
-  MatTreeModule
+  MatTreeModule,
 } from '@angular/material';
-import {CdkTableModule} from "@angular/cdk/table";
-import {CdkTreeModule} from "@angular/cdk/tree";
-import {DragDropModule} from "@angular/cdk/drag-drop";
-import {ScrollingModule} from "@angular/cdk/scrolling";
 
 @NgModule({
   exports: [
@@ -54,6 +54,7 @@ import {ScrollingModule} from "@angular/cdk/scrolling";
     MatCardModule,
     MatCheckboxModule,
     MatChipsModule,
+    MatStepperModule,
     MatDatepickerModule,
     MatDialogModule,
     MatDividerModule,
@@ -80,7 +81,7 @@ import {ScrollingModule} from "@angular/cdk/scrolling";
     MatToolbarModule,
     MatTooltipModule,
     MatTreeModule,
-    ScrollingModule
+    ScrollingModule,
   ]
 })
 export class MaterialModule {}

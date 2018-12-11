@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import {HttpClient} from "@angular/common/http";
-import {Observable} from "rxjs";
+import {Component, Input, OnInit} from '@angular/core';
+import {RoutesService} from '../services/routes/routes.service';
+import {NavItem} from '../model/nav-item.model';
 
 @Component({
   selector: 'app-nav',
@@ -10,19 +10,20 @@ import {Observable} from "rxjs";
 export class NavComponent implements OnInit {
   title = 'Navigation';
 
-  navItems;
+  navItems: NavItem[];
 
   constructor(
-    private http: HttpClient
+    private routesService: RoutesService
   ) { }
 
-  private loadNavItems(): Observable<any> {
-    return this.http.get("../../assets/routes.json");
-  }
-
   ngOnInit() {
-    this.loadNavItems()
-      .subscribe(navItems => this.navItems = navItems);
+    this.routesService.getNavItems()
+      .subscribe(navItems => {
+        this.navItems = navItems;
+        for (let i = 0; i < this.navItems.length; i++) {
+          console.log(navItems[i]);
+        }
+      });
   }
 
 }

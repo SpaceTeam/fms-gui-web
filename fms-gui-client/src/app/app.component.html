@@ -6,12 +6,10 @@
     <h1>{{ title }}</h1>
   </mat-toolbar>
 
-  <mat-sidenav-container>
-    <mat-sidenav mode="side" #sideNav [(opened)]="opened">
+  <mat-drawer-container autosize>
+    <mat-drawer mode="side" #sideNav [(opened)]="opened">
       <app-nav></app-nav>
-    </mat-sidenav>
-    <mat-sidenav-content>
-      <router-outlet></router-outlet>
-    </mat-sidenav-content>
-  </mat-sidenav-container>
+    </mat-drawer>
+    <router-outlet></router-outlet>
+  </mat-drawer-container>
 </div>

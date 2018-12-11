@@ -1,4 +1,4 @@
 <mat-nav-list *ngIf="navItems">
-  <!-- Collapsible content -->
-  <a mat-list-item *ngFor="let nav of navItems" routerLink="{{nav.routerLink}}">{{nav.title}}</a>
+  <!-- Navigation items -->
+  <a mat-list-item *ngFor="let item of navItems" [routerLink]=[item.route]>{{item.title}}</a>
 </mat-nav-list>

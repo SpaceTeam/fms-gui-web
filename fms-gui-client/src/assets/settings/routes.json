@@ -1,0 +1,14 @@
+[
+  {
+    "route": "/",
+    "title": "Main"
+  },
+  {
+    "route": "/statuspanel",
+    "title": "Status Panel"
+  },
+  {
+    "route": "/flightmode",
+    "title": "Flight Mode"
+  }
+]

@@ -9,8 +9,15 @@ import {interval} from 'rxjs';
   styleUrls: ['./flightmode.component.scss']
 })
 export class FlightmodeComponent implements OnInit {
+
+  /**
+   * The component's title, which will be used in the toolbar
+   */
   title = 'Flight mode';
 
+  /**
+   * The object containing the current FMS data
+   */
   fmsData: FMSData;
 
   /**

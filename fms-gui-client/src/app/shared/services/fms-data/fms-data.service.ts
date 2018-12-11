@@ -22,7 +22,7 @@ export class FmsDataService {
   /**
    * Contains the url of the server where we can get the json file
    */
-  url = 'assets/mock-fms.json';
+  url = 'assets/mock-files/mock-fms.json';
 
   constructor(
     private http: HttpClient
@@ -36,6 +36,7 @@ export class FmsDataService {
     const d = new Date();
     return this.http.get<FMSData>(this.url)
       .pipe(
+        // TODO: Save this to a log file
         // tap(() => console.log(`Fetched FMSData at ${d.toLocaleTimeString('de', optionsTime)}`)),
         catchError(this.handleError<FMSData>(`get fms data at ${d.toLocaleTimeString('de', optionsTime)}`))
       );

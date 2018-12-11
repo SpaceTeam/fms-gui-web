@@ -9,6 +9,10 @@ import {FmsDataService} from '../shared/services/fms-data/fms-data.service';
   styleUrls: ['./main.component.scss']
 })
 export class MainComponent implements OnInit {
+
+  /**
+   * The component's title, which will be used in the toolbar
+   */
   title = 'Ground Station - Space Team';
 
   /**

@@ -9,6 +9,10 @@ import {interval} from 'rxjs';
   styleUrls: ['./statuspanel.component.scss']
 })
 export class StatuspanelComponent implements OnInit {
+
+  /**
+   * The component's title, which will be used in the toolbar
+   */
   title = 'Status Panel';
 
   /**

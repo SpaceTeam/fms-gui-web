@@ -11,12 +11,14 @@ The application itself is split into two parts:
 ### Prerequisites
 
 What things you need to run the software:
-* [Angular](https://angular.io/)
-* [NodeJS](https://nodejs.org/en/)
+* [Angular](https://angular.io/) (Client side)
+* [NodeJS](https://nodejs.org/en/) (Server side)
 
 ### Styleguide
 
-A styleguide, which gives directives regarding the code styling and commenting, still needs to be added.
+Please stick to the styleguide, which is provided by [Angular](https://angular.io/guide/styleguide)\
+When creating folders, please use dashes (-) for separating the names \
+E.g. fms-data
 
 ## Deployment
 

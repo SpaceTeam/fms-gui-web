@@ -30,7 +30,11 @@ If you want to use another port, use the --port directive. E.g. if you want to u
 ng serve --open --port 4300
 ```
 This command should open the page in your favourite browser. To close the server, just close the terminal.
-
+Normally it's sufficient, if you just use 
+```
+npm run start
+```
+which executes the commands provided in the package.json file
 ### Build
 
 Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.

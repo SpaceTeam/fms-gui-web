@@ -17,6 +17,7 @@ What things you need to run the software:
 ### Styleguide
 
 Please stick to the styleguide, which is provided by [Angular](https://angular.io/guide/styleguide)\
+Another styleguide, which is highly recommended, is the one offered by [ITNext](https://itnext.io/choosing-a-highly-scalable-folder-structure-in-angular-d987de65ec7)\
 When creating folders, please use dashes (-) for separating the names \
 E.g. fms-data
 

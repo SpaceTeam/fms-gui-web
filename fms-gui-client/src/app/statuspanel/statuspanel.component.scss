@@ -1,0 +1,19 @@
+.margin-1em {
+  margin: 1em;
+}
+
+.margin-side-1em {
+  margin-left: 1em;
+  margin-right: 1em;
+}
+
+.grid {
+  display: grid;
+  grid-gap: 8px;
+  width: 100%;
+  height: 100%;
+}
+
+.grid-cols-2 {
+  grid-template-columns: auto auto;
+}

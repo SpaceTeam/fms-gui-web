@@ -1,5 +1,6 @@
 <mat-nav-list *ngIf="navItems">
   <!-- Navigation items -->
+  <!-- TODO: Define JSON Schema for routes.json -->
   <mat-list-item *ngFor="let item of navItems" (click)="nav.click()">
     <mat-icon matListIcon>{{item.icon}}</mat-icon>
     <a [routerLink]=[item.route] #nav>{{item.title}}</a>

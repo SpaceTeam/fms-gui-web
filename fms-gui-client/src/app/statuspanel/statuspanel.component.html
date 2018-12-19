@@ -1,7 +1,7 @@
 <main>
   <mat-toolbar>{{ title }}</mat-toolbar>
   <div *ngIf="fmsData">
-    <p>Retrieved data at: {{ date }}</p>
+    <p>Retrieved data at{{separator}} {{ date }}</p>
     <mat-grid-list cols="3" class="margin-1em">
       <!-- Contains the control buttons on the left side of the panel -->
       <mat-grid-tile id="control-container">
@@ -14,26 +14,188 @@
       <!-- Contains the additional, specially highlighted information -->
       <mat-grid-tile id="highlight-component">
         <div id="highlight-container" class="grid grid-cols-2">
+          <!-- TODO: Define in an external file all cards, which should be displayed on the right side -->
+          <!-- TODO: Add labels to the list items, so we know which item describes what -->
           <mat-card id="status-container">
             <mat-card-title>Status</mat-card-title>
+            <mat-card-content>
+              <!-- TODO: Define in an external file which items should be displayed in which window -->
+              <mat-list>
+                <mat-list-item>
+                  <span>Rocketstate</span>
+                  {{separator}}
+                  {{fmsData.status.rocketState}}
+                </mat-list-item>
+                <mat-list-item>
+                  <span>Flight substate</span>
+                  {{separator}}
+                  {{fmsData.status.flightSubstate}}
+                </mat-list-item>
+                <mat-list-item>
+                  <span>Servo sep 1 pos</span>{{separator}}
+                </mat-list-item>
+                <mat-list-item>
+                  <span>Servo sep 2 pos</span>{{separator}}
+                </mat-list-item>
+                <mat-list-item>
+                  <span>Servo recov pos</span>{{separator}}
+                </mat-list-item>
+                <mat-list-item>
+                  <span>CPU load</span>{{separator}}
+                </mat-list-item>
+                <mat-list-item>ADC Value{{separator}}</mat-list-item>
+              </mat-list>
+            </mat-card-content>
           </mat-card>
           <mat-card id="temperature-container">
             <mat-card-title>Temperature</mat-card-title>
+            <mat-list>
+              <mat-list-item>
+                <span>tmp100</span>{{separator}}
+              </mat-list-item>
+              <mat-list-item>
+                <span>presstmp</span>{{separator}}
+              </mat-list-item>
+              <mat-list-item>
+                <span>gyrotmp</span>{{separator}}
+              </mat-list-item>
+              <mat-list-item>
+                <span>mgyrotmp</span>{{separator}}
+              </mat-list-item>
+            </mat-list>
           </mat-card>
           <mat-card id="accelerations-container">
             <mat-card-title>Accelerations</mat-card-title>
+            <mat-list>
+              <mat-list-item>
+                <span>Adxl345 x</span>{{separator}}
+              </mat-list-item>
+              <mat-list-item>
+                <span>Adxl345 y</span>{{separator}}
+              </mat-list-item>
+              <mat-list-item>
+                <span>Adxl345 z</span>{{separator}}
+              </mat-list-item>
+              <mat-list-item>
+                <span>Adxl377 x</span>{{separator}}
+              </mat-list-item>
+              <mat-list-item>
+                <span>Adxl377 y</span>{{separator}}
+              </mat-list-item>
+              <mat-list-item>
+                <span>Adxl377 z</span>{{separator}}
+              </mat-list-item>
+              <mat-list-item>
+                <span>MPU acc x</span>{{separator}}
+              </mat-list-item>
+              <mat-list-item>
+                <span>MPU acc y</span>{{separator}}
+              </mat-list-item>
+              <mat-list-item>
+                <span>MPU acc z</span>{{separator}}
+              </mat-list-item>
+            </mat-list>
           </mat-card>
           <mat-card id="psu-container">
             <mat-card-title>PSU</mat-card-title>
+            <mat-list>
+              <mat-list-item>
+                <span>vservo</span>{{separator}}
+              </mat-list-item>
+              <mat-list-item>
+                <span>vhv</span>{{separator}}
+              </mat-list-item>
+              <mat-list-item>
+                <span>imcon</span>{{separator}}
+              </mat-list-item>
+              <mat-list-item>
+                <span>iaaux</span>{{separator}}
+              </mat-list-item>
+              <mat-list-item>
+                <span>iacon</span>{{separator}}
+              </mat-list-item>
+              <mat-list-item>
+                <span>imaux</span>{{separator}}
+              </mat-list-item>
+              <mat-list-item>
+                <span>vxbee</span>{{separator}}
+              </mat-list-item>
+              <mat-list-item>
+                <span>vgps</span>{{separator}}
+              </mat-list-item>
+              <mat-list-item>
+                <span>vbat1</span>{{separator}}
+              </mat-list-item>
+              <mat-list-item>
+                <span>vbat2</span>{{separator}}
+              </mat-list-item>
+              <mat-list-item>
+                <span>tmphv</span>{{separator}}
+              </mat-list-item>
+              <mat-list-item>
+                <span>tmpuc</span>{{separator}}
+              </mat-list-item>
+            </mat-list>
           </mat-card>
           <mat-card id="gyros-container">
             <mat-card-title>Gyros</mat-card-title>
+            <mat-list>
+              <mat-list-item>
+                <span>gyro x</span>{{separator}}
+              </mat-list-item>
+              <mat-list-item>
+                <span>gyro y</span>{{separator}}
+              </mat-list-item>
+              <mat-list-item>
+                <span>gyro z</span>{{separator}}
+              </mat-list-item>
+              <mat-list-item>
+                <span>mpug x</span>{{separator}}
+              </mat-list-item>
+              <mat-list-item>
+                <span>mpug y</span>{{separator}}
+              </mat-list-item>
+              <mat-list-item>
+                <span>mpug z</span>{{separator}}
+              </mat-list-item>
+            </mat-list>
           </mat-card>
           <mat-card id="magnometers-container">
             <mat-card-title>Magnometers</mat-card-title>
+            <mat-list>
+              <mat-list-item>
+                <span>hmc x</span>{{separator}}
+              </mat-list-item>
+              <mat-list-item>
+                <span>hmc y</span>{{separator}}
+              </mat-list-item>
+              <mat-list-item>
+                <span>hmc z</span>{{separator}}
+              </mat-list-item>
+              <mat-list-item>
+                <span>mpumag x</span>{{separator}}
+              </mat-list-item>
+              <mat-list-item>
+                <span>mpumag y</span>{{separator}}
+              </mat-list-item>
+              <mat-list-item>
+                <span>mpumag z</span>{{separator}}
+              </mat-list-item>
+            </mat-list>
           </mat-card>
           <mat-card id="additional-container">
             <mat-card-title>Additional</mat-card-title>
+            <mat-list>
+              <mat-list-item>
+                <span>press</span>{{separator}}
+              </mat-list-item>
+              <mat-list-item>
+                <span>GPS1</span>{{separator}}
+              </mat-list-item>
+              <mat-list-item>
+                <span>GPS1</span>{{separator}}
+              </mat-list-item>
+            </mat-list>
           </mat-card>
         </div>
       </mat-grid-tile>

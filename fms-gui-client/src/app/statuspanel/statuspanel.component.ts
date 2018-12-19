@@ -31,6 +31,11 @@ export class StatuspanelComponent implements OnInit {
    */
   source = interval(1000);
 
+  /**
+   * The separator between labels and texts
+   */
+  separator = ':';
+
   constructor(
     private fmsDataService: FmsDataService
   ) { }

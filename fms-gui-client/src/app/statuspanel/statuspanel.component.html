@@ -1,18 +1,17 @@
-<main>
+<main class="wrap">
   <mat-toolbar>{{ title }}</mat-toolbar>
   <div *ngIf="fmsData">
     <p>Retrieved data at{{separator}} {{ date }}</p>
-    <mat-grid-list cols="3" class="margin-1em">
+    <div class="grid grid-cols-3">
       <!-- Contains the control buttons on the left side of the panel -->
-      <mat-grid-tile id="control-container">
+      <div id="control-container">
         Controls
-      </mat-grid-tile>
+      </div>
       <!-- Contains the status bytes, which indicate if something is on or off -->
-      <mat-grid-tile id="status-bytes-container">
+      <div id="status-bytes-container">
         Status bytes
-      </mat-grid-tile>
+      </div>
       <!-- Contains the additional, specially highlighted information -->
-      <mat-grid-tile id="highlight-component">
         <div id="highlight-container" class="grid grid-cols-2">
           <!-- TODO: Define in an external file all cards, which should be displayed on the right side -->
           <!-- TODO: Add labels to the list items, so we know which item describes what -->
@@ -32,18 +31,30 @@
                   {{fmsData.status.flightSubstate}}
                 </mat-list-item>
                 <mat-list-item>
-                  <span>Servo sep 1 pos</span>{{separator}}
+                  <span>Servo sep 1 pos</span>
+                  {{separator}}
+                  {{fmsData.status.servoPos.array.Element0}}
                 </mat-list-item>
                 <mat-list-item>
-                  <span>Servo sep 2 pos</span>{{separator}}
+                  <span>Servo sep 2 pos</span>
+                  {{separator}}
+                  {{fmsData.status.servoPos.array.Element1}}
                 </mat-list-item>
                 <mat-list-item>
-                  <span>Servo recov pos</span>{{separator}}
+                  <span>Servo recov pos</span>
+                  {{separator}}
+                  {{fmsData.status.servoPos.array.Element2}}
                 </mat-list-item>
                 <mat-list-item>
-                  <span>CPU load</span>{{separator}}
+                  <span>CPU load</span>
+                  {{separator}}
+                  {{fmsData.status.cpu_load}}
                 </mat-list-item>
-                <mat-list-item>ADC Value{{separator}}</mat-list-item>
+                <mat-list-item>
+                  <span>ADC Value</span>
+                  {{separator}}
+                  {{fmsData.status.sepadet_adc_value}}
+                </mat-list-item>
               </mat-list>
             </mat-card-content>
           </mat-card>
@@ -197,8 +208,7 @@
               </mat-list-item>
             </mat-list>
           </mat-card>
-        </div>
-      </mat-grid-tile>
-    </mat-grid-list>
+      </div>
+    </div>
   </div>
 </main>

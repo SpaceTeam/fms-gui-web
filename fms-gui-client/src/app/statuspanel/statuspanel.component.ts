@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import {FmsDataService} from '../shared/services/fms-data/fms-data.service';
 import {FMSData} from '../shared/model/fms-data/fms-data.model';
 import {interval} from 'rxjs';
+import {StatusControlService} from '../shared/services/controls/status-control.service';
+import {StatusControl} from '../shared/model/status-control.model';
 
 @Component({
   selector: 'app-statuspanel',
@@ -21,9 +23,9 @@ export class StatuspanelComponent implements OnInit {
   fmsData: FMSData;
 
   /**
-   * The date object when the fms data was retrieved
+   * The controls for the status
    */
-  date: Date;
+  statusControls: StatusControl[];
 
   /**
    * The timer, which tells how often a given function should be called
@@ -37,20 +39,29 @@ export class StatuspanelComponent implements OnInit {
   separator = ':';
 
   constructor(
-    private fmsDataService: FmsDataService
+    private fmsDataService: FmsDataService,
+    private statusControlService: StatusControlService
   ) { }
 
   ngOnInit() {
     this.source.subscribe(() => this.loadFMSData()); // Get FMS data every second
+    this.loadStatusControls();
   }
 
   /**
    * Get the current FMS data and save it in the fmsData object
    */
   loadFMSData(): void {
-    this.date = new Date();
     this.fmsDataService.getData()
       .subscribe(fmsData => this.fmsData = fmsData);  // Subscribe tells what to do with the callback
+  }
+
+  /**
+   * Get the status controls
+   */
+  loadStatusControls(): void {
+    this.statusControlService.getStatusControls()
+      .subscribe(controls => this.statusControls = controls);
   }
 
 }

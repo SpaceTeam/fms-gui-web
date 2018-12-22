@@ -1,16 +1,16 @@
 [
   {
-    "route": "/",
+    "path": "",
     "title": "Main",
     "icon": "home"
   },
   {
-    "route": "/statuspanel",
+    "path": "statuspanel",
     "title": "Status Panel",
     "icon": "show_chart"
   },
   {
-    "route": "/flightmode",
+    "path": "flightmode",
     "title": "Flight Mode",
     "icon": "flight"
   }

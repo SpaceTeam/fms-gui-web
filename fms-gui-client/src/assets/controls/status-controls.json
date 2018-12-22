@@ -1,0 +1,146 @@
+[
+  {
+    "name": "Calib State",
+    "code": "002"
+  },
+  {
+    "name": "RTF State",
+    "code": "004"
+  },
+  {
+    "name": "Powersave State",
+    "code": "006"
+  },
+  {
+    "name": "Enable Longrange Radio",
+    "code": "007"
+  },
+  {
+    "name": "Disable Longrange Radio",
+    "code": "008"
+  },
+  {
+    "name": "Flash write Enable",
+    "code": "010"
+  },
+  {
+    "name": "Flash Bulk erase",
+    "code": "011"
+  },
+  {
+    "name": "Servo 0 Open",
+    "code": "012"
+  },
+  {
+    "name": "Servo 0 Close",
+    "code": "013"
+  },
+  {
+    "name": "Servo 1 Open",
+    "code": "014"
+  },
+  {
+    "name": "Servo 1 Close",
+    "code": "015"
+  },
+  {
+    "name": "Servo 2 Open",
+    "code": "016"
+  },
+  {
+    "name": "Servo 2 Close",
+    "code": "017"
+  },
+  {
+    "name": "Look for Servo",
+    "code": "018"
+  },
+  {
+    "name": "Servo 0 Disable PWR",
+    "code": "025"
+  },
+  {
+    "name": "Servo 0 Disable PWR",
+    "code": "026"
+  },
+  {
+    "name": "Servo 0 Disable PWR",
+    "code": "027"
+  },
+  {
+    "name": "Get Status",
+    "code": "028"
+  },
+  {
+    "name": "Get PWR Data",
+    "code": "029"
+  },
+  {
+    "name": "Get Data",
+    "code": "030"
+  },
+  {
+    "name": "Get GNSS",
+    "code": "031"
+  },
+  {
+    "name": "Get Calib Data",
+    "code": "032"
+  },
+  {
+    "name": "Flash to USB",
+    "code": "033"
+  },
+  {
+    "name": "7-Seq HI",
+    "code": "034"
+  },
+  {
+    "name": "7-Seq LOW",
+    "code": "035"
+  },
+  {
+    "name": "Longrange Radio Reset",
+    "code": "036"
+  },
+  {
+    "name": "Get Sepa",
+    "code": "038"
+  },
+  {
+    "name": "Camera On",
+    "code": "039"
+  },
+  {
+    "name": "Camera Off",
+    "code": "040"
+  },
+  {
+    "name": "Test Igniters",
+    "code": "041"
+  },
+  {
+    "name": "Start Unit-test",
+    "code": "042"
+  },
+  {
+    "name": "Servo all Open",
+    "code": "050"
+  },
+  {
+    "name": "Servo all Close",
+    "code": "051"
+  },
+  {
+    "name": "Calib Apog. Kalmaninvar. Substate",
+    "code": "055"
+  },
+  {
+    "name": "Calib Apog. Kalman Substate",
+    "code": "056"
+  },
+  {
+    "name": "Calib Headingshow Substate",
+    "code": "057"
+  }
+]

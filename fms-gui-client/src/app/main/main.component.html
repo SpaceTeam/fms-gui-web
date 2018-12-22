@@ -46,28 +46,25 @@
               <span>CPU load</span>{{separator}}{{space}}{{fmsData.status.cpu_load}}
             </mat-list-item>
             <mat-list-item>
-              <span
-                [class.notLoaded]="fmsData.status.flags.adc_initialized"
-                [class.loaded]="fmsData.status.flags.adc_initialized"
-              >
-                ADC
-              </span>
+              <span class="badge"
+                [class.badge-danger]="!fmsData.status.flags.adc_initialized"
+                [class.badge-success]="fmsData.status.flags.adc_initialized"
+              >&nbsp;</span>&nbsp;
+              <span>ADC</span>
             </mat-list-item>
             <mat-list-item>
-              <span
-                [class.notLoaded]="fmsData.status.flags.dac_initialized"
-                [class.loaded]="fmsData.status.flags.dac_initialized"
-              >
-                DAC
-              </span>
+              <span class="badge"
+                    [class.badge-danger]="!fmsData.status.flags.dac_initialized"
+                    [class.badge-success]="fmsData.status.flags.dac_initialized"
+              >&nbsp;</span>&nbsp;
+              <span>DAC</span>
             </mat-list-item>
             <mat-list-item>
-              <span
-                [class.notLoaded]="fmsData.status.flags.dma_initialized"
-                [class.loaded]="fmsData.status.flags.dma_initialized"
-              >
-                DMA
-              </span>
+              <span class="badge"
+                    [class.badge-danger]="!fmsData.status.flags.dma_initialized"
+                    [class.badge-success]="fmsData.status.flags.dma_initialized"
+              >&nbsp;</span>&nbsp;
+              <span>DMA</span>
             </mat-list-item>
             <mat-list-item>
               <span>Flash</span>{{separator}}{{space}}{{fmsData.status.flash_adr}}% full

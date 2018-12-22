@@ -1,23 +1,18 @@
-.margin-1em {
-  margin: 1em;
-}
-
-.margin-side-1em {
-  margin-left: 1em;
-  margin-right: 1em;
-}
-
-.grid {
+.button-container {
   display: grid;
-  grid-gap: 8px;
-  width: 100%;
-  height: 100%;
+  grid-template-columns: 15% 85%;
+  text-align: left;
 }
 
-.grid-cols-2 {
-  grid-template-columns: repeat(2, 1fr);
+#control-container {
+  overflow-y: auto;
+  width: 300px;
 }
 
-.grid-cols-3 {
-  grid-template-columns: repeat(3, 1fr);
+#status-panel {
+  display: grid;
+  grid-template-columns: auto 60% auto;
+  grid-gap: 4px;
 }
+
+button { width: 100%;}

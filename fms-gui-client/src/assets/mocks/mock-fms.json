@@ -13,7 +13,7 @@
   "status": {
     "localTimestamp": "2018-12-09T18:13:41.885Z",
     "flags": {
-      "adc_initialized": true,
+      "adc_initialized": false,
       "dac_initialized": true,
       "dma_initialized": true,
       "flash_ssp_initialized": true,

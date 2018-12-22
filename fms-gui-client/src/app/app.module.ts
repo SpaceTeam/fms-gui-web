@@ -8,9 +8,10 @@ import {FlightmodeComponent} from './flightmode/flightmode.component';
 import {MainComponent} from './main/main.component';
 import {StatuspanelComponent} from './statuspanel/statuspanel.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
-import {MaterialModule} from "./material.module";
-import {HttpClientModule} from "@angular/common/http";
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {MaterialModule} from './material.module';
+import {HttpClientModule} from '@angular/common/http';
+import {ReplaceUnderscorePipe} from './shared/pipes/replace-underscore.pipe';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import {HttpClientModule} from "@angular/common/http";
     NavComponent,
     FlightmodeComponent,
     StatuspanelComponent,
-    MainComponent
+    MainComponent,
+    ReplaceUnderscorePipe
   ],
   imports: [
     BrowserModule,

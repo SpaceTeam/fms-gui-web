@@ -16,7 +16,7 @@ export class StatusControlService {
   /**
    * The url containing the location of the setting file
    */
-  private url = 'assets/controls/status-controls.json';
+  private url = 'assets/controls/statuspanel.controls.json';
 
   constructor(
     private http: HttpClient

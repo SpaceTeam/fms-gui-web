@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://spaceteam.at/schemas/routes.schema.json",
+  "title": "routes",
+  "description": "An array of routes",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "description": "A route to a specific page",
+    "$ref": "#/definitions/route"
+  },
+  "definitions": {
+    "route": {
+      "title": "route",
+      "description": "A route inside the FMS GUI",
+      "type": "object",
+      "properties": {
+        "path": {
+          "description": "The unique path which will lead to the specific page",
+          "type": "string"
+        },
+        "title":{
+          "description": "The title, which will be shown as the link text",
+          "type": "string"
+        },
+        "icon": {
+          "description": "The icon, which will be placed before the title for better visual recognition",
+          "type": "string"
+        }
+      },
+      "required": ["path", "title", "icon"]
+    }
+  },
+  "uniqueItems": true
+}

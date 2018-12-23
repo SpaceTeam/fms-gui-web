@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://spaceteam.at/schemas/status-controls.schema.json",
+  "title": "status-controls",
+  "description": "An array of controls for the status panel",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "description": "A control in the status panel",
+    "$ref": "#/definitions/status-control"
+  },
+  "definitions": {
+    "status-control": {
+      "title": "status-control",
+      "description": "A control in the status panel",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "The name of the control to be displayed",
+          "type": "string"
+        },
+        "code": {
+          "description": "The unique code, which is used for identifying a command",
+          "type": "string"
+        }
+      },
+      "required": ["name", "code"]
+    }
+  },
+  "uniqueItems": true
+}

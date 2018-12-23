@@ -22,7 +22,7 @@ export class FmsDataService {
   /**
    * Contains the url of the server where we can get the json file
    */
-  url = 'assets/mocks/mock-fms.json';
+  url = 'assets/mocks/mock.fms.json';
 
   constructor(
     private http: HttpClient

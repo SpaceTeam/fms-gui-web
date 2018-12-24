@@ -1,0 +1,29 @@
+{
+  "title": "Gyros",
+  "list": [
+    {
+      "name": "gyro x",
+      "variable": ""
+    },
+    {
+      "name": "gyro y",
+      "variable": ""
+    },
+    {
+      "name": "gyro z",
+      "variable": ""
+    },
+    {
+      "name": "mpug x",
+      "variable": ""
+    },
+    {
+      "name": "mpug y",
+      "variable": ""
+    },
+    {
+      "name": "mpug z",
+      "variable": ""
+    }
+  ]
+}

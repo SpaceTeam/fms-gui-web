@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {StatusControl} from '../../model/status-control.model';
+import {Control} from '../../model/control.model';
 
 /**
  * This service class gets the data from the routes setting file, for adding nav items dynamically
@@ -9,7 +9,7 @@ import {StatusControl} from '../../model/status-control.model';
 @Injectable({
   providedIn: 'root'
 })
-export class StatusControlService {
+export class ControlService {
 
   // TODO: Instead of using a JSON, use a YAML or properties file!
   /**
@@ -23,10 +23,10 @@ export class StatusControlService {
 
   /**
    * Gets the control elements from the given url
-   * @return an observable array of {@link StatusControl} elements
+   * @return an observable array of {@link Control} elements
    */
-  public getStatusControls(): Observable<StatusControl[]> {
-    return this.http.get<StatusControl[]>(this.url);
+  public getControls(): Observable<Control[]> {
+    return this.http.get<Control[]>(this.url);
   }
 }
 

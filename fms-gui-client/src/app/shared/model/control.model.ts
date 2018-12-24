@@ -1,4 +1,4 @@
-export interface StatusControl {
+export interface Control {
   name: string;
   code: string;
 }

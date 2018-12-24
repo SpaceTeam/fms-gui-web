@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import {FmsDataService} from '../shared/services/fms-data/fms-data.service';
 import {FMSData} from '../shared/model/fms-data/fms-data.model';
 import {interval} from 'rxjs';
-import {StatusControlService} from '../shared/services/controls/status-control.service';
-import {StatusControl} from '../shared/model/status-control.model';
+import {ControlService} from '../shared/services/controls/control.service';
+import {Control} from '../shared/model/control.model';
 
 @Component({
   selector: 'app-statuspanel',
@@ -25,7 +25,7 @@ export class StatuspanelComponent implements OnInit {
   /**
    * The controls for the status
    */
-  statusControls: StatusControl[];
+  Controls: Control[];
 
   /**
    * The timer, which tells how often a given function should be called
@@ -40,12 +40,12 @@ export class StatuspanelComponent implements OnInit {
 
   constructor(
     private fmsDataService: FmsDataService,
-    private statusControlService: StatusControlService
+    private ControlService: ControlService
   ) { }
 
   ngOnInit() {
     this.source.subscribe(() => this.loadFMSData()); // Get FMS data every second
-    this.loadStatusControls();
+    this.loadControls();
   }
 
   /**
@@ -59,9 +59,9 @@ export class StatuspanelComponent implements OnInit {
   /**
    * Get the status controls
    */
-  loadStatusControls(): void {
-    this.statusControlService.getStatusControls()
-      .subscribe(controls => this.statusControls = controls);
+  loadControls(): void {
+    this.ControlService.getControls()
+      .subscribe(controls => this.Controls = controls);
   }
 
 }

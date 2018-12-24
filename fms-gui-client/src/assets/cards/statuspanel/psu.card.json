@@ -1,0 +1,53 @@
+{
+  "title": "PSU",
+  "list": [
+    {
+      "name": "vservo",
+      "variable": ""
+    },
+    {
+      "name": "vhv",
+      "variable": ""
+    },
+    {
+      "name": "imcon",
+      "variable": ""
+    },
+    {
+      "name": "iaaux",
+      "variable": ""
+    },
+    {
+      "name": "iacon",
+      "variable": ""
+    },
+    {
+      "name": "imaux",
+      "variable": ""
+    },
+    {
+      "name": "vxbee",
+      "variable": ""
+    },
+    {
+      "name": "vgps",
+      "variable": ""
+    },
+    {
+      "name": "vbat1",
+      "variable": ""
+    },
+    {
+      "name": "vbat2",
+      "variable": ""
+    },
+    {
+      "name": "tmphv",
+      "variable": ""
+    },
+    {
+      "name": "tmpuc",
+      "variable": ""
+    }
+  ]
+}

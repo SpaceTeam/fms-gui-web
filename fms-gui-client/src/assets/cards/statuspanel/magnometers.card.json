@@ -1,0 +1,29 @@
+{
+  "title": "Magnometers",
+  "list": [
+    {
+      "name": "hmc x",
+      "variable": ""
+    },
+    {
+      "name": "hmc y",
+      "variable": ""
+    },
+    {
+      "name": "hmc z",
+      "variable": ""
+    },
+    {
+      "name": "mpumag x",
+      "variable": ""
+    },
+    {
+      "name": "mpumag y",
+      "variable": ""
+    },
+    {
+      "name": "mpumag z",
+      "variable": ""
+    }
+  ]
+}

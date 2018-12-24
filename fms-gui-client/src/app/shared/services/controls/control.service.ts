@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {NavItem} from '../../model/nav-item.model';
 import {StatusControl} from '../../model/status-control.model';
 
 /**

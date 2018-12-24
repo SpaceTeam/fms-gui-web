@@ -1,0 +1,41 @@
+{
+  "title": "Accelerations",
+  "list": [
+    {
+      "name": "Adxl345 x",
+      "variable": ""
+    },
+    {
+      "name": "Adxl345 y",
+      "variable": ""
+    },
+    {
+      "name": "Adxl345 z",
+      "variable": ""
+    },
+    {
+      "name": "Adxl377 x",
+      "variable": ""
+    },
+    {
+      "name": "Adxl377 y",
+      "variable": ""
+    },
+    {
+      "name": "Adxl377 z",
+      "variable": ""
+    },
+    {
+      "name": "MPU acc x",
+      "variable": ""
+    },
+    {
+      "name": "MPU acc y",
+      "variable": ""
+    },
+    {
+      "name": "MPU acc z",
+      "variable": ""
+    }
+  ]
+}

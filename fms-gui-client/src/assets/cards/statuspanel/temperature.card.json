@@ -1,0 +1,21 @@
+{
+  "title": "Temperature",
+  "list": [
+    {
+      "name": "tmp100",
+      "variable": ""
+    },
+    {
+      "name": "press tmp",
+      "variable": ""
+    },
+    {
+      "name": "gyro tmp",
+      "variable": ""
+    },
+    {
+      "name": "mgyro tmp",
+      "variable": ""
+    }
+  ]
+}

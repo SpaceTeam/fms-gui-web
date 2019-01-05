@@ -4,6 +4,8 @@ import {FMSData} from '../shared/model/fms-data/fms-data.model';
 import {interval} from 'rxjs';
 import {ControlService} from '../shared/services/controls/control.service';
 import {Control} from '../shared/model/control.model';
+import {Card} from '../shared/model/card.model';
+import {CardsService} from '../shared/services/cards/cards.service';
 
 @Component({
   selector: 'app-statuspanel',
@@ -25,7 +27,12 @@ export class StatuspanelComponent implements OnInit {
   /**
    * The controls for the status
    */
-  Controls: Control[];
+  controls: Control[];
+
+  /**
+   * The cards on the right side
+   */
+  cards: Card[];
 
   /**
    * The timer, which tells how often a given function should be called
@@ -40,12 +47,14 @@ export class StatuspanelComponent implements OnInit {
 
   constructor(
     private fmsDataService: FmsDataService,
-    private ControlService: ControlService
+    private controlService: ControlService,
+    private cardsService: CardsService
   ) { }
 
   ngOnInit() {
     this.source.subscribe(() => this.loadFMSData()); // Get FMS data every second
     this.loadControls();
+    this.cards = this.cardsService.getCards('statuspanel');
   }
 
   /**
@@ -60,8 +69,8 @@ export class StatuspanelComponent implements OnInit {
    * Get the status controls
    */
   loadControls(): void {
-    this.ControlService.getControls()
-      .subscribe(controls => this.Controls = controls);
+    this.controlService.getControls()
+      .subscribe(controls => this.controls = controls);
   }
 
 }

@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://spaceteam.at/schemas/fms.schema.json",
+  "title": "fms",
+  "description": "An FMS object",
+  "type": "object",
+  "properties": {
+    "startingTime": {
+      "description": "TODO",
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "definitions": {
+    "pair": {
+      "title": "pair",
+      "description": "A key-value pair containing a key as description and its value",
+      "type": "object",
+      "properties": {
+        "key": {
+          "description": "The unique key",
+          "type": "string"
+        },
+        "value": {
+          "description": "The key's value",
+          "type": "string"
+        },
+        "valueType": {
+          "description": "An enum which contains supported data types",
+          "type": "string",
+          "enum": ["number", "boolean", "string", "date"]
+        }
+      }
+    }
+  }
+}

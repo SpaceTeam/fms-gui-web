@@ -3,27 +3,27 @@
   "list": [
     {
       "name": "hmc x",
-      "variable": ""
+      "key": ""
     },
     {
       "name": "hmc y",
-      "variable": ""
+      "key": ""
     },
     {
       "name": "hmc z",
-      "variable": ""
+      "key": ""
     },
     {
       "name": "mpumag x",
-      "variable": ""
+      "key": ""
     },
     {
       "name": "mpumag y",
-      "variable": ""
+      "key": ""
     },
     {
       "name": "mpumag z",
-      "variable": ""
+      "key": ""
     }
   ]
 }

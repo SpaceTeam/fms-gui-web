@@ -21,8 +21,20 @@ export class FmsDataService {
   // TODO: Change this url as soon as we have a server to contact!
   /**
    * Contains the url of the server where we can get the json file
+   * TODO: Change from 'assets' to the server's url, containing the files
    */
-  url = 'assets/mocks/mock.fms.json';
+  url = 'assets';
+
+  /**
+   * Contains the url of the json
+   */
+  jsonUrl = '/mocks/mock.fms.json';
+
+  /**
+   * Contains the url of the schema
+   * TODO: Create a JSON schema for the FMS JSON files
+   */
+  schemaUrl = '';
 
   constructor(
     private http: HttpClient
@@ -30,16 +42,33 @@ export class FmsDataService {
 
   /**
    * Retrieves a FMS JSON from the server and returns it to the client
+   * TODO: Change this to be more dynamic -> instead of creating an FMSData object, get the simple JSON => We need this for e.g. making dynamic cards possible
    * @return returns an observable of an FMS object
    */
   getData(): Observable<FMSData> {
     const d = new Date();
-    return this.http.get<FMSData>(this.url)
+    return this.http.get<FMSData>(this.url + this.jsonUrl)
       .pipe(
         // TODO: Save this to a log file
         // tap(() => console.log(`Fetched FMSData at ${d.toLocaleTimeString('de', optionsTime)}`)),
         catchError(this.handleError<FMSData>(`get fms data at ${d.toLocaleTimeString('de', optionsTime)}`))
       );
+  }
+
+  /**
+   * TODO: Implement the same for numbers, boolean and dates
+   * Returns the string referenced by the key
+   * @param key e.g. "orientation_of_fms"
+   * @return the value e.g. "Y_PLUS"
+   */
+  getString(key: string): string {
+    // TODO: Implement me
+    return null;
+  }
+
+  private validateJSON(json): boolean {
+    // TODO: Implement the JSON validation => get the JSON schema and validate it
+    return false;
   }
 
   /**

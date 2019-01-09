@@ -3,43 +3,43 @@
   "list": [
     {
       "name": "Rocket state",
-      "variable": "status.rocketState"
+      "key": "status.rocketState"
     },
     {
       "name": "Flight substate",
-      "variable": "status.flightSubstate"
+      "key": "status.flightSubstate"
     },
     {
       "name": "Servo sep 1 pos",
-      "variable": "status.servoPos.array.Element0"
+      "key": "status.servoPos.array.Element0"
     },
     {
       "name": "Servo sep 2 pos",
-      "variable": "status.servoPos.array.Element1"
+      "key": "status.servoPos.array.Element1"
     },
     {
       "name": "Servo recov pos",
-      "variable": "status.servoPos.array.Element2"
+      "key": "status.servoPos.array.Element2"
     },
     {
       "name": "CPU load",
-      "variable": "status.cpu_load"
+      "key": "status.cpu_load"
     },
     {
       "name": "Sepadet ADC Value",
-      "variable": "status.sepadet_adc_value"
+      "key": "status.sepadet_adc_value"
     },
     {
       "name": "Seven Segment",
-      "variable": ""
+      "key": ""
     },
     {
       "name": "Igniter [V]",
-      "variable": ""
+      "key": ""
     },
     {
       "name": "Igniter HP [V]",
-      "variable": ""
+      "key": ""
     }
   ]
 }

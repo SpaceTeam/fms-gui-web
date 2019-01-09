@@ -3,19 +3,19 @@
   "list": [
     {
       "name": "tmp100",
-      "variable": ""
+      "key": ""
     },
     {
       "name": "press tmp",
-      "variable": ""
+      "key": ""
     },
     {
       "name": "gyro tmp",
-      "variable": ""
+      "key": ""
     },
     {
       "name": "mgyro tmp",
-      "variable": ""
+      "key": ""
     }
   ]
 }

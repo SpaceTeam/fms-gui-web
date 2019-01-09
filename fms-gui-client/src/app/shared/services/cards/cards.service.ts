@@ -32,7 +32,7 @@ export class CardsService {
     const cards: Card[] = [];
 
     // TODO: Implement me!
-    this.getJSON(screen).subscribe(data => {
+    this.getCardsJSON(screen).subscribe(data => {
       for (let i = 0; i < data.length; i++) {
         this.getCard(data[i]).subscribe(card => cards.push(card));
       }
@@ -41,7 +41,7 @@ export class CardsService {
     return cards;
   }
 
-  public getJSON(json: string): Observable<any> {
+  public getCardsJSON(json: string): Observable<any> {
     return this.http.get(this.settingsUrl + json + '.cards.json');
   }
 

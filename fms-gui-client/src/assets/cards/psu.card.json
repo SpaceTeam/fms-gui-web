@@ -3,51 +3,51 @@
   "list": [
     {
       "name": "vservo",
-      "variable": ""
+      "key": ""
     },
     {
       "name": "vhv",
-      "variable": ""
+      "key": ""
     },
     {
       "name": "imcon",
-      "variable": ""
+      "key": ""
     },
     {
       "name": "iaaux",
-      "variable": ""
+      "key": ""
     },
     {
       "name": "iacon",
-      "variable": ""
+      "key": ""
     },
     {
       "name": "imaux",
-      "variable": ""
+      "key": ""
     },
     {
       "name": "vxbee",
-      "variable": ""
+      "key": ""
     },
     {
       "name": "vgps",
-      "variable": ""
+      "key": ""
     },
     {
       "name": "vbat1",
-      "variable": ""
+      "key": ""
     },
     {
       "name": "vbat2",
-      "variable": ""
+      "key": ""
     },
     {
       "name": "tmphv",
-      "variable": ""
+      "key": ""
     },
     {
       "name": "tmpuc",
-      "variable": ""
+      "key": ""
     }
   ]
 }

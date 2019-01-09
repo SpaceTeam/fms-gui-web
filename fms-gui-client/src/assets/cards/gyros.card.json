@@ -3,27 +3,27 @@
   "list": [
     {
       "name": "gyro x",
-      "variable": ""
+      "key": ""
     },
     {
       "name": "gyro y",
-      "variable": ""
+      "key": ""
     },
     {
       "name": "gyro z",
-      "variable": ""
+      "key": ""
     },
     {
       "name": "mpug x",
-      "variable": ""
+      "key": ""
     },
     {
       "name": "mpug y",
-      "variable": ""
+      "key": ""
     },
     {
       "name": "mpug z",
-      "variable": ""
+      "key": ""
     }
   ]
 }

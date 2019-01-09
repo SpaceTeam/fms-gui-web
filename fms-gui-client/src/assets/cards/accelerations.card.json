@@ -3,39 +3,39 @@
   "list": [
     {
       "name": "Adxl345 x",
-      "variable": ""
+      "key": ""
     },
     {
       "name": "Adxl345 y",
-      "variable": ""
+      "key": ""
     },
     {
       "name": "Adxl345 z",
-      "variable": ""
+      "key": ""
     },
     {
       "name": "Adxl377 x",
-      "variable": ""
+      "key": ""
     },
     {
       "name": "Adxl377 y",
-      "variable": ""
+      "key": ""
     },
     {
       "name": "Adxl377 z",
-      "variable": ""
+      "key": ""
     },
     {
       "name": "MPU acc x",
-      "variable": ""
+      "key": ""
     },
     {
       "name": "MPU acc y",
-      "variable": ""
+      "key": ""
     },
     {
       "name": "MPU acc z",
-      "variable": ""
+      "key": ""
     }
   ]
 }

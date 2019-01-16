@@ -6,9 +6,21 @@
   "type": "object",
   "properties": {
     "startingTime": {
-      "description": "TODO",
+      "description": "TODO: Define a date format",
       "type": "string",
       "minLength": 1
+    },
+    "power": {
+      "description": "Defines a power state",
+      "$ref": "#/definitions/pairArray"
+    },
+    "connectionQualitySens": {
+      "description": "Defines the connection quality",
+      "$ref": "#/definitions/pairArray"
+    },
+    "status": {
+      "description": "Defines a status",
+      "$ref": "#/definitions/pairArray"
     }
   },
   "definitions": {
@@ -27,9 +39,30 @@
         },
         "valueType": {
           "description": "An enum which contains supported data types",
-          "type": "string",
-          "enum": ["number", "boolean", "string", "date"]
+          "anyOf": [
+            {"type": "number"},
+            {"type": "boolean"},
+            {"type": "string"},
+            {
+              "type": "string",
+              "description": "date format",
+              "format": "date-time"
+            },
+            {
+              "$ref": "#/definitions/pairArray"
+            }
+          ]
         }
+      },
+      "required": ["key", "value", "valueType"]
+    },
+    "pairArray": {
+      "title": "pairArray",
+      "description": "An array of pairs",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/definitions/pair"
       }
     }
   }

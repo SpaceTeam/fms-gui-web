@@ -5,65 +5,10 @@
   "description": "An FMS object",
   "type": "object",
   "properties": {
-    "startingTime": {
-      "description": "TODO: Define a date format",
-      "type": "string",
-      "minLength": 1
-    },
-    "power": {
-      "description": "Defines a power state",
-      "$ref": "#/definitions/pairArray"
-    },
-    "connectionQualitySens": {
-      "description": "Defines the connection quality",
-      "$ref": "#/definitions/pairArray"
-    },
-    "status": {
-      "description": "Defines a status",
-      "$ref": "#/definitions/pairArray"
-    }
+    "startingTime": { "$ref": "./date.schema.json" },
+    "power": { "$ref": "./power.schema.json" },
+    "connectionQualitySens": { "$ref": "./connection-quality-sens.schema.json" },
+    "status": { "$ref": "./status.schema.json" }
   },
-  "definitions": {
-    "pair": {
-      "title": "pair",
-      "description": "A key-value pair containing a key as description and its value",
-      "type": "object",
-      "properties": {
-        "key": {
-          "description": "The unique key",
-          "type": "string"
-        },
-        "value": {
-          "description": "The key's value",
-          "type": "string"
-        },
-        "valueType": {
-          "description": "An enum which contains supported data types",
-          "anyOf": [
-            {"type": "number"},
-            {"type": "boolean"},
-            {"type": "string"},
-            {
-              "type": "string",
-              "description": "date format",
-              "format": "date-time"
-            },
-            {
-              "$ref": "#/definitions/pairArray"
-            }
-          ]
-        }
-      },
-      "required": ["key", "value", "valueType"]
-    },
-    "pairArray": {
-      "title": "pairArray",
-      "description": "An array of pairs",
-      "type": "array",
-      "minItems": 1,
-      "items": {
-        "$ref": "#/definitions/pair"
-      }
-    }
-  }
+  "required": ["startingTime", "power", "connectionQualitySens", "status"]
 }

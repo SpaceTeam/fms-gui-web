@@ -1,0 +1,23 @@
+{
+  "connectionQualitySens": {
+    "localtimestamp": "",
+    "quality": 0
+  },
+  "startingTime": "",
+  "power": {
+    "current": 0,
+    "voltageCell": 0,
+    "localtimestamp": "",
+    "voltage": 0
+  },
+  "status": {
+    "flags": [
+      {
+        "value": "false",
+        "key": "adc_initialized",
+        "valueType": "boolean"
+      }
+    ],
+    "localtimestamp": ""
+  }
+}

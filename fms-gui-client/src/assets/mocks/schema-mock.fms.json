@@ -11,13 +11,19 @@
     "voltage": 0
   },
   "status": {
-    "flags": [
-      {
-        "value": "false",
-        "key": "adc_initialized",
-        "valueType": "boolean"
-      }
-    ],
-    "localtimestamp": ""
+    "flags": {
+      "valueType": "boolean",
+      "pair-array": [
+        {
+          "value": false,
+          "key": "adc_initialized"
+        }
+      ]
+    },
+    "localtimestamp": "2018-01-30T05:52:20Z",
+    "rocketstate": {
+      "value": "",
+      "key": ""
+    }
   }
 }

@@ -6,7 +6,8 @@
   "type": "object",
   "properties": {
     "localtimestamp": { "$ref": "./date.schema.json" },
-    "flags": { "$ref": "./pair-array.schema.json" }
+    "flags": { "$ref": "./pairs.schema.json"}
   },
+  "additionalProperties": { "$ref": "./pairs.schema.json#/definitions/pair" },
   "required": ["localtimestamp","flags"]
 }

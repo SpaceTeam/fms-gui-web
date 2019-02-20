@@ -42,7 +42,8 @@ export class FmsDataService {
 
   /**
    * Retrieves a FMS JSON from the server and returns it to the client
-   * TODO: Change this to be more dynamic -> instead of creating an FMSData object, get the simple JSON => We need this for e.g. making dynamic cards possible
+   * TODO: Change this to be more dynamic -> instead of creating an FMSData object,
+   * get the simple JSON => We need this for e.g. making dynamic cards possible
    * @return returns an observable of an FMS object
    */
   getData(): Observable<FMSData> {

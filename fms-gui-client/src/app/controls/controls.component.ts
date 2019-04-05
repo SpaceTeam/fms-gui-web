@@ -12,6 +12,8 @@ import {Control} from '../shared/model/control.model';
 })
 export class ControlsComponent implements OnInit {
 
+  title = 'Controls';
+
   /**
    * The FMSData object containing the current FMS data
    */

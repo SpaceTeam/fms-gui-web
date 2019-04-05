@@ -1,14 +1,3 @@
-.button-container {
-  display: grid;
-  grid-template-columns: 15% 85%;
-  text-align: left;
-}
-
-#control-container {
-  overflow-y: auto;
-  width: 300px;
-}
-
 #status-panel {
   display: grid;
   grid-template-columns: auto 60% auto;

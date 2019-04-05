@@ -3,11 +3,15 @@ import { Routes, RouterModule } from '@angular/router';
 import {MainComponent} from './main/main.component';
 import {StatuspanelComponent} from './statuspanel/statuspanel.component';
 import {FlightmodeComponent} from './flightmode/flightmode.component';
+import {ControlsComponent} from './controls/controls.component';
+import {PageNotFoundComponent} from './page-not-found/page-not-found.component';
 
 const routes: Routes = [
   { path: '', component: MainComponent},
   { path: 'statuspanel', component: StatuspanelComponent},
-  { path: 'flightmode', component: FlightmodeComponent}
+  { path: 'flightmode', component: FlightmodeComponent},
+  { path: 'controls', component: ControlsComponent},
+  { path: '**', component: PageNotFoundComponent}
 ];
 
 @NgModule({

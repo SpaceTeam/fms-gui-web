@@ -4,18 +4,6 @@
   </mat-toolbar>
   <div *ngIf="fmsData" class="margin-side-1em">
     <div id="status-panel">
-      <!-- Contains the control buttons on the left side of the panel -->
-      <div id="control-container" *ngIf="controls">
-        <h2>Controls</h2>
-        <div *ngFor="let control of controls">
-          <button mat-button>
-            <div class="button-container">
-              <span>{{control.code}}</span>
-              <span>{{control.name}}</span>
-            </div>
-          </button>
-        </div>
-      </div>
       <!-- Contains the status bytes, which indicate if something is on or off -->
       <div id="status-flags-container">
         <h2>Flags</h2>

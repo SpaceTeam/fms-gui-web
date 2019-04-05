@@ -13,5 +13,10 @@
     "path": "flightmode",
     "title": "Flight Mode",
     "icon": "flight"
+  },
+  {
+    "path": "controls",
+    "title": "Controls",
+    "icon": "settings_input_component"
   }
 ]

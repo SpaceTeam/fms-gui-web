@@ -12,6 +12,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MaterialModule} from './material.module';
 import {HttpClientModule} from '@angular/common/http';
 import {ReplaceUnderscorePipe} from './shared/pipes/replace-underscore.pipe';
+import { ControlsComponent } from './controls/controls.component';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +22,9 @@ import {ReplaceUnderscorePipe} from './shared/pipes/replace-underscore.pipe';
     FlightmodeComponent,
     StatuspanelComponent,
     MainComponent,
-    ReplaceUnderscorePipe
+    ReplaceUnderscorePipe,
+    ControlsComponent,
+    PageNotFoundComponent
   ],
   imports: [
     BrowserModule,

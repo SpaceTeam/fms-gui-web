@@ -1,0 +1,13 @@
+<!-- Contains the control buttons on the left side of the panel -->
+<div id="control-container" *ngIf="controls">
+  <h2>Controls</h2>
+  <div *ngFor="let control of controls">
+    <button mat-button>
+      <span>{{control.code}}</span>
+      &nbsp;
+      <span>{{control.name}}</span>
+      &nbsp;
+      <mat-icon matListIcon [class.md-inactive]="control.inactive">{{control.icon}}</mat-icon>
+    </button>
+  </div>
+</div>

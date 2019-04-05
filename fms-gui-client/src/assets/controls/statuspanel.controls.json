@@ -89,7 +89,8 @@
   },
   {
     "name": "Flash to USB",
-    "code": "033"
+    "code": "033",
+    "icon": "usb"
   },
   {
     "name": "7-Seq HI",
@@ -109,11 +110,14 @@
   },
   {
     "name": "Camera On",
-    "code": "039"
+    "code": "039",
+    "icon": "photo_camera"
   },
   {
     "name": "Camera Off",
-    "code": "040"
+    "code": "040",
+    "icon": "photo_camera",
+    "inactive": true
   },
   {
     "name": "Test Igniters",

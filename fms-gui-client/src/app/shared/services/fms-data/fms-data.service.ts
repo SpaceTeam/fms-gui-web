@@ -3,6 +3,7 @@ import { FMSData } from '../../model/fms-data/fms-data.model';
 import { Observable, of } from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {catchError} from 'rxjs/operators';
+import {WebSocketService} from '../web-socket/web-socket.service';
 
 const optionsTime = {
   hour: '2-digit',
@@ -17,8 +18,6 @@ const optionsTime = {
 })
 export class FmsDataService {
 
-  // TODO: Save the url in a properties / YAML file
-  // TODO: Change this url as soon as we have a server to contact!
   /**
    * Contains the url of the server where we can get the json file
    * TODO: Change from 'assets' to the server's url, containing the files
@@ -37,7 +36,8 @@ export class FmsDataService {
   schemaUrl = '';
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private webSocketService: WebSocketService
   ) { }
 
   /**

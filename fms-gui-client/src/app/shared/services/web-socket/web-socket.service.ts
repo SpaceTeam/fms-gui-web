@@ -9,31 +9,48 @@ export class WebSocketService {
 
   /**
    * Creates a simple web-socket
-   * @param host the hostname, e.g. localhost
-   * @param port the port to be used, e.g. 8080
-   * @param path the path to the subscribe endpoint, e.g. subscribe
-   * @param secure defines the security, e.g. ws or wss
    * @example host: localhost, port: 8080, path: subscribe, secure: true -> new WebSocket("wss://localhost:8080/subscribe");
    */
-  createSocket(host: string, port?: number, path?: string, secure?: boolean): WebSocket {
+  static createSocket(properties: WebSocketProperties): WebSocket {
 
     // Define a default port, if the port is not given
-    if (!port) {
-      port = 80;
+    if (!properties.port) {
+      properties.port = 80;
     }
 
     let protocol = 'wss';
 
     // If security is not given, assume simple TCP connection
-    if (!secure) {
+    if (!properties.secure) {
       protocol = 'ws';
     }
 
     // Define default path (root)
-    if (!path) {
-      path = '';
+    if (!properties.path) {
+      properties.path = '';
     }
 
-    return new WebSocket(protocol + '://' + host + ':' + port + '/' + path);
+    return new WebSocket(protocol + '://' + properties.host + ':' + properties.port + '/' + properties.path);
+  }
+
+  /**
+   * Opens a WebSocket to the server and reacts to changes
+   */
+  static openWebSocket(
+    connection: WebSocket,
+    properties: WebSocketProperties,
+    onOpen?: (this: WebSocket, event: Event) => void,
+    onMessage?: (this: WebSocket, event: MessageEvent) => void,
+    onClose?: (this: WebSocket, event: CloseEvent) => void
+  ): void {
+    if (connection != null) {
+      return;
+    }
+
+    connection = WebSocketService.createSocket(properties);
+
+    connection.onopen = onOpen;
+    connection.onmessage = onMessage;
+    connection.onclose = onClose;
   }
 }

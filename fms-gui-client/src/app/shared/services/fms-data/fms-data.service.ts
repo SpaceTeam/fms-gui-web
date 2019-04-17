@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {catchError} from 'rxjs/operators';
 import {WebSocketService} from '../web-socket/web-socket.service';
+import {environment as env} from '../../../../environments/environment';
 
 const optionsTime = {
   hour: '2-digit',
@@ -22,23 +23,47 @@ export class FmsDataService {
    * Contains the url of the server where we can get the json file
    * TODO: Change from 'assets' to the server's url, containing the files
    */
-  url = 'assets';
+  private url = 'assets';
 
   /**
    * Contains the url of the json
    */
-  jsonUrl = '/mocks/mock.fms.json';
+  private jsonUrl = '/mocks/mock.fms.json';
 
   /**
    * Contains the url of the schema
    * TODO: Create a JSON schema for the FMS JSON files
    */
-  schemaUrl = '';
+  private schemaUrl = '';
+
+  /**
+   * The connection to the WebSocket
+   */
+  private connection: WebSocket = null;
+
+  /**
+   * The global FMSData
+   */
+  private fms: FMSData;
 
   constructor(
     private http: HttpClient,
     private webSocketService: WebSocketService
-  ) { }
+  ) {
+    // Open a websocket to the server, which will last over the whole application
+    WebSocketService.openWebSocket(
+      this.connection,
+      {
+        host: env.server.host,
+        port: env.server.port,
+        path: env.server.subscribe,
+        secure: env.server.secure
+      },
+      this.onOpen,
+      this.onMessage,
+      this.onClose
+    );
+  }
 
   /**
    * Retrieves a FMS JSON from the server and returns it to the client
@@ -57,19 +82,32 @@ export class FmsDataService {
   }
 
   /**
-   * TODO: Implement the same for numbers, boolean and dates
-   * Returns the string referenced by the key
-   * @param key e.g. "orientation_of_fms"
-   * @return the value e.g. "Y_PLUS"
+   * This is just a dummy method, which tests, if the connection to the server works
    */
-  getString(key: string): string {
-    // TODO: Implement me
-    return null;
+  printServerResponse(): void {
+    let url: string = 'http://' + env.server.host + ':' + env.server.port;
+    this.http.get<JSON>(url)
+      .toPromise()
+      .then(res => {
+        console.log("Print Server Response: " + res['message']);
+      });
   }
 
-  private validateJSON(json): boolean {
-    // TODO: Implement the JSON validation => get the JSON schema and validate it
-    return false;
+  /**
+   * This method defines what should happen on the client part as soon as the WebSocket connection is established
+   * @param event
+   */
+  private onOpen(this: WebSocket, event: Event): void {
+    console.log('WebSocket open');
+  }
+
+  private onMessage(this: WebSocket, event: MessageEvent): void {
+    console.log('Sent WebSocket message');
+  }
+
+  private onClose(this: WebSocket, event: CloseEvent): void {
+    console.log('WebSocket close');
+    this.close();
   }
 
   /**

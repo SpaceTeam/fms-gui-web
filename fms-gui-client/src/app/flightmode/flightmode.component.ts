@@ -39,5 +39,4 @@ export class FlightmodeComponent implements OnInit {
     this.fmsDataService.getData()
       .subscribe(fmsData => this.fmsData = fmsData);  // Subscribe tells what to do with the callback
   }
-
 }

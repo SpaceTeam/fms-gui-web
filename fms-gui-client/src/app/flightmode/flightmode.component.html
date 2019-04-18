@@ -1,6 +1,8 @@
 <main>
-  <mat-toolbar>{{ title }}</mat-toolbar>
-  <div *ngIf="fmsData">
-    Loaded FMS data
+  <mat-toolbar>
+    <span>{{ title }}</span>
+  </mat-toolbar>
+  <div *ngIf="fmsDataService.present | async" class="margin-side-1em">
+    Is present
   </div>
 </main>

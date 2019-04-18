@@ -2,15 +2,26 @@
 
 import {ExpressApp} from './express-app';
 import {environment} from './environments/environment';
+import {interval} from 'rxjs';
+import * as fs from 'fs';
+import * as wsWebSocket from 'ws';
+import {Logger} from './shared/services/logger/logger';
 
 const port: number = environment.server.port;
-const expressApp: ExpressApp = new ExpressApp();
+const options = environment.server.options;
+const paths = environment.server.paths;
 
+/**
+ * The timer, which tells how often a given function should be called
+ */
+const source = interval(options.period);
+
+const expressApp: ExpressApp = new ExpressApp();
 const app = expressApp.app;
-const ws = expressApp.ws;
+const expressWs = expressApp.expressWs;
 
 app.get('/', (req, res) => {
-    console.log('New connection');
+    Logger.log('New GET request');
     res.json({
         status: 200,
         message: 'Hello WebSocket world!'
@@ -20,10 +31,11 @@ app.get('/', (req, res) => {
 /**
  * This enables the communication over the ws protocol
  */
-app.ws('/' + environment.server.subscribe, (ws, req) => {
+expressWs.app.ws(paths.subscribe, (ws: wsWebSocket, req) => {
+    // on('open') is not an event!
 
-    ws.on('message', msg => {
-        console.log(`Received ${msg}`);
+    ws.on('message', (msg: string) => {
+        Logger.log(`Received ${msg}`);
         ws.send(JSON.stringify({
             status: 200,
             message: 'Subscription submitted'
@@ -31,12 +43,38 @@ app.ws('/' + environment.server.subscribe, (ws, req) => {
     });
 
     ws.on('close', () => {
-        console.log('Close websocket');
+        Logger.log('Close websocket');
         ws.close();
     });
 });
 
 /**
+ * Sends the newest FMS data to the connected clients
+ */
+function updateFMSData() {
+    let clients: Set<wsWebSocket> = expressWs.getWss().clients;
+    // Notify clients every 'period' seconds
+    clients.forEach((client: wsWebSocket) => {
+        if (client.readyState === client.OPEN) {
+            // Get the FMS data
+            fs.readFile(__dirname + '/..' + paths.fmsData, (err, data) => {
+                if (err) {
+                    Logger.error(err);
+                    throw err;
+                }
+
+                // Send the FMS data to the client
+                client.send(data.toString('utf8'));
+            });
+        }
+    });
+}
+
+/**
  * Creates a http server and enables REST requests
  */
-app.listen(port, () => console.log(`Server started on port ${port}`));
+app.listen(port, () => {
+    Logger.log(`Server started on port ${port}`);
+    // Update the user every 'period' seconds
+    source.subscribe(() => updateFMSData());
+});

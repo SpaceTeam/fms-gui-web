@@ -1,8 +1,8 @@
 <main>
   <mat-toolbar>{{ title }}</mat-toolbar>
-  <mat-grid-list cols="2" rowHeight="500px">
+  <mat-grid-list cols="2" rowHeight="500px" *ngIf="false">
     <mat-grid-tile>
-      <mat-card id="connection" *ngIf="fmsData">
+      <mat-card id="connection">
         <mat-card-header>
           <mat-card-title>Connection</mat-card-title>
         </mat-card-header>
@@ -33,41 +33,41 @@
       </mat-card>
     </mat-grid-tile>
     <mat-grid-tile>
-      <mat-card id="status" *ngIf="fmsData">
+      <mat-card id="status">
         <mat-card-header>
           <mat-card-title>Status</mat-card-title>
         </mat-card-header>
         <mat-card-content>
           <mat-list>
             <mat-list-item>
-              <span>Timestamp</span>{{separator}}{{space}}{{fmsData.status.localTimestamp}}
+              <span>Timestamp</span>{{separator}}{{space}}{{fmsDataService.getFMSData().status.localTimestamp}}
             </mat-list-item>
             <mat-list-item>
-              <span>CPU load</span>{{separator}}{{space}}{{fmsData.status.cpu_load}}
+              <span>CPU load</span>{{separator}}{{space}}{{fmsDataService.getFMSData().status.cpu_load}}
             </mat-list-item>
             <mat-list-item>
               <span class="badge"
-                [class.badge-danger]="!fmsData.status.flags.adc_initialized"
-                [class.badge-success]="fmsData.status.flags.adc_initialized"
+                [class.badge-danger]="!fmsDataService.getFMSData().status.flags.adc_initialized"
+                [class.badge-success]="fmsDataService.getFMSData().status.flags.adc_initialized"
               >&nbsp;</span>&nbsp;
               <span>ADC</span>
             </mat-list-item>
             <mat-list-item>
               <span class="badge"
-                    [class.badge-danger]="!fmsData.status.flags.dac_initialized"
-                    [class.badge-success]="fmsData.status.flags.dac_initialized"
+                    [class.badge-danger]="!fmsDataService.getFMSData().status.flags.dac_initialized"
+                    [class.badge-success]="fmsDataService.getFMSData().status.flags.dac_initialized"
               >&nbsp;</span>&nbsp;
               <span>DAC</span>
             </mat-list-item>
             <mat-list-item>
               <span class="badge"
-                    [class.badge-danger]="!fmsData.status.flags.dma_initialized"
-                    [class.badge-success]="fmsData.status.flags.dma_initialized"
+                    [class.badge-danger]="!fmsDataService.getFMSData().status.flags.dma_initialized"
+                    [class.badge-success]="fmsDataService.getFMSData().status.flags.dma_initialized"
               >&nbsp;</span>&nbsp;
               <span>DMA</span>
             </mat-list-item>
             <mat-list-item>
-              <span>Flash</span>{{separator}}{{space}}{{fmsData.status.flash_adr}}% full
+              <span>Flash</span>{{separator}}{{space}}{{fmsDataService.getFMSData().status.flash_adr}}% full
             </mat-list-item>
           </mat-list>
         </mat-card-content>

@@ -1,0 +1,621 @@
+[
+  {
+    "name": "Power",
+    "value": [
+      {
+        "name": "Voltage",
+        "value": 0.0
+      },
+      {
+        "name": "Current",
+        "value": -0.002
+      }
+    ]
+  },
+  {
+    "name": "Status",
+    "value": [
+      {
+        "name": "Flags",
+        "value": [
+          {
+            "name": "Adc initialized",
+            "value": true
+          },
+          {
+            "name": "Dac initialized",
+            "value": true
+          },
+          {
+            "name": "Dma initialized",
+            "value": true
+          },
+          {
+            "name": "Flash ssp initialized",
+            "value": true
+          },
+          {
+            "name": "I2c0 initialized",
+            "value": true
+          },
+          {
+            "name": "I2c1 initialized",
+            "value": true
+          },
+          {
+            "name": "I2c2 initialized",
+            "value": true
+          },
+          {
+            "name": "Uart0 initialized",
+            "value": true
+          },
+          {
+            "name": "Uart1 initialized",
+            "value": false
+          },
+          {
+            "name": "Uart2 initialized",
+            "value": true
+          },
+          {
+            "name": "Uart3 initialized",
+            "value": true
+          },
+          {
+            "name": "Rtc initialized",
+            "value": true
+          },
+          {
+            "name": "Ssp1 initialized",
+            "value": true
+          },
+          {
+            "name": "Structs initialized",
+            "value": true
+          },
+          {
+            "name": "Systick initialized",
+            "value": true
+          },
+          {
+            "name": "Timer1 initialized",
+            "value": true
+          },
+          {
+            "name": "Watchdog initialized",
+            "value": true
+          },
+          {
+            "name": "Eeprom initialized",
+            "value": false
+          },
+          {
+            "name": "Ars initialized",
+            "value": true
+          },
+          {
+            "name": "Power management initialized",
+            "value": true
+          },
+          {
+            "name": "Flash initialized",
+            "value": true
+          },
+          {
+            "name": "Seven segment intern initialized",
+            "value": false
+          },
+          {
+            "name": "Seven segment extern initialized",
+            "value": true
+          },
+          {
+            "name": "Startup success",
+            "value": true
+          },
+          {
+            "name": "Sensor pressure initialized",
+            "value": true
+          },
+          {
+            "name": "Startup checked",
+            "value": true
+          },
+          {
+            "name": "Sensor imu initialized",
+            "value": false
+          },
+          {
+            "name": "Sensor tmp100 initialized",
+            "value": true
+          },
+          {
+            "name": "Sensor hig initialized",
+            "value": true
+          },
+          {
+            "name": "Sensor gyro initialized",
+            "value": true
+          },
+          {
+            "name": "Gnss initialized",
+            "value": false
+          },
+          {
+            "name": "Servo initialized all",
+            "value": true
+          },
+          {
+            "name": "Pwm initialized",
+            "value": true
+          },
+          {
+            "name": "Afs initialized",
+            "value": false
+          },
+          {
+            "name": "Camera initialized",
+            "value": true
+          },
+          {
+            "name": "Sensor current initialized",
+            "value": true
+          },
+          {
+            "name": "Igniter initialized",
+            "value": true
+          },
+          {
+            "name": "Separation detection initialized",
+            "value": false
+          },
+          {
+            "name": "Servo configured",
+            "value": true
+          },
+          {
+            "name": "Igniter configured",
+            "value": false
+          },
+          {
+            "name": "Igniter 1 fired",
+            "value": false
+          },
+          {
+            "name": "Igniter 2 fired",
+            "value": false
+          },
+          {
+            "name": "Igniter 3 fired",
+            "value": false
+          },
+          {
+            "name": "Igniter 4 fired",
+            "value": false
+          },
+          {
+            "name": "Igniter 1 firing",
+            "value": false
+          },
+          {
+            "name": "Igniter 2 firing",
+            "value": false
+          },
+          {
+            "name": "Igniter 3 firing",
+            "value": false
+          },
+          {
+            "name": "Igniter 4 firing",
+            "value": false
+          },
+          {
+            "name": "Igniter armed",
+            "value": false
+          },
+          {
+            "name": "Igniter 1 connected",
+            "value": false
+          },
+          {
+            "name": "Igniter 2 connected",
+            "value": false
+          },
+          {
+            "name": "Igniter 3 connected",
+            "value": false
+          },
+          {
+            "name": "Igniter 4 connected",
+            "value": false
+          },
+          {
+            "name": "Ars enabled",
+            "value": false
+          },
+          {
+            "name": "Camera on",
+            "value": false
+          },
+          {
+            "name": "Gnss powersave",
+            "value": true
+          },
+          {
+            "name": "Flash erased",
+            "value": false
+          },
+          {
+            "name": "Flash store data",
+            "value": true
+          },
+          {
+            "name": "Radio on",
+            "value": true
+          },
+          {
+            "name": "Radio tx active",
+            "value": false
+          },
+          {
+            "name": "Flash flight header written",
+            "value": true
+          },
+          {
+            "name": "Timer1 running",
+            "value": false
+          },
+          {
+            "name": "Rtc synchronized",
+            "value": true
+          },
+          {
+            "name": "Usb connection detected",
+            "value": false
+          },
+          {
+            "name": "Watchdog timeout occured",
+            "value": false
+          },
+          {
+            "name": "Flash full",
+            "value": true
+          },
+          {
+            "name": "Crystal oszillator used",
+            "value": false
+          },
+          {
+            "name": "Liftoff detected",
+            "value": false
+          },
+          {
+            "name": "Gnss fix",
+            "value": false
+          },
+          {
+            "name": "Rocket panic",
+            "value": false
+          },
+          {
+            "name": "Mainchute altitude detected",
+            "value": false
+          },
+          {
+            "name": "Eagle landed",
+            "value": true
+          },
+          {
+            "name": "Rocket is stable",
+            "value": false
+          },
+          {
+            "name": "Apogee detected by kalman",
+            "value": false
+          },
+          {
+            "name": "Recovery mode",
+            "value": false
+          },
+          {
+            "name": "Check stability executed",
+            "value": true
+          },
+          {
+            "name": "Config intialized",
+            "value": false
+          },
+          {
+            "name": "Stages separated",
+            "value": false
+          },
+          {
+            "name": "Igniter hpower fired",
+            "value": false
+          },
+          {
+            "name": "Igniter hpower firing",
+            "value": false
+          },
+          {
+            "name": "Igniter hpower connected",
+            "value": false
+          },
+          {
+            "name": "Reset during flight",
+            "value": true
+          },
+          {
+            "name": "Housekeeping data read",
+            "value": false
+          },
+          {
+            "name": "Mbb satcom configured",
+            "value": false
+          },
+          {
+            "name": "Mbb satcom initialized",
+            "value": false
+          },
+          {
+            "name": "Mbb cameras configured",
+            "value": false
+          },
+          {
+            "name": "Mbb cameras initialized",
+            "value": false
+          },
+          {
+            "name": "Power management operational",
+            "value": true
+          },
+          {
+            "name": "Rail 5v enabled",
+            "value": false
+          },
+          {
+            "name": "Padding1",
+            "value": false
+          },
+          {
+            "name": "Padding2",
+            "value": false
+          },
+          {
+            "name": "Battery overvoltage",
+            "value": false
+          },
+          {
+            "name": "Battery only attached",
+            "value": false
+          },
+          {
+            "name": "Rail 3v3 sensor enabled",
+            "value": true
+          },
+          {
+            "name": "Rail 3v3 gnss enabled",
+            "value": true
+          },
+          {
+            "name": "Rail 3v3 external enabled",
+            "value": false
+          },
+          {
+            "name": "Cmd buffer overrun",
+            "value": false
+          },
+          {
+            "name": "Eeprom page cycle overflow",
+            "value": false
+          },
+          {
+            "name": "Flash dma buffer overrun",
+            "value": false
+          },
+          {
+            "name": "Flash write error",
+            "value": false
+          },
+          {
+            "name": "I2c job buffer overflow",
+            "value": false
+          },
+          {
+            "name": "I2c interrupt handler error",
+            "value": false
+          },
+          {
+            "name": "Interrupt interference",
+            "value": false
+          },
+          {
+            "name": "Uart0 tx buffer overflow",
+            "value": false
+          },
+          {
+            "name": "Uart0 rx buffer overflow",
+            "value": false
+          },
+          {
+            "name": "Uart1 tx buffer overflow",
+            "value": false
+          },
+          {
+            "name": "Uart1 rx buffer overflow",
+            "value": false
+          },
+          {
+            "name": "Uart2 tx buffer overflow",
+            "value": false
+          },
+          {
+            "name": "Uart2 rx buffer overflow",
+            "value": false
+          },
+          {
+            "name": "Uart3 tx buffer overflow",
+            "value": false
+          },
+          {
+            "name": "Uart3 rx buffer overflow",
+            "value": false
+          },
+          {
+            "name": "Ssp1 interrupt ror",
+            "value": false
+          },
+          {
+            "name": "Ssp1 interrupt unknown device",
+            "value": false
+          },
+          {
+            "name": "Ssp1 buffer overflow",
+            "value": false
+          },
+          {
+            "name": "Watchdog interrupt handler hit",
+            "value": false
+          },
+          {
+            "name": "Flight substate default handler hit",
+            "value": false
+          },
+          {
+            "name": "Rocket state default handler hit",
+            "value": false
+          },
+          {
+            "name": "Struct size overflows uart buffer",
+            "value": true
+          },
+          {
+            "name": "Config from eeprom",
+            "value": true
+          },
+          {
+            "name": "Event actions from eeprom",
+            "value": false
+          },
+          {
+            "name": "Brown out warning level interrupt hit",
+            "value": false
+          },
+          {
+            "name": "Lora overtemperature",
+            "value": false
+          },
+          {
+            "name": "Lora critical temperature",
+            "value": false
+          },
+          {
+            "name": "Mbb satcom running",
+            "value": false
+          },
+          {
+            "name": "Mbb cameras running",
+            "value": true
+          },
+          {
+            "name": "Development mode",
+            "value": false
+          },
+          {
+            "name": "Servo sweep in progress",
+            "value": false
+          },
+          {
+            "name": "Powerdown desired",
+            "value": false
+          }
+        ]
+      },
+      {
+        "name": "Timestamp",
+        "value": 0
+      },
+      {
+        "name": "Rocket state",
+        "value": 0
+      },
+      {
+        "name": "Flight substate",
+        "value": 0
+      },
+      {
+        "name": "Servo pos",
+        "value": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "Sepadet adc value",
+        "value": 0
+      },
+      {
+        "name": "Radio tx byte counter",
+        "value": 0
+      },
+      {
+        "name": "Flash adr",
+        "value": 0
+      },
+      {
+        "name": "Seven segment value",
+        "value": "\u0000"
+      },
+      {
+        "name": "Cpu load",
+        "value": 0
+      },
+      {
+        "name": "Igniter adc voltage",
+        "value": 0
+      },
+      {
+        "name": "Liftoff timestamp",
+        "value": 0
+      },
+      {
+        "name": "Apogee timestamp",
+        "value": 0
+      },
+      {
+        "name": "Mainchute timestamp",
+        "value": 0
+      },
+      {
+        "name": "Landing timestamp",
+        "value": 0
+      },
+      {
+        "name": "Igniter 1 voltage",
+        "value": 0
+      },
+      {
+        "name": "Igniter 2 voltage",
+        "value": 0
+      },
+      {
+        "name": "Igniter 3 voltage",
+        "value": 0
+      },
+      {
+        "name": "Igniter 4 voltage",
+        "value": 0
+      },
+      {
+        "name": "Igniter hpower voltage",
+        "value": 0
+      },
+      {
+        "name": "Orientation of fms",
+        "value": "X-"
+      }
+    ]
+  }
+]

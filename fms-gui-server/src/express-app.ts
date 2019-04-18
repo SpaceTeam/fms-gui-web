@@ -10,19 +10,20 @@ export class ExpressApp {
     /**
      * Handles the REST calls
      */
-    public app;
+    public app: express.Application;
 
     /**
+     * The app that express-ws was set up on
      * Handles the websocket stuff, notifying clients
      */
-    public ws;
+    public expressWs;
 
     constructor() {
         // Create an express app
         this.app = express();
 
-        // Create the webserver
-        this.ws = expressWs(this.app).app;
+        // Create the web server
+        this.expressWs = expressWs(this.app);
 
         // use cors (cross site requests)
         this.app.use(cors());

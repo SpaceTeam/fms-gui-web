@@ -2,13 +2,13 @@
   <mat-toolbar>
     <span>{{ title }}</span>
   </mat-toolbar>
-  <div *ngIf="fmsData" class="margin-side-1em">
+  <div *ngIf="false" class="margin-side-1em">
     <div id="status-panel">
       <!-- Contains the status bytes, which indicate if something is on or off -->
       <div id="status-flags-container">
         <h2>Flags</h2>
         <div class="grid grid-cols-4 grid-gap-sm">
-          <div *ngFor="let item of fmsData.status.flags | keyvalue">
+          <div *ngFor="let item of fmsDataService.getFMSData().status.flags | keyvalue">
             <span
               class="badge"
               [class.badge-success]="item.value"
@@ -27,7 +27,7 @@
           <div>
             <h3>{{card.title}}</h3>
             <ul>
-              <li *ngFor="let item of card.list">{{item.name}}{{separator}}{{fmsData.status.flags}}</li>
+              <li *ngFor="let item of card.list">{{item.name}}{{separator}}{{fmsDataService.getFMSData().status.flags}}</li>
             </ul>
           </div>
         </div>

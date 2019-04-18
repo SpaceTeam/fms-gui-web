@@ -2,15 +2,31 @@
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
+/**
+ * serverOptions:   Security related
+ * options:
+ *  - period: The WebSocket update period
+ */
 export const environment = {
-  production: false,
-  server : {
-    secure: false,
-    host: 'localhost',
-    port: 9000,
-    subscribe: 'subscribe',
-    listFMS: 'listFMS'
-  }
+    production: false,
+    server: {
+        secure: false,
+        host: 'localhost',
+        port: 9000,
+        paths: {
+            subscribe: '/subscribe',
+            listFMS: '/listFMS',
+            fmsData: '/assets/json/mock.fms.json'
+            //fmsData: '/assets/json/fms-name-value-pairs.json'
+        },
+        serverOptions: {
+            key: "",
+            cert: ""
+        },
+        options: {
+            period: 1000,
+        }
+    }
 };
 
 /*

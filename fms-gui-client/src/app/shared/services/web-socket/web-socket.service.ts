@@ -39,9 +39,9 @@ export class WebSocketService {
   static openWebSocket(
     connection: WebSocket,
     properties: WebSocketProperties,
-    onOpen?: (this: WebSocket, event: Event) => void,
-    onMessage?: (this: WebSocket, event: MessageEvent) => void,
-    onClose?: (this: WebSocket, event: CloseEvent) => void
+    onOpen?: (this: WebSocket, event: Event) => any,
+    onMessage?: (event: MessageEvent) => any,
+    onClose?: (this: WebSocket, event: CloseEvent) => any
   ): void {
     if (connection != null) {
       return;

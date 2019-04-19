@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FmsDataService} from '../shared/services/fms-data/fms-data.service';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-main',
@@ -14,11 +15,6 @@ export class MainComponent implements OnInit {
   title = 'Ground Station - Space Team';
 
   /**
-   * The date object when the fms data was retrieved
-   */
-  date: Date;
-
-  /**
    * The separator between labels and texts
    */
   separator = ':';
@@ -28,10 +24,8 @@ export class MainComponent implements OnInit {
    */
   space = ' ';
 
-  constructor(
-    private fmsDataService: FmsDataService
-  ) { }
-
-  ngOnInit() {
+  constructor(public fmsDataService: FmsDataService) {
   }
+
+  ngOnInit() {}
 }

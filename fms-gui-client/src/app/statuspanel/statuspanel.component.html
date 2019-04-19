@@ -2,7 +2,7 @@
   <mat-toolbar>
     <span>{{ title }}</span>
   </mat-toolbar>
-  <div *ngIf="false" class="margin-side-1em">
+  <div *ngIf="fmsDataService.isFMSDataPresent" class="margin-side-1em">
     <div id="status-panel">
       <!-- Contains the status bytes, which indicate if something is on or off -->
       <div id="status-flags-container">

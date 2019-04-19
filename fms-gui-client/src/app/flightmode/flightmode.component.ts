@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FmsDataService} from '../shared/services/fms-data/fms-data.service';
 
 @Component({
@@ -13,7 +13,8 @@ export class FlightmodeComponent implements OnInit {
    */
   title = 'Flight mode';
 
-  constructor(private fmsDataService: FmsDataService) { }
+  constructor(public fmsDataService: FmsDataService) {
+  }
 
-  ngOnInit() { }
+  ngOnInit() {}
 }

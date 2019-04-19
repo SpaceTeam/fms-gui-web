@@ -1,6 +1,6 @@
 <main>
   <mat-toolbar>{{ title }}</mat-toolbar>
-  <mat-grid-list cols="2" rowHeight="500px" *ngIf="false">
+  <mat-grid-list cols="2" rowHeight="500px" *ngIf="fmsDataService.isFMSDataPresent">
     <mat-grid-tile>
       <mat-card id="connection">
         <mat-card-header>

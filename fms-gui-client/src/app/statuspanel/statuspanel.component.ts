@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FmsDataService} from '../shared/services/fms-data/fms-data.service';
 import {Card} from '../shared/model/card.model';
 import {CardsService} from '../shared/services/cards/cards.service';
@@ -8,7 +8,7 @@ import {CardsService} from '../shared/services/cards/cards.service';
   templateUrl: './statuspanel.component.html',
   styleUrls: ['./statuspanel.component.scss']
 })
-export class StatuspanelComponent implements OnInit {
+export class StatuspanelComponent implements OnInit, OnDestroy {
 
   /**
    * The component's title, which will be used in the toolbar
@@ -25,12 +25,13 @@ export class StatuspanelComponent implements OnInit {
    */
   separator = ':';
 
-  constructor(
-    private fmsDataService: FmsDataService,
-    private cardsService: CardsService
-  ) { }
+  constructor(private cardsService: CardsService, public fmsDataService: FmsDataService) {
+  }
 
   ngOnInit() {
     this.cards = this.cardsService.getCards('statuspanel');
+  }
+
+  ngOnDestroy(): void {
   }
 }

@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Logger} from '../logger/logger.service';
+import {Logger} from '../../logger/logger';
 import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
 
 @Injectable({
@@ -54,7 +54,7 @@ export class WebSocketService {
 
     // Listening for messages from the server
     socket.subscribe(
-      msg => onMessage(msg),                 // Called whenever there is a message from the server
+      msg => onMessage(msg),            // Called whenever there is a message from the server
       err => Logger.error(err),         // Called if any point WebSocket API signals some kind of error
       () => Logger.log('complete')   // Called when connection is closed (for whatever reason)
     );

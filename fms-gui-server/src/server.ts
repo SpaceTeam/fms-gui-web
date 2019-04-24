@@ -30,6 +30,7 @@ app.get('/', (req, res) => {
 
 /**
  * This enables the communication over the ws protocol
+ * TODO: Change this to paths.subscribe.fms
  */
 expressWs.app.ws(paths.subscribe, (ws: wsWebSocket, req) => {
     // on('open') is not an event!
@@ -48,15 +49,19 @@ expressWs.app.ws(paths.subscribe, (ws: wsWebSocket, req) => {
     });
 });
 
+// TODO: Add another subscription, e.g. paths.subscribe.controls
+
 /**
  * Sends the newest FMS data to the connected clients
  */
-function updateFMSData() {
+function updateFMSData(): void {
     let clients: Set<wsWebSocket> = expressWs.getWss().clients;
+
+    // TODO: Filter out clients, which are subscribed to the FMSDataService and which are subscribed to the ControlService
     // Notify clients every 'period' seconds
     clients.forEach((client: wsWebSocket) => {
         if (client.readyState === client.OPEN) {
-            // Get the FMS data
+            // Get the FMS data from the specified directory
             fs.readFile(__dirname + '/..' + paths.fmsData, (err, data) => {
                 if (err) {
                     Logger.error(err);

@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { FMSData } from '../../model/old-fms-data/fms-data.model';
 import {WebSocketService} from '../web-socket/web-socket.service';
-import {environment as env} from '../../../../environments/environment';
-import {BehaviorSubject, Observable, Subscription} from 'rxjs';
+import {BehaviorSubject} from 'rxjs';
 import {WebSocketSubject} from 'rxjs/webSocket';
+import {ServerProperties} from '../../properties/server.properties';
 
 /**
  * This service class gets the data from an FMS end point and provides functions for that data
@@ -17,16 +17,6 @@ export class FmsDataService {
    * The websocket connection to the server
    */
   private static readonly webSocketSubject: WebSocketSubject<FMSData>;
-
-  /**
-   * The server's properties, which will be converted into a URL
-   */
-  private static readonly webSocketProperties: WebSocketProperties = {
-    host: env.server.host,
-    port: env.server.port,
-    path: env.server.subscribe,
-    secure: env.server.secure
-  };
 
   /**
    * The global FMSData
@@ -50,7 +40,7 @@ export class FmsDataService {
    */
   constructor() {
     // Open a websocket to the server, which will last over the whole application
-    WebSocketService.connectWebSocket(FmsDataService.webSocketSubject, FmsDataService.webSocketProperties, FmsDataService.onMessage);
+    WebSocketService.connectWebSocket(FmsDataService.webSocketSubject, ServerProperties.SERVER_PROPERTIES, FmsDataService.onMessage);
     FmsDataService.presentSubject.asObservable().subscribe(bool => this.isFMSDataPresent = bool);
   }
 

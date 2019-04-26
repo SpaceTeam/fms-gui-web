@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {FmsDataService} from '../shared/services/fms-data/fms-data.service';
-import {ControlService} from '../shared/services/controls/control.service';
 import {Control} from '../shared/model/control.model';
+import {ControlService} from '../shared/services/controls/control.service';
 
 @Component({
   selector: 'app-controls',

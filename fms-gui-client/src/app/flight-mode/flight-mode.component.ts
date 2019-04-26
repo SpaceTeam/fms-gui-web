@@ -2,11 +2,11 @@ import {Component, OnInit} from '@angular/core';
 import {FmsDataService} from '../shared/services/fms-data/fms-data.service';
 
 @Component({
-  selector: 'app-flightmode',
-  templateUrl: './flightmode.component.html',
-  styleUrls: ['./flightmode.component.scss']
+  selector: 'app-flight-mode',
+  templateUrl: './flight-mode.component.html',
+  styleUrls: ['./flight-mode.component.scss']
 })
-export class FlightmodeComponent implements OnInit {
+export class FlightModeComponent implements OnInit {
 
   /**
    * The component's title, which will be used in the toolbar

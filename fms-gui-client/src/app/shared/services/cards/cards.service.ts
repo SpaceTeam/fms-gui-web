@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import {Card} from '../../model/card.model';
 
 @Injectable({
   providedIn: 'root'
@@ -13,11 +12,7 @@ export class CardsService {
 
   /**
    * Gets all cards for a specific screen -> The cards are provided in a setting file
-   * e.g. screen is "statuspanel", then it gets all cards, which are provided in statuspanel.cards.json
+   * e.g. screen is "status-panel", then it gets all cards, which are provided in status-panel.cards.json
    * TODO: As the cards should move to the server, this method is only a temporary solution
    */
-  public getCards(screen: string): Card[] {
-    // TODO: Implement me
-    return null;
-  }
 }

@@ -1,7 +1,7 @@
 /**
  * This defines a properties object we need for creating a new WebSocket
  */
-interface WebSocketProperties {
+export interface WebSocketProperties {
   /**
    * The server's host name, e.g. localhost
    */

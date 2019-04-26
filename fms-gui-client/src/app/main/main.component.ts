@@ -1,6 +1,5 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FmsDataService} from '../shared/services/fms-data/fms-data.service';
-import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-main',
@@ -23,6 +22,8 @@ export class MainComponent implements OnInit {
    * The space between a separator and the next element
    */
   space = ' ';
+
+  FmsDataService = FmsDataService;
 
   constructor(public fmsDataService: FmsDataService) {
   }

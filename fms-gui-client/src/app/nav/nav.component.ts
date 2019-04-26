@@ -1,6 +1,6 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {RoutesService} from '../services/routes/routes.service';
-import {NavItem} from '../model/nav-item.model';
+import {Component, OnInit} from '@angular/core';
+import {RoutesService} from '../shared/services/routes/routes.service';
+import {NavItem} from '../shared/model/nav-item.model';
 
 @Component({
   selector: 'app-nav',

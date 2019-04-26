@@ -14,10 +14,10 @@ What things you need to run the software:
 * [Angular](https://angular.io/) (Client side)
 * [NodeJS](https://nodejs.org/en/) (Server side)
 
-### Styleguide
+### Style guide
 
-Please stick to the styleguide, which is provided by [Angular](https://angular.io/guide/styleguide)\
-Another styleguide, which is highly recommended, is the one offered by [ITNext](https://itnext.io/choosing-a-highly-scalable-folder-structure-in-angular-d987de65ec7)\
+Please stick to the style guide, which is provided by [Angular](https://angular.io/guide/styleguide)\
+Another style guide, which is highly recommended, is the one offered by [ITNext](https://itnext.io/choosing-a-highly-scalable-folder-structure-in-angular-d987de65ec7)\
 When creating folders, please use dashes (-) for separating the names \
 E.g. fms-data
 

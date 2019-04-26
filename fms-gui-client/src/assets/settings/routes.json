@@ -5,12 +5,12 @@
     "icon": "home"
   },
   {
-    "path": "statuspanel",
+    "path": "status-panel",
     "title": "Status Panel",
     "icon": "show_chart"
   },
   {
-    "path": "flightmode",
+    "path": "flight-mode",
     "title": "Flight Mode",
     "icon": "flight"
   },

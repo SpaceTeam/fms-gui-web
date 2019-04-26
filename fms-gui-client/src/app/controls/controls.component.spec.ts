@@ -1,6 +1,10 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ControlsComponent } from './controls.component';
+import {MaterialModule} from '../material.module';
+import {NavComponent} from '../nav/nav.component';
+import {RouterTestingModule} from '@angular/router/testing';
+import {HttpClientModule} from '@angular/common/http';
 
 describe('ControlsComponent', () => {
   let component: ControlsComponent;
@@ -8,7 +12,8 @@ describe('ControlsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ControlsComponent ]
+      imports: [MaterialModule, RouterTestingModule, HttpClientModule],
+      declarations: [ ControlsComponent, NavComponent ]
     })
     .compileComponents();
   }));

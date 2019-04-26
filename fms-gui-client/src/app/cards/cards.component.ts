@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import {Card} from '../shared/model/card.model';
-import {CardsService} from '../shared/services/cards/cards.service';
 
 @Component({
   selector: 'app-cards',
@@ -15,12 +14,7 @@ export class CardsComponent implements OnInit {
    */
   cards: Card[];
 
-  /**
-   * The separator between labels and texts
-   */
-  separator = ':';
-
-  constructor(private cardsService: CardsService) {
+  constructor() {
   }
 
   ngOnInit() {

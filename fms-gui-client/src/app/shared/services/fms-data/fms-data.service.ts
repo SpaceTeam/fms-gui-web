@@ -1,11 +1,9 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {WebSocketService} from '../web-socket/web-socket.service';
 import {BehaviorSubject} from 'rxjs';
 import {WebSocketSubject} from 'rxjs/webSocket';
 import {ServerProperties} from '../../properties/server.properties';
 import {NameValuePair} from '../../model/name-value-pair.model';
-import {DuplicateEntryException} from '../../exceptions/json/duplicate-entry.exception';
-import {NoSuchEntryException} from '../../exceptions/json/no-such-entry.exception';
 import {Logger} from '../../logger/logger';
 
 /**
@@ -58,24 +56,28 @@ export class FmsDataService {
   /**
    * Returns the actual FMS data
    */
-  public getFMSData(): Array<NameValuePair> {
+  public static getFMSData(): Array<NameValuePair> {
     return FmsDataService.fms;
   }
 
   /**
    * Returns the value to a given path
    * @param path to a variable
-   * @param subtree for only processing a given subtree
    * @use get("status/flags") returns an array
    */
-  public getValue(path: string): string | number | boolean | Array<NameValuePair> {
+  public static getValue(path: string): string | number | boolean | Array<NameValuePair> {
     return FmsDataService.getValueFromSubtree(path, FmsDataService.fms);
   }
 
+  /**
+   * Returns the value to a given path in the given subtree
+   * @param path to a variable
+   * @param subtree for only processing a given subtree
+   */
   private static getValueFromSubtree(path: string, subtree: Array<NameValuePair>): string | number | boolean | Array<NameValuePair> {
 
     // 1) Split the path
-    let arr: string[] = path.split("/");
+    let arr: string[] = path.split('/');
 
     // 2) Find the next element, e.g. 'Flags'
     let next = arr.shift();
@@ -83,13 +85,13 @@ export class FmsDataService {
     // 3) Get the subtree with the given path
     // e.g. next = "Flags" should return the array with "Flags"
     subtree = subtree.filter(pair => {
-      if(next.toLowerCase() === pair.name.toLowerCase()) {
+      if (next.toLowerCase() === pair.name.toLowerCase()) {
         return pair;
       }
     });
 
     // 4) If the subtree is empty, then there is no element with the given path
-    if(subtree.length === 0) {
+    if (subtree.length === 0) {
       Logger.error(`There is no ${next} in ${subtree}`);
       //throw new NoSuchEntryException(`There is no ${next} in ${subtree}`);
       return null;
@@ -103,14 +105,18 @@ export class FmsDataService {
     }
 
     // 6) Check, if we're in the last level -> there should be no element in the path anymore
-    if(arr.length === 0) {
+    if (arr.length === 0) {
       return subtree[0].value;
     }
     // 7) Else we have to find the next level and pass it as a parameter
     else {
       // Concatenate the remaining string and traverse the new subtree with it
-      return FmsDataService.getValueFromSubtree(arr.join("/"), <Array<NameValuePair>>subtree[0].value);
+      return FmsDataService.getValueFromSubtree(arr.join('/'), <Array<NameValuePair>>subtree[0].value);
     }
+  }
+
+  public static castToArrayNameValuePair(value: string | number | boolean | Array<NameValuePair>): Array<NameValuePair> {
+    return <Array<NameValuePair>>value;
   }
 
   /**

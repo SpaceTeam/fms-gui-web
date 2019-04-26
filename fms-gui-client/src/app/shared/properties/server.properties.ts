@@ -1,4 +1,5 @@
 import {environment as env} from '../../../environments/environment';
+import {WebSocketProperties} from '../model/web-socket/web-socket.properties.model';
 
 export namespace ServerProperties {
 

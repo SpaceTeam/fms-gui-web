@@ -1,42 +1,41 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-import {NavComponent} from './shared/nav/nav.component';
-import {FlightmodeComponent} from './flightmode/flightmode.component';
-import {MainComponent} from './main/main.component';
-import {StatuspanelComponent} from './statuspanel/statuspanel.component';
+import {BrowserModule} from '@angular/platform-browser';
+import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MaterialModule} from './material.module';
 import {HttpClientModule} from '@angular/common/http';
-import {ReplaceUnderscorePipe} from './shared/pipes/replace-underscore.pipe';
-import { ControlsComponent } from './controls/controls.component';
-import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
-import { CardsComponent } from './cards/cards.component';
+import {MaterialModule} from './material.module';
+import {AppRoutingModule} from './app-routing.module';
+
+import {AppComponent} from './app.component';
+import {NavComponent} from './nav/nav.component';
+import {FlightModeComponent} from './flight-mode/flight-mode.component';
+import {MainComponent} from './main/main.component';
+import {StatusPanelComponent} from './status-panel/status-panel.component';
+import {ControlsComponent} from './controls/controls.component';
+import {PageNotFoundComponent} from './page-not-found/page-not-found.component';
+import {CardsComponent} from './cards/cards.component';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    NavComponent,
-    FlightmodeComponent,
-    StatuspanelComponent,
-    MainComponent,
-    ReplaceUnderscorePipe,
-    ControlsComponent,
-    PageNotFoundComponent,
-    CardsComponent
-  ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    MaterialModule,
-    HttpClientModule
+    HttpClientModule,
+    MaterialModule
+  ],
+  declarations: [
+    AppComponent,
+    NavComponent,
+    FlightModeComponent,
+    StatusPanelComponent,
+    MainComponent,
+    ControlsComponent,
+    PageNotFoundComponent,
+    CardsComponent
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}

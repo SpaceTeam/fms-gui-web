@@ -40,34 +40,34 @@
         <mat-card-content>
           <mat-list>
             <mat-list-item>
-              <span>Timestamp</span>{{separator}}{{space}}{{fmsDataService.getValue("status/timestamp")}}
+              <span>Timestamp</span>{{separator}}{{space}}{{FmsDataService.getValue("status/timestamp")}}
             </mat-list-item>
             <mat-list-item>
-              <span>CPU load</span>{{separator}}{{space}}{{fmsDataService.getValue("status/cpu load")}}
+              <span>CPU load</span>{{separator}}{{space}}{{FmsDataService.getValue("status/cpu load")}}
             </mat-list-item>
             <mat-list-item>
               <span class="badge"
-                [class.badge-danger]='!fmsDataService.getValue("status/flags/adc initialized")'
-                [class.badge-success]='fmsDataService.getValue("status/flags/adc initialized")'
+                [class.badge-danger]='!FmsDataService.getValue("status/flags/adc initialized")'
+                [class.badge-success]='FmsDataService.getValue("status/flags/adc initialized")'
               >&nbsp;</span>&nbsp;
               <span>ADC</span>
             </mat-list-item>
             <mat-list-item>
               <span class="badge"
-                    [class.badge-danger]='!fmsDataService.getValue("status/flags/dac initialized")'
-                    [class.badge-success]='fmsDataService.getValue("status/flags/dac initialized")'
+                    [class.badge-danger]='!FmsDataService.getValue("status/flags/dac initialized")'
+                    [class.badge-success]='FmsDataService.getValue("status/flags/dac initialized")'
               >&nbsp;</span>&nbsp;
               <span>DAC</span>
             </mat-list-item>
             <mat-list-item>
               <span class="badge"
-                    [class.badge-danger]='!fmsDataService.getValue("status/flags/dma initialized")'
-                    [class.badge-success]='fmsDataService.getValue("status/flags/dma initialized")'
+                    [class.badge-danger]='!FmsDataService.getValue("status/flags/dma initialized")'
+                    [class.badge-success]='FmsDataService.getValue("status/flags/dma initialized")'
               >&nbsp;</span>&nbsp;
               <span>DMA</span>
             </mat-list-item>
             <mat-list-item>
-              <span>Flash</span>{{separator}}{{space}}{{fmsDataService.getValue("status/flash adr")}}% full
+              <span>Flash</span>{{separator}}{{space}}{{FmsDataService.getValue("status/flash adr")}}% full
             </mat-list-item>
           </mat-list>
         </mat-card-content>

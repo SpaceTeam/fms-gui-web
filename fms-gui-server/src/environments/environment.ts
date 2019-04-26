@@ -3,7 +3,11 @@
 // The list of file replacements can be found in `angular.json`.
 
 /**
+ * The server's properties
+ *
  * serverOptions:   Security related
+ *  - key
+ *  - cert
  * options:
  *  - period: The WebSocket update period
  */
@@ -16,8 +20,8 @@ export const environment = {
         paths: {
             subscribe: '/subscribe',
             listFMS: '/listFMS',
-            fmsData: '/assets/json/mock.fms.json'
-            //fmsData: '/assets/json/fms-name-value-pairs.json'
+            //fmsData: '/assets/json/mock.fms.json'
+            fmsData: '/assets/json/fms-name-value-pairs.json'
         },
         serverOptions: {
             key: "",

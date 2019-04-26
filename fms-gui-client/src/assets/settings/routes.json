@@ -18,5 +18,10 @@
     "path": "controls",
     "title": "Controls",
     "icon": "settings_input_component"
+  },
+  {
+    "path": "cards",
+    "title": "Cards",
+    "icon": "view_module"
   }
 ]

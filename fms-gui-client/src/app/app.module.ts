@@ -14,6 +14,7 @@ import {HttpClientModule} from '@angular/common/http';
 import {ReplaceUnderscorePipe} from './shared/pipes/replace-underscore.pipe';
 import { ControlsComponent } from './controls/controls.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { CardsComponent } from './cards/cards.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
     MainComponent,
     ReplaceUnderscorePipe,
     ControlsComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    CardsComponent
   ],
   imports: [
     BrowserModule,

@@ -5,31 +5,15 @@
   <div *ngIf="fmsDataService.isFMSDataPresent" class="margin-side-1em">
     <div id="status-panel">
       <!-- Contains the status bytes, which indicate if something is on or off -->
-      <div id="status-flags-container">
-        <h2>Flags</h2>
-        <div class="grid grid-cols-4 grid-gap-sm">
-          <div *ngFor="let item of fmsDataService.getFMSData().status.flags | keyvalue">
-            <span
-              class="badge"
-              [class.badge-success]="item.value"
-              [class.badge-danger]="!item.value"
-            >&nbsp;</span>&nbsp;
-            <span>{{item.key | replaceUnderscore}}</span>
-          </div>
-        </div>
-      </div>
-      <!-- Contains the additional, specially highlighted information -->
-      <div id="highlight-container" class="flex-container">
-        <!-- TODO: Move the cards and which cards should be displayed to the server -->
-        <!-- TODO: Display the cards from cards/statuspanel -->
-        <h2>Status</h2>
-        <div *ngFor="let card of cards">
-          <div>
-            <h3>{{card.title}}</h3>
-            <ul>
-              <li *ngFor="let item of card.list">{{item.name}}{{separator}}{{fmsDataService.getFMSData().status.flags}}</li>
-            </ul>
-          </div>
+      <h2>Flags</h2>
+      <div class="grid grid-cols-4 grid-gap-sm">
+        <div *ngFor='let item of fmsDataService.getValue("status/flags")'>
+          <span
+            class="badge"
+            [class.badge-success]="item.value"
+            [class.badge-danger]="!item.value"
+          >&nbsp;</span>&nbsp;
+          <span>{{item.name}}</span>
         </div>
       </div>
     </div>

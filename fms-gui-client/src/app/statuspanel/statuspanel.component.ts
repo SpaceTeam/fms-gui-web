@@ -1,7 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FmsDataService} from '../shared/services/fms-data/fms-data.service';
-import {Card} from '../shared/model/card.model';
-import {CardsService} from '../shared/services/cards/cards.service';
 
 @Component({
   selector: 'app-statuspanel',
@@ -15,21 +13,11 @@ export class StatuspanelComponent implements OnInit, OnDestroy {
    */
   title = 'Status Panel';
 
-  /**
-   * The cards on the right side
-   */
-  cards: Card[];
-
-  /**
-   * The separator between labels and texts
-   */
-  separator = ':';
-
-  constructor(private cardsService: CardsService, public fmsDataService: FmsDataService) {
+  constructor(public fmsDataService: FmsDataService) {
   }
 
   ngOnInit() {
-    this.cards = this.cardsService.getCards('statuspanel');
+
   }
 
   ngOnDestroy(): void {

@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { FlightModeComponent } from './flight-mode.component';
-import {MaterialModule} from '../material.module';
+import {TestModule} from '../test.module';
 
 describe('FlightModeComponent', () => {
   let component: FlightModeComponent;
@@ -9,7 +9,7 @@ describe('FlightModeComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ MaterialModule],
+      imports: [ TestModule],
       declarations: [ FlightModeComponent ]
     })
     .compileComponents();

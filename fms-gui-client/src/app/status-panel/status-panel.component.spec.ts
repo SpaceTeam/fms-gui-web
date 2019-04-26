@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { StatusPanelComponent } from './status-panel.component';
-import {MaterialModule} from '../material.module';
+import {TestModule} from '../test.module';
 
 describe('StatusPanelComponent', () => {
   let component: StatusPanelComponent;
@@ -8,7 +8,7 @@ describe('StatusPanelComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [MaterialModule],
+      imports: [TestModule],
       declarations: [ StatusPanelComponent ]
     })
     .compileComponents();

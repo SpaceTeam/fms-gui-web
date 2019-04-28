@@ -35,7 +35,7 @@ app.get('/', (req, res) => {
 /**
  * FMS ws communication
  */
-expressWs.app.ws(paths.subscribe.fms, (ws: wsWebSocket, req) => {
+expressWs.app.ws(paths.subscribe.fms, (ws: wsWebSocket) => {
     // on('open') is not an event!
 
     ws.on('message', (msg: string) => {
@@ -58,7 +58,7 @@ expressWs.app.ws(paths.subscribe.fms, (ws: wsWebSocket, req) => {
 /**
  * Cards ws communication
  */
-expressWs.app.ws(paths.subscribe.cards, (ws: wsWebSocket, req) => {
+expressWs.app.ws(paths.subscribe.cards, (ws: wsWebSocket) => {
     // on('open') is not an event!
 
     ws.on('message', (msg: string) => {
@@ -74,14 +74,13 @@ expressWs.app.ws(paths.subscribe.cards, (ws: wsWebSocket, req) => {
         ws.close();
     });
 
-    console.log("Push Cards");
     cardsClients.push(ws);
 });
 
 /**
  * Controls ws communication
  */
-expressWs.app.ws(paths.subscribe.controls, (ws: wsWebSocket, req) => {
+expressWs.app.ws(paths.subscribe.controls, (ws: wsWebSocket) => {
     // on('open') is not an event!
 
     ws.on('message', (msg: string) => {
@@ -100,7 +99,6 @@ expressWs.app.ws(paths.subscribe.controls, (ws: wsWebSocket, req) => {
     console.log("Push Controls");
     controlsClients.push(ws);
 });
-
 
 /**
  * Sends the newest FMS data to the connected clients

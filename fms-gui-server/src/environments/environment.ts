@@ -23,8 +23,6 @@ export const environment = {
                 cards: "/subscribe/cards",
                 controls: "/subscribe/controls"
             },
-            listFMS: '/listFMS',
-            //fmsData: '/assets/json/mock.fms.json'
             data: {
                 fms: '/assets/json/fms-name-value-pairs.json',
                 cards: '/assets/json/cards-name-value-pairs.json'

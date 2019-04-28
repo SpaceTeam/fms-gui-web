@@ -2,11 +2,8 @@
   <mat-toolbar>
     <span>{{ title }}</span>
   </mat-toolbar>
-  <div class="margin-side-1em">
-    TODO: Display the cards from cards/status-panel
-  </div>
   <div *ngIf="cardsService.isDataPresent" class="margin-side-1em">
-    Cards are available
+    TODO: Display the cards from cards/status-panel
   </div>
   <div *ngIf="!cardsService.isDataPresent" class="margin-side-1em">
     Cards not available

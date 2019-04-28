@@ -4,7 +4,6 @@ import {NameValuePair} from '../../model/name-value-pair/name-value-pair.model';
 import {BehaviorSubject} from 'rxjs';
 import {WebSocketService} from '../web-socket/web-socket.service';
 import {ServerProperties} from '../../properties/server.properties';
-import {NameValuePairType} from '../../model/name-value-pair/name-value-pair.type';
 import {Utils} from '../../utils/Utils';
 
 @Injectable({
@@ -19,17 +18,17 @@ export class CardsService {
 
   /**
    * The global CardsData
-   * accessible via {@link CardsService.getData}
+   * accessible via {@link FmsDataService.getData}
    */
   private static cards: Array<NameValuePair>;
 
   /**
-   * A subject which can be subscribed to for telling, if any cards data are present
+   * A subject which can be subscribed to for telling, if any FMS data are present
    */
   private static presentSubject = new BehaviorSubject<boolean>(false);
 
   /**
-   * The global indicator for telling, if the cards data is present
+   * The global indicator for telling, if the FMS data is present
    *
    */
   public isDataPresent: boolean;
@@ -44,7 +43,7 @@ export class CardsService {
   }
 
   /**
-   * Returns the actual cards data
+   * Returns the actual Cards data
    */
   public static getData(): Array<NameValuePair> {
     return CardsService.cards;
@@ -55,13 +54,13 @@ export class CardsService {
    * @param path to a variable
    * @use get("status/flags") returns an array
    */
-  public static getValue(path: string): NameValuePairType {
+  public static getValue(path: string): string | number | boolean | Array<NameValuePair> {
     return Utils.getValueFromTree(path, CardsService.cards);
   }
 
   /**
    * This method defines what should happen as soon as the client receives a message
-   * @param msg the actual fms data
+   * @param msg the actual cards data
    */
   private static onMessage(msg: Array<NameValuePair>): any {
     // Parse the received message to a FMS object
@@ -70,5 +69,4 @@ export class CardsService {
     // Send to all subscribers, that there is a new FMS object
     CardsService.presentSubject.next(Utils.hasData(CardsService.cards));
   }
-
 }

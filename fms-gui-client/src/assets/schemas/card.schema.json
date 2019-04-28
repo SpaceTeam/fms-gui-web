@@ -30,7 +30,7 @@
           "description": "The name of the item",
           "type": "string"
         },
-        "key": {
+        "value": {
           "description": "The variable (key) to be used from the fms.json",
           "type": "string"
         },

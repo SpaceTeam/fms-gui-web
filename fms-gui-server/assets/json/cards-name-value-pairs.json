@@ -1,0 +1,237 @@
+[
+  {
+    "name": "Accelerations",
+    "value": [
+      {
+        "name": "Adxl345 x",
+        "value": ""
+      },
+      {
+        "name": "Adxl345 y",
+        "value": ""
+      },
+      {
+        "name": "Adxl345 z",
+        "value": ""
+      },
+      {
+        "name": "Adxl377 x",
+        "value": ""
+      },
+      {
+        "name": "Adxl377 y",
+        "value": ""
+      },
+      {
+        "name": "Adxl377 z",
+        "value": ""
+      },
+      {
+        "name": "MPU acc x",
+        "value": ""
+      },
+      {
+        "name": "MPU acc y",
+        "value": ""
+      },
+      {
+        "name": "MPU acc z",
+        "value": ""
+      }
+    ]
+  },
+  {
+    "name": "Additional",
+    "value": [
+      {
+        "name": "press",
+        "value": ""
+      },
+      {
+        "name": "GPS1",
+        "value": ""
+      },
+      {
+        "name": "GPS1",
+        "value": ""
+      }
+    ]
+  },
+  {
+    "name": "Gyros",
+    "value": [
+      {
+        "name": "gyro x",
+        "value": ""
+      },
+      {
+        "name": "gyro y",
+        "value": ""
+      },
+      {
+        "name": "gyro z",
+        "value": ""
+      },
+      {
+        "name": "mpug x",
+        "value": ""
+      },
+      {
+        "name": "mpug y",
+        "value": ""
+      },
+      {
+        "name": "mpug z",
+        "value": ""
+      }
+    ]
+  },
+  {
+    "name": "Magnometers",
+    "value": [
+      {
+        "name": "hmc x",
+        "value": ""
+      },
+      {
+        "name": "hmc y",
+        "value": ""
+      },
+      {
+        "name": "hmc z",
+        "value": ""
+      },
+      {
+        "name": "mpumag x",
+        "value": ""
+      },
+      {
+        "name": "mpumag y",
+        "value": ""
+      },
+      {
+        "name": "mpumag z",
+        "value": ""
+      }
+    ]
+  },
+  {
+    "name": "PSU",
+    "value": [
+      {
+        "name": "vservo",
+        "value": ""
+      },
+      {
+        "name": "vhv",
+        "value": ""
+      },
+      {
+        "name": "imcon",
+        "value": ""
+      },
+      {
+        "name": "iaaux",
+        "value": ""
+      },
+      {
+        "name": "iacon",
+        "value": ""
+      },
+      {
+        "name": "imaux",
+        "value": ""
+      },
+      {
+        "name": "vxbee",
+        "value": ""
+      },
+      {
+        "name": "vgps",
+        "value": ""
+      },
+      {
+        "name": "vbat1",
+        "value": ""
+      },
+      {
+        "name": "vbat2",
+        "value": ""
+      },
+      {
+        "name": "tmphv",
+        "value": ""
+      },
+      {
+        "name": "tmpuc",
+        "value": ""
+      }
+    ]
+  },
+  {
+    "name": "Status",
+    "value": [
+      {
+        "name": "Rocket state",
+        "value": "status.rocketState"
+      },
+      {
+        "name": "Flight substate",
+        "value": "status.flightSubstate"
+      },
+      {
+        "name": "Servo sep 1 pos",
+        "value": "status.servoPos.array.Element0"
+      },
+      {
+        "name": "Servo sep 2 pos",
+        "value": "status.servoPos.array.Element1"
+      },
+      {
+        "name": "Servo recov pos",
+        "value": "status.servoPos.array.Element2"
+      },
+      {
+        "name": "CPU load",
+        "value": "status.cpu_load"
+      },
+      {
+        "name": "Sepadet ADC Value",
+        "value": "status.sepadet_adc_value"
+      },
+      {
+        "name": "Seven Segment",
+        "value": ""
+      },
+      {
+        "name": "Igniter [V]",
+        "value": ""
+      },
+      {
+        "name": "Igniter HP [V]",
+        "value": ""
+      }
+    ]
+  },
+  {
+    "name": "Temperature",
+    "value": [
+      {
+        "name": "tmp100",
+        "value": ""
+      },
+      {
+        "name": "press tmp",
+        "value": ""
+      },
+      {
+        "name": "gyro tmp",
+        "value": ""
+      },
+      {
+        "name": "mgyro tmp",
+        "value": ""
+      }
+    ]
+  }
+]

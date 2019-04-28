@@ -8,7 +8,11 @@ export const environment = {
     secure: false,
     host: 'localhost',
     port: 9000,
-    subscribe: 'subscribe',
+    subscribe: {
+      fms: "subscribe/fms",
+      cards: "susbcribe/cards",
+      controls: "subscribe/controls"
+    },
     listFMS: 'listFMS'
   }
 };

@@ -20,6 +20,10 @@ const expressApp: ExpressApp = new ExpressApp();
 const app = expressApp.app;
 const expressWs = expressApp.expressWs;
 
+const fmsClients: Array<wsWebSocket> = [];
+const cardsClients: Array<wsWebSocket> = [];
+const controlsClients: Array<wsWebSocket> = [];
+
 app.get('/', (req, res) => {
     Logger.log('New GET request');
     res.json({
@@ -29,14 +33,13 @@ app.get('/', (req, res) => {
 });
 
 /**
- * This enables the communication over the ws protocol
- * TODO: Change this to paths.subscribe.fms
+ * FMS ws communication
  */
-expressWs.app.ws(paths.subscribe, (ws: wsWebSocket, req) => {
+expressWs.app.ws(paths.subscribe.fms, (ws: wsWebSocket, req) => {
     // on('open') is not an event!
 
     ws.on('message', (msg: string) => {
-        Logger.log(`Received ${msg}`);
+        Logger.log(`Received ${msg} in FMS`);
         ws.send(JSON.stringify({
             status: 200,
             message: 'Subscription submitted'
@@ -44,34 +47,93 @@ expressWs.app.ws(paths.subscribe, (ws: wsWebSocket, req) => {
     });
 
     ws.on('close', () => {
-        Logger.log('Close websocket');
+        Logger.log('Close FMS websocket');
         ws.close();
     });
+
+    console.log("Push FMS");
+    fmsClients.push(ws);
 });
 
-// TODO: Add another subscription, e.g. paths.subscribe.controls
+/**
+ * Cards ws communication
+ */
+expressWs.app.ws(paths.subscribe.cards, (ws: wsWebSocket, req) => {
+    // on('open') is not an event!
+
+    ws.on('message', (msg: string) => {
+        Logger.log(`Received ${msg} in Cards`);
+        ws.send(JSON.stringify({
+            status: 200,
+            message: 'Subscription submitted'
+        }));
+    });
+
+    ws.on('close', () => {
+        Logger.log('Close Cards websocket');
+        ws.close();
+    });
+
+    console.log("Push Cards");
+    cardsClients.push(ws);
+});
+
+/**
+ * Controls ws communication
+ */
+expressWs.app.ws(paths.subscribe.controls, (ws: wsWebSocket, req) => {
+    // on('open') is not an event!
+
+    ws.on('message', (msg: string) => {
+        Logger.log(`Received ${msg} in Controls`);
+        ws.send(JSON.stringify({
+            status: 200,
+            message: 'Subscription submitted'
+        }));
+    });
+
+    ws.on('close', () => {
+        Logger.log('Close Controls websocket');
+        ws.close();
+    });
+
+    console.log("Push Controls");
+    controlsClients.push(ws);
+});
+
 
 /**
  * Sends the newest FMS data to the connected clients
  */
 function updateFMSData(): void {
-    let clients: Set<wsWebSocket> = expressWs.getWss().clients;
-
-    // TODO: Filter out clients, which are subscribed to the FMSDataService and which are subscribed to the ControlService
     // Notify clients every 'period' seconds
-    clients.forEach((client: wsWebSocket) => {
+    fmsClients.forEach((client: wsWebSocket) => {
         if (client.readyState === client.OPEN) {
             // Get the FMS data from the specified directory
-            fs.readFile(__dirname + '/..' + paths.fmsData, (err, data) => {
-                if (err) {
-                    Logger.error(err);
-                    throw err;
-                }
-
-                // Send the FMS data to the client
-                client.send(data.toString('utf8'));
-            });
+            readDataAndSendToClient(client, paths.data.fms);
         }
+    });
+}
+
+function updateCardsData(): void {
+    // Notify clients every 'period' seconds
+    cardsClients.forEach((client: wsWebSocket) => {
+        if (client.readyState === client.OPEN) {
+            // Get the Cards data from the specified directory
+            readDataAndSendToClient(client, paths.data.cards);
+        }
+    });
+}
+
+function readDataAndSendToClient(client: wsWebSocket, path: string) {
+    fs.readFile(__dirname + '/..' + path, (err, data) => {
+        if (err) {
+            Logger.error(err);
+            throw err;
+        }
+
+        // Send the data to the client
+        client.send(data.toString('utf8'));
     });
 }
 
@@ -81,5 +143,8 @@ function updateFMSData(): void {
 app.listen(port, () => {
     Logger.log(`Server started on port ${port}`);
     // Update the user every 'period' seconds
-    source.subscribe(() => updateFMSData());
+    source.subscribe(() => {
+        updateFMSData();
+        updateCardsData();
+    });
 });

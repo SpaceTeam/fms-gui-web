@@ -18,10 +18,17 @@ export const environment = {
         host: 'localhost',
         port: 9000,
         paths: {
-            subscribe: '/subscribe',
+            subscribe: {
+                fms: "/subscribe/fms",
+                cards: "/subscribe/cards",
+                controls: "/subscribe/controls"
+            },
             listFMS: '/listFMS',
             //fmsData: '/assets/json/mock.fms.json'
-            fmsData: '/assets/json/fms-name-value-pairs.json'
+            data: {
+                fms: '/assets/json/fms-name-value-pairs.json',
+                cards: '/assets/json/cards-name-value-pairs.json'
+            }
         },
         serverOptions: {
             key: "",

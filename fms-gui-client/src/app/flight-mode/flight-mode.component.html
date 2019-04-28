@@ -2,7 +2,10 @@
   <mat-toolbar>
     <span>{{ title }}</span>
   </mat-toolbar>
-  <div *ngIf="fmsDataService.isFMSDataPresent" class="margin-side-1em">
-    Is present
+  <div *ngIf="fmsDataService.isDataPresent" class="margin-side-1em">
+    FMS Data available
+  </div>
+  <div *ngIf="!fmsDataService.isDataPresent" class="margin-side-1em">
+    FMS Data not available
   </div>
 </main>

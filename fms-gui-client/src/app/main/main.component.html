@@ -1,6 +1,6 @@
 <main>
   <mat-toolbar>{{ title }}</mat-toolbar>
-  <mat-grid-list cols="2" rowHeight="500px" *ngIf="fmsDataService.isFMSDataPresent">
+  <mat-grid-list cols="2" rowHeight="500px" *ngIf="fmsDataService.isDataPresent">
     <mat-grid-tile>
       <mat-card id="connection">
         <mat-card-header>
@@ -74,4 +74,7 @@
       </mat-card>
     </mat-grid-tile>
   </mat-grid-list>
+  <div *ngIf="!fmsDataService.isDataPresent" class="margin-side-1em">
+    FMS Data not available
+  </div>
 </main>

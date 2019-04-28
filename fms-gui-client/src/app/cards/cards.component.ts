@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {Card} from '../shared/model/card.model';
+import {CardsService} from '../shared/services/cards/cards.service';
+import {Utils} from '../shared/utils/Utils';
 
 @Component({
   selector: 'app-cards',
@@ -14,7 +16,10 @@ export class CardsComponent implements OnInit {
    */
   cards: Card[];
 
-  constructor() {
+  CardsService = CardsService;
+  Utils = Utils;
+
+  constructor(private cardsService: CardsService) {
   }
 
   ngOnInit() {

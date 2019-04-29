@@ -51,7 +51,6 @@ expressWs.app.ws(paths.subscribe.fms, (ws: wsWebSocket) => {
         ws.close();
     });
 
-    console.log("Push FMS");
     fmsClients.push(ws);
 });
 
@@ -96,14 +95,13 @@ expressWs.app.ws(paths.subscribe.controls, (ws: wsWebSocket) => {
         ws.close();
     });
 
-    console.log("Push Controls");
     controlsClients.push(ws);
 });
 
 /**
  * Sends the newest FMS data to the connected clients
  */
-function updateFMSData(): void {
+function sendFMSData(): void {
     // Notify clients every 'period' seconds
     fmsClients.forEach((client: wsWebSocket) => {
         if (client.readyState === client.OPEN) {
@@ -113,7 +111,10 @@ function updateFMSData(): void {
     });
 }
 
-function updateCardsData(): void {
+/**
+ * Send the cards data to the clients
+ */
+function sendCardsData(): void {
     // Notify clients every 'period' seconds
     cardsClients.forEach((client: wsWebSocket) => {
         if (client.readyState === client.OPEN) {
@@ -142,7 +143,7 @@ app.listen(port, () => {
     Logger.log(`Server started on port ${port}`);
     // Update the user every 'period' seconds
     source.subscribe(() => {
-        updateFMSData();
-        updateCardsData();
+        sendFMSData();
+        sendCardsData();
     });
 });

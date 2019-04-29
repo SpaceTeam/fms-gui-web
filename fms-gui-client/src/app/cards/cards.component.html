@@ -3,7 +3,20 @@
     <span>{{ title }}</span>
   </mat-toolbar>
   <div *ngIf="cardsService.isDataPresent" class="margin-side-1em">
-    TODO: Display the cards from cards/status-panel
+    <div id="cards" class="flex">
+      <mat-card *ngFor="let card of CardsService.getData()">
+        <mat-card-header>
+          <mat-card-title>{{card.name}}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <ul>
+            <li *ngFor="let item of Utils.castToArrayNameValuePair(card.value)">
+              {{item.name}}: {{CardsService.getValue(item.value)}}
+            </li>
+          </ul>
+        </mat-card-content>
+      </mat-card>
+    </div>
   </div>
   <div *ngIf="!cardsService.isDataPresent" class="margin-side-1em">
     Cards not available

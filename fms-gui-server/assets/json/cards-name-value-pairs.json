@@ -173,31 +173,31 @@
     "value": [
       {
         "name": "Rocket state",
-        "value": "status.rocketState"
+        "value": "Status/Rocket State"
       },
       {
         "name": "Flight substate",
-        "value": "status.flightSubstate"
+        "value": "Status/Flight substate"
       },
       {
         "name": "Servo sep 1 pos",
-        "value": "status.servoPos.array.Element0"
+        "value": "Status/Servo pos/x"
       },
       {
         "name": "Servo sep 2 pos",
-        "value": "status.servoPos.array.Element1"
+        "value": "Status/Servo pos/y"
       },
       {
         "name": "Servo recov pos",
-        "value": "status.servoPos.array.Element2"
+        "value": "Status/Servo pos/z"
       },
       {
         "name": "CPU load",
-        "value": "status.cpu_load"
+        "value": "Status/Cpu load"
       },
       {
         "name": "Sepadet ADC Value",
-        "value": "status.sepadet_adc_value"
+        "value": "Status/Sepadet adc value"
       },
       {
         "name": "Seven Segment",

@@ -9,13 +9,16 @@
 $small: 500px;
 $medium: 800px;
 
-.flex-container, .flex-column, .flex-row {
+.flex, .flex-column, .flex-row {
   display: flex;
 }
 
-.flex-container {
+.flex {
   flex-flow: row wrap;
   justify-content: space-around;
+
+  &.left { justify-content: flex-start; }
+  &.right { justify-content: flex-end; }
 
   // Small screens
   @media all and (max-width: $small) {
@@ -31,17 +34,21 @@ $medium: 800px;
 
 .grid { display: grid; }
 .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
-.grid-cols-2-auto { grid-template-columns: repeat(2, auto); }
 .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
-.grid-cols-3-auto { grid-template-columns: repeat(3, auto); }
-.grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
-.grid-cols-4-auto { grid-template-columns: repeat(4, auto); }
+.grid-cols-4 {
+  grid-template-columns: repeat(4, 1fr);
+
+  // Medium screens
+  @media all and (max-width: $medium) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  // Small screens
+  @media all and (max-width: $small) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 .grid-cols-5 { grid-template-columns: repeat(5, 1fr); }
-.grid-cols-5-auto { grid-template-columns: repeat(5, auto); }
-.grid-cols-6 { grid-template-columns: repeat(6, 1fr); }
-.grid-cols-6-auto { grid-template-columns: repeat(6, auto); }
-.grid-cols-7 { grid-template-columns: repeat(7, 1fr); }
-.grid-cols-7-auto { grid-template-columns: repeat(7, auto); }
 
 .grid-gap-sm { grid-gap: 2px; }
 
@@ -59,6 +66,17 @@ body {
 }
 
 main { min-height: 25vw; }
+
+mat-card {
+  min-width: 150px;
+  max-width: 300px;
+
+  // Small screens
+  @media all and (max-width: $small) {
+    min-width: 100px;
+    max-width: 200px;
+  }
+}
 
 ul, ol { list-style-type: none; }
 

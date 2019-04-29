@@ -5,6 +5,7 @@ import {BehaviorSubject} from 'rxjs';
 import {WebSocketService} from '../web-socket/web-socket.service';
 import {ServerProperties} from '../../properties/server.properties';
 import {Utils} from '../../utils/Utils';
+import {FmsDataService} from '../fms-data/fms-data.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,17 +19,17 @@ export class CardsService {
 
   /**
    * The global CardsData
-   * accessible via {@link FmsDataService.getData}
+   * accessible via {@link CardsService.getData}
    */
   private static cards: Array<NameValuePair>;
 
   /**
-   * A subject which can be subscribed to for telling, if any FMS data are present
+   * A subject which can be subscribed to for telling, if any cards data are present
    */
   private static presentSubject = new BehaviorSubject<boolean>(false);
 
   /**
-   * The global indicator for telling, if the FMS data is present
+   * The global indicator for telling, if the cards data is present
    *
    */
   public isDataPresent: boolean;
@@ -36,7 +37,7 @@ export class CardsService {
   /**
    * A static starter, similar to a constructor, but without the need of creating an instance to start this service
    */
-  constructor() {
+  constructor(private fmsDataService: FmsDataService) {
     // Open a websocket to the server, which will last over the whole application
     WebSocketService.connectWebSocket(CardsService.webSocketSubject, ServerProperties.SERVER_CARDS_PROPERTIES, CardsService.onMessage);
     CardsService.presentSubject.asObservable().subscribe(bool => this.isDataPresent = bool);
@@ -55,7 +56,7 @@ export class CardsService {
    * @use get("status/flags") returns an array
    */
   public static getValue(path: string): string | number | boolean | Array<NameValuePair> {
-    return Utils.getValueFromTree(path, CardsService.cards);
+    return FmsDataService.getValue(path);
   }
 
   /**

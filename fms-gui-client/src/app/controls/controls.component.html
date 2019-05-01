@@ -1,10 +1,11 @@
 <!-- Contains the control buttons on the left side of the panel -->
-<main *ngIf="controls">
+<main>
   <mat-toolbar>
     <span>{{ title }}</span>
   </mat-toolbar>
+  <div  *ngIf="controlService.isDataPresent">
     <div class="grid grid-cols-5">
-    <button mat-button *ngFor="let control of controls">
+    <button mat-button *ngFor="let control of ControlService.getData()">
       <span>{{control.code}}</span>
       &nbsp;
       <span>{{control.name}}</span>
@@ -12,4 +13,7 @@
       <mat-icon matListIcon [class.md-inactive]="control.inactive">{{control.icon}}</mat-icon>
     </button>
     </div>
+  </div>
+  <!-- Display Loading screen -->
+  <app-loading *ngIf="!controlService.isDataPresent"></app-loading>
 </main>

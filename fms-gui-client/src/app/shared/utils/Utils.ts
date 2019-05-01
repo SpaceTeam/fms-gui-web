@@ -59,7 +59,7 @@ export namespace Utils {
     }
   }
 
-  export function hasData(array: Array<NameValuePair>): boolean {
+  export function hasData<T>(array: Array<T>): boolean {
     return array !== null && array !== undefined;
   }
 }

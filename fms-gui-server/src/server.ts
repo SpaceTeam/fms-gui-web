@@ -124,6 +124,19 @@ function sendCardsData(): void {
     });
 }
 
+/**
+ * Send the controls data to the clients
+ */
+function sendControlsData(): void {
+    // Notify clients every 'period' seconds
+    controlsClients.forEach((client: wsWebSocket) => {
+       if (client.readyState === client.OPEN) {
+           // Get the Controls data from the specified directory
+           readDataAndSendToClient(client, paths.data.controls);
+       }
+    });
+}
+
 function readDataAndSendToClient(client: wsWebSocket, path: string) {
     fs.readFile(__dirname + '/..' + path, (err, data) => {
         if (err) {
@@ -145,5 +158,6 @@ app.listen(port, () => {
     source.subscribe(() => {
         sendFMSData();
         sendCardsData();
+        sendControlsData();
     });
 });

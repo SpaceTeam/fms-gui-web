@@ -25,7 +25,8 @@ export const environment = {
             },
             data: {
                 fms: '/assets/json/fms-name-value-pairs.json',
-                cards: '/assets/json/cards-name-value-pairs.json'
+                cards: '/assets/json/cards-name-value-pairs.json',
+                controls: '/assets/json/status-panel.controls.json'
             }
         },
         serverOptions: {

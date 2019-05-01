@@ -18,7 +18,5 @@
       </mat-card>
     </div>
   </div>
-  <div *ngIf="!cardsService.isDataPresent" class="margin-side-1em">
-    Cards not available
-  </div>
+  <app-loading *ngIf="!cardsService.isDataPresent"></app-loading>
 </main>

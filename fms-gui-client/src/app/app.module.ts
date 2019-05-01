@@ -14,6 +14,7 @@ import {StatusPanelComponent} from './status-panel/status-panel.component';
 import {ControlsComponent} from './controls/controls.component';
 import {PageNotFoundComponent} from './page-not-found/page-not-found.component';
 import {CardsComponent} from './cards/cards.component';
+import {LoadingComponent} from './loading/loading.component';
 
 @NgModule({
   imports: [
@@ -33,7 +34,9 @@ import {CardsComponent} from './cards/cards.component';
     MainComponent,
     ControlsComponent,
     PageNotFoundComponent,
-    CardsComponent
+    CardsComponent,
+    LoadingComponent,
+    LoadingComponent
   ],
   bootstrap: [AppComponent]
 })

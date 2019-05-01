@@ -1,6 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import {FmsDataService} from '../shared/services/fms-data/fms-data.service';
-import {Control} from '../shared/model/control.model';
 import {ControlService} from '../shared/services/controls/control.service';
 
 @Component({
@@ -12,24 +10,9 @@ export class ControlsComponent implements OnInit {
 
   title = 'Controls';
 
-  /**
-   * The controls for the status
-   */
-  controls: Control[];
+  ControlService = ControlService;
 
-  constructor(private fmsDataService: FmsDataService,
-              private controlService: ControlService) { }
+  constructor(private controlService: ControlService) { }
 
-  ngOnInit() {
-    this.loadControls();
-  }
-
-  /**
-   * Get the status controls
-   */
-  loadControls(): void {
-    this.controlService.getControls()
-      .subscribe(controls => this.controls = controls);
-  }
-
+  ngOnInit() {}
 }

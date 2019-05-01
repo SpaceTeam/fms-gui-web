@@ -8,7 +8,7 @@ import {WebSocketProperties} from '../../model/web-socket/web-socket.properties.
 })
 export class WebSocketService {
 
-  private static createUrl(properties: WebSocketProperties): string {
+  public static createUrl(properties: WebSocketProperties): string {
     // Define a default port, if the port is not given
     if (!properties.port) {
       properties.port = 80;
@@ -46,6 +46,12 @@ export class WebSocketService {
     return socket;
   }
 
+  /**
+   * Creates a new {@link WebSocketSubject}
+   * @param socket
+   * @param socketProperties
+   * @param onMessage
+   */
   private static createWebSocket<T>(
     socket: WebSocketSubject<T>,
     socketProperties: WebSocketProperties,

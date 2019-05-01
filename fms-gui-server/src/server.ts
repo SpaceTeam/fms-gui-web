@@ -20,10 +20,24 @@ const expressApp: ExpressApp = new ExpressApp();
 const app = expressApp.app;
 const expressWs = expressApp.expressWs;
 
+/**
+ * A dynamic array with all subscribed FMS clients (who will receive the FMS data)
+ */
 const fmsClients: Array<wsWebSocket> = [];
+
+/**
+ * A dynamic array with all subscribed Cards clients (who will receive the Cards data)
+ */
 const cardsClients: Array<wsWebSocket> = [];
+
+/**
+ * A dynamic array with all subscribed Controls clients (who will receive the Controls data)
+ */
 const controlsClients: Array<wsWebSocket> = [];
 
+/**
+ * Simple GET endpoint, for testing purposes
+ */
 app.get('/', (req, res) => {
     Logger.log('New GET request');
     res.json({
@@ -137,6 +151,11 @@ function sendControlsData(): void {
     });
 }
 
+/**
+ * Reads the data from the given path and sends it to the client
+ * @param client the recipient
+ * @param path the path to the file from the top directory, e.g. /assets/json/status-panel.controls.json
+ */
 function readDataAndSendToClient(client: wsWebSocket, path: string) {
     fs.readFile(__dirname + '/..' + path, (err, data) => {
         if (err) {

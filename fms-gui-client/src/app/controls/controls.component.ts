@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {ControlService} from '../shared/services/controls/control.service';
+import {Control} from '../shared/model/control.model';
 
 @Component({
   selector: 'app-controls',
@@ -15,4 +16,12 @@ export class ControlsComponent implements OnInit {
   constructor(private controlService: ControlService) { }
 
   ngOnInit() {}
+
+  /**
+   * Defines what should happen, if a control button was clicked
+   * @param control the control which was clicked
+   */
+  onControlButtonClicked(control: Control) {
+    ControlService.sendMessage(control);
+  }
 }

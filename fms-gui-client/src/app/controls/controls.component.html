@@ -5,7 +5,7 @@
   </mat-toolbar>
   <div  *ngIf="controlService.isDataPresent">
     <div class="grid grid-cols-5">
-    <button mat-button *ngFor="let control of ControlService.getData()">
+    <button mat-button *ngFor="let control of ControlService.getData()" (click)="onControlButtonClicked(control)">
       <span>{{control.code}}</span>
       &nbsp;
       <span>{{control.name}}</span>

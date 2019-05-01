@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { FmsDataService } from './fms-data.service';
-import {NameValuePair} from '../../model/name-value-pair.model';
+import {NameValuePair} from '../../model/name-value-pair/name-value-pair.model';
 
 describe('FmsDataService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));

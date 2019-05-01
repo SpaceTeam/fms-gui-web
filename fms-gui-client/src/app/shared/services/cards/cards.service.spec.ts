@@ -3,10 +3,20 @@ import { TestBed } from '@angular/core/testing';
 import { CardsService } from './cards.service';
 
 describe('CardsService', () => {
-  beforeEach(() => TestBed.configureTestingModule({}));
+
+  let service: CardsService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.get(CardsService);
+  });
 
   it('should be created', () => {
-    const service: CardsService = TestBed.get(CardsService);
     expect(service).toBeTruthy();
+  });
+
+  it('Cards JSON should be present', () => {
+    // Requires: Server to be running
+    expect(service.isDataPresent).toBeTruthy();
   });
 });

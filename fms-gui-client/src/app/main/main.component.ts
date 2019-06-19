@@ -32,6 +32,9 @@ export class MainComponent implements OnInit {
   ngOnInit() {}
 
   onSubmit() {
-    console.log(this.addressForm.value);
+    this.fmsDataService.newConnection({
+      host: this.addressForm.controls['host'].value,
+      port: this.addressForm.controls['port'].value
+    })
   }
 }

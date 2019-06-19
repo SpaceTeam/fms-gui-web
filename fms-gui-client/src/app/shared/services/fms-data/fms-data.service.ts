@@ -5,6 +5,7 @@ import {WebSocketSubject} from 'rxjs/webSocket';
 import {ServerProperties} from '../../properties/server.properties';
 import {NameValuePair} from '../../model/name-value-pair/name-value-pair.model';
 import {Utils} from '../../utils/Utils';
+import {WebSocketProperties} from '../../model/web-socket/web-socket.properties.model';
 
 /**
  * This service class gets the data from an FMS end point and provides functions for that data
@@ -17,7 +18,7 @@ export class FmsDataService {
   /**
    * The websocket connection to the server
    */
-  private static readonly webSocketSubject: WebSocketSubject<Array<NameValuePair>>;
+  private static webSocketSubject: WebSocketSubject<Array<NameValuePair>>;
 
   /**
    * The global FMSData
@@ -59,6 +60,20 @@ export class FmsDataService {
    */
   public static getValue(path: string): string | number | boolean | Array<NameValuePair> {
     return Utils.getValueFromTree(path, FmsDataService.fms);
+  }
+
+  /**
+   * Creates a new connection to a server and overrides the default connection defined in environment.ts
+   * @param webSocketProperties the properties containing the necessary data for connecting to the server
+   */
+  public newConnection(webSocketProperties: WebSocketProperties): void {
+
+    // Clear the current FMS object
+    FmsDataService.fms = [];
+
+    // Connect the service to the server
+    WebSocketService.connectWebSocket(FmsDataService.webSocketSubject, webSocketProperties, FmsDataService.onMessage);
+    FmsDataService.presentSubject.asObservable().subscribe(bool => this.isDataPresent = bool);
   }
 
   /**

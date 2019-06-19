@@ -62,7 +62,12 @@ export class WebSocketService {
     // Listening for messages from the server
     socket.subscribe(
       msg => onMessage(msg),            // Called whenever there is a message from the server
-      err => Logger.error(err),         // Called if any point WebSocket API signals some kind of error
+      err => {
+        // Called if the WebSocket API signals some kind of error
+        Logger.error(err);
+
+        // TODO: return an error (so that we can display it in the UI)
+      },
       () => Logger.log('complete')   // Called when connection is closed (for whatever reason)
     );
 

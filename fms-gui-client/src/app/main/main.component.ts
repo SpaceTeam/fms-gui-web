@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {FmsDataService} from '../shared/services/fms-data/fms-data.service';
+import {FormBuilder} from '@angular/forms';
 
 @Component({
   selector: 'app-main',
@@ -18,15 +19,19 @@ export class MainComponent implements OnInit {
    */
   separator = ':';
 
-  /**
-   * The space between a separator and the next element
-   */
-  space = ' ';
-
   FmsDataService = FmsDataService;
 
-  constructor(public fmsDataService: FmsDataService) {
+  addressForm = this.fb.group({
+    host: [''],
+    port: ['']
+  });
+
+  constructor(public fmsDataService: FmsDataService, private fb: FormBuilder) {
   }
 
   ngOnInit() {}
+
+  onSubmit() {
+    console.log(this.addressForm.value);
+  }
 }

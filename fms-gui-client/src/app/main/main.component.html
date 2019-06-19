@@ -1,72 +1,35 @@
 <main>
   <mat-toolbar>{{ title }}</mat-toolbar>
-  <div class="grid grid-cols-2" *ngIf="fmsDataService.isDataPresent">
+  <div class="grid" *ngIf="fmsDataService.isDataPresent">
     <mat-card id="connection">
       <mat-card-header>
         <mat-card-title>Connection</mat-card-title>
       </mat-card-header>
-      <mat-card-content class="block-children">
-        <button mat-button>Connect</button>
-        <button mat-button disabled>Disconnect</button>
-        <mat-form-field>
-          <mat-select placeholder="Placeholder">
-            <mat-option value="19200">19200</mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field>
-          <mat-select placeholder="Placeholder port">
-            <mat-option value="usb0">/dev/ttyUSB0</mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field>
-          <mat-select placeholder="Placeholder stage">
-            <mat-option value="upper-stage">Upper Stage</mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field>
-          <mat-select placeholder="Placeholder 2">
-            <mat-option value="moros">Moros</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </mat-card-content>
-    </mat-card>
-    <mat-card id="status">
-      <mat-card-header>
-        <mat-card-title>Status</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <mat-list>
-          <mat-list-item>
-            <span>Timestamp</span>{{separator}}{{space}}{{FmsDataService.getValue("status/timestamp")}}
-          </mat-list-item>
-          <mat-list-item>
-            <span>CPU load</span>{{separator}}{{space}}{{FmsDataService.getValue("status/cpu load")}}
-          </mat-list-item>
-          <mat-list-item>
-              <span class="badge"
-                    [class.badge-danger]='!FmsDataService.getValue("status/flags/adc initialized")'
-                    [class.badge-success]='FmsDataService.getValue("status/flags/adc initialized")'
-              >&nbsp;</span>&nbsp;
-            <span>ADC</span>
-          </mat-list-item>
-          <mat-list-item>
-              <span class="badge"
-                    [class.badge-danger]='!FmsDataService.getValue("status/flags/dac initialized")'
-                    [class.badge-success]='FmsDataService.getValue("status/flags/dac initialized")'
-              >&nbsp;</span>&nbsp;
-            <span>DAC</span>
-          </mat-list-item>
-          <mat-list-item>
-              <span class="badge"
-                    [class.badge-danger]='!FmsDataService.getValue("status/flags/dma initialized")'
-                    [class.badge-success]='FmsDataService.getValue("status/flags/dma initialized")'
-              >&nbsp;</span>&nbsp;
-            <span>DMA</span>
-          </mat-list-item>
-          <mat-list-item>
-            <span>Flash</span>{{separator}}{{space}}{{FmsDataService.getValue("status/flash adr")}}% full
-          </mat-list-item>
-        </mat-list>
+      <mat-card-content class="flex-column">
+        <form [formGroup]="addressForm" (ngSubmit)="onSubmit()">
+
+          <!-- Host -->
+          <mat-form-field>
+            <mat-label>Host</mat-label>
+            <label>
+              <input type="text" formControlName="host" matInput placeholder="http://localhost">
+            </label>
+          </mat-form-field>
+
+          <!-- Port -->
+          <mat-form-field>
+            <mat-label>Port</mat-label>
+            <label>
+              <input type="number" formControlName="port" matInput placeholder="4200" min="0" step="1">
+            </label>
+          </mat-form-field>
+
+          <!-- Disconnect -->
+          <button mat-button disabled>Disconnect</button>
+
+          <!-- Connect -->
+          <button mat-button type="submit" [disabled]="!addressForm.valid">Connect</button>
+        </form>
       </mat-card-content>
     </mat-card>
   </div>

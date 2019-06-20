@@ -10,11 +10,19 @@ export namespace Utils {
    * @param tree for only processing a given tree
    */
   export function getValueFromTree(path: string, tree: Array<NameValuePair>): NameValuePairType {
+
+    // Error case: Tree is non existent or empty
+    if (!hasData(tree)) {
+      return null;
+    }
+
     // 1) Split the path
     let arr: string[] = path.split('/');
 
     // 2) Find the next element, e.g. 'Flags'
     let next = arr.shift();
+
+    // console.log(tree);
 
     // 3) Get the tree with the given path
     // e.g. next = "Flags" should return the array with "Flags"
@@ -60,6 +68,6 @@ export namespace Utils {
   }
 
   export function hasData<T>(array: Array<T>): boolean {
-    return array !== null && array !== undefined;
+    return array !== null && array !== undefined && array.length > 0;
   }
 }

@@ -15,6 +15,7 @@ import {ControlsComponent} from './controls/controls.component';
 import {PageNotFoundComponent} from './page-not-found/page-not-found.component';
 import {CardsComponent} from './cards/cards.component';
 import {LoadingComponent} from './loading/loading.component';
+import {AlertComponent} from './alert/alert.component';
 
 @NgModule({
   imports: [
@@ -36,7 +37,7 @@ import {LoadingComponent} from './loading/loading.component';
     PageNotFoundComponent,
     CardsComponent,
     LoadingComponent,
-    LoadingComponent
+    AlertComponent
   ],
   bootstrap: [AppComponent]
 })

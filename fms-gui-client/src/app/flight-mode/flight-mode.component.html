@@ -2,8 +2,8 @@
   <mat-toolbar>
     <span>{{ title }}</span>
   </mat-toolbar>
-  <div *ngIf="fmsDataService.isDataPresent" class="margin-side-1em">
+  <div *ngIf="FmsDataService.isDataPresent" class="margin-side-1em">
     Ready to go!
   </div>
-  <app-loading *ngIf="!fmsDataService.isDataPresent"></app-loading>
+  <app-loading *ngIf="!FmsDataService.isDataPresent"></app-loading>
 </main>

@@ -14,9 +14,9 @@ export class NavComponent implements OnInit {
    */
   navItems: NavItem[];
 
-  constructor(
-    private routesService: RoutesService
-  ) { }
+  constructor(private routesService: RoutesService) {
+
+  }
 
   ngOnInit() {
     this.routesService.getNavItems()

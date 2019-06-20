@@ -1,6 +1,12 @@
 <main>
   <mat-toolbar>{{ title }}</mat-toolbar>
-  <div class="grid" *ngIf="fmsDataService.isDataPresent">
+  <div class="grid">
+    <app-alert *ngIf="FmsDataService.isDataPresent !== undefined"
+      [errorMessage]="alertErrorMessage"
+      [successMessage]="alertSuccessMessage"
+      [conditionError]="!FmsDataService.hasErrorOccurred"
+      [conditionSuccess]="FmsDataService.hasErrorOccurred"
+    ></app-alert>
     <mat-card id="connection">
       <mat-card-header>
         <mat-card-title>Connection</mat-card-title>
@@ -12,26 +18,31 @@
           <mat-form-field>
             <mat-label>Host</mat-label>
             <label>
-              <input type="text" formControlName="host" matInput placeholder="localhost">
+              <input type="text" formControlName="host" matInput placeholder="localhost" required>
             </label>
+            <mat-error *ngIf="addressForm.controls['host'].invalid">{{ errorMessage }}</mat-error>
           </mat-form-field>
 
           <!-- Port -->
           <mat-form-field>
             <mat-label>Port</mat-label>
             <label>
-              <input type="number" formControlName="port" matInput placeholder="4200" min="0" step="1">
+              <input type="number" formControlName="port" matInput placeholder="9000" min="0" step="1" required>
             </label>
+            <mat-error *ngIf="addressForm.controls['port'].invalid">{{ errorMessage }}</mat-error>
           </mat-form-field>
 
-          <!-- Disconnect -->
-          <button mat-button disabled>Disconnect</button>
+
+          <div class="grid-cols-2">
+            <!-- TODO: Implement me -->
+            <!-- Disconnect -->
+            <!--<button mat-button disabled (click)="disconnect()">Disconnect</button>-->
 
           <!-- Connect -->
           <button mat-button type="submit" [disabled]="!addressForm.valid">Connect</button>
+          </div>
         </form>
       </mat-card-content>
     </mat-card>
   </div>
-  <app-loading *ngIf="!fmsDataService.isDataPresent"></app-loading>
 </main>

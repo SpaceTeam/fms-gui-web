@@ -5,6 +5,7 @@ import {WebSocketSubject} from 'rxjs/webSocket';
 import {WebSocketService} from '../web-socket/web-socket.service';
 import {ServerProperties} from '../../properties/server.properties';
 import {Utils} from '../../utils/Utils';
+import {Logger} from '../../logger/logger';
 
 /**
  * This service class gets the data from the routes setting file, for adding nav items dynamically
@@ -43,7 +44,8 @@ export class ControlService {
     ControlService.webSocketSubject = WebSocketService.connectWebSocket(
       ControlService.webSocketSubject,
       ServerProperties.SERVER_CONTROLS_PROPERTIES,
-      ControlService.onMessage
+      ControlService.onMessage,
+      ControlService.onError
     );
     ControlService.presentSubject.asObservable().subscribe(bool => this.isDataPresent = bool);
   }
@@ -65,6 +67,10 @@ export class ControlService {
 
     // Send to all subscribers, that there is a new Control object
     ControlService.presentSubject.next(Utils.hasData(ControlService.controls));
+  }
+
+  private static onError(err: any): any {
+    Logger.error(err);
   }
 
   /**

@@ -15,7 +15,7 @@ describe('FmsDataService', () => {
     const service: FmsDataService = TestBed.get(FmsDataService);
 
     // Requires: Server to be running
-    expect(service.isDataPresent).toBeTruthy();
+    expect(FmsDataService.isDataPresent).toBeTruthy();
   });
 
   it('should traverse FMS JSON tree successfully', () => {

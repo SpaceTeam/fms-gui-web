@@ -1,6 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {FmsDataService} from '../shared/services/fms-data/fms-data.service';
-import {FormBuilder} from '@angular/forms';
+import {FormBuilder, Validators} from '@angular/forms';
+import {ServerProperties} from '../shared/properties/server.properties';
+import {WebSocketProperties} from '../shared/model/web-socket/web-socket.properties.model';
 
 @Component({
   selector: 'app-main',
@@ -19,22 +21,57 @@ export class MainComponent implements OnInit {
    */
   separator = ':';
 
+  errorMessage: string = "You must enter a value";
+
+  alertErrorMessage: string;
+  alertSuccessMessage: string;
+
   FmsDataService = FmsDataService;
 
   addressForm = this.fb.group({
-    host: [''],
-    port: ['']
+    host: ['', [Validators.required]],
+    port: ['', [Validators.required]]
   });
 
-  constructor(public fmsDataService: FmsDataService, private fb: FormBuilder) {
+  constructor(private fb: FormBuilder) {
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.setMessages(ServerProperties.SERVER_FMS_PROPERTIES);
+  }
 
   onSubmit() {
-    this.fmsDataService.newConnection({
+
+    this.setMessages();
+
+    FmsDataService.newConnection({
       host: this.addressForm.controls['host'].value,
       port: this.addressForm.controls['port'].value
-    })
+    });
+  }
+
+  private setAlertErrorMessage(webSocketProperties?: WebSocketProperties): void {
+    let host = (webSocketProperties ? webSocketProperties.host : this.addressForm.controls['host'].value);
+    let port = (webSocketProperties ? webSocketProperties.port : this.addressForm.controls['port'].value);
+    this.alertErrorMessage = `Connection to ${host}:${port} failed`;
+  }
+
+  private setAlertSuccessMessage(webSocketProperties?: WebSocketProperties): void {
+    let host = (webSocketProperties ? webSocketProperties.host : this.addressForm.controls['host'].value);
+    let port = (webSocketProperties ? webSocketProperties.port : this.addressForm.controls['port'].value);
+    this.alertSuccessMessage = `Connected to ${host}:${port}`;
+  }
+
+  public setMessages(webSocketProperties?: WebSocketProperties): void {
+    // TODO: Only set this error message, if an error occurred
+    this.setAlertErrorMessage(webSocketProperties);
+
+    // TODO: Only set this success message, if the connection was successful
+    this.setAlertSuccessMessage(webSocketProperties);
+  }
+
+  public disconnect(): void {
+    FmsDataService.newConnection(null);
+    this.alertErrorMessage = "Disconnected";
   }
 }

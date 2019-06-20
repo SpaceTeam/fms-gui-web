@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FmsDataService} from '../shared/services/fms-data/fms-data.service';
 import {Utils} from '../shared/utils/Utils';
 
@@ -17,7 +17,7 @@ export class StatusPanelComponent implements OnInit {
   FmsDataService = FmsDataService;
   Utils = Utils;
 
-  constructor(public fmsDataService: FmsDataService) {
+  constructor() {
   }
 
   ngOnInit() {

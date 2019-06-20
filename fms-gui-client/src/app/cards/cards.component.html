@@ -2,7 +2,7 @@
   <mat-toolbar>
     <span>{{ title }}</span>
   </mat-toolbar>
-  <div *ngIf="cardsService.isDataPresent" class="margin-side-1em">
+  <div *ngIf="CardsService.isDataPresent" class="margin-side-1em">
     <div id="cards" class="flex">
       <mat-card *ngFor="let card of CardsService.getData()">
         <mat-card-header>
@@ -18,5 +18,5 @@
       </mat-card>
     </div>
   </div>
-  <app-loading *ngIf="!cardsService.isDataPresent"></app-loading>
+  <app-loading *ngIf="!CardsService.isDataPresent"></app-loading>
 </main>

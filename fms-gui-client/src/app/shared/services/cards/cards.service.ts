@@ -6,6 +6,8 @@ import {WebSocketService} from '../web-socket/web-socket.service';
 import {ServerProperties} from '../../properties/server.properties';
 import {Utils} from '../../utils/Utils';
 import {FmsDataService} from '../fms-data/fms-data.service';
+import {Logger} from '../../logger/logger';
+import {WebSocketProperties} from '../../model/web-socket/web-socket.properties.model';
 
 @Injectable({
   providedIn: 'root'
@@ -32,15 +34,15 @@ export class CardsService {
    * The global indicator for telling, if the cards data is present
    *
    */
-  public isDataPresent: boolean;
+  public static isDataPresent: boolean;
 
   /**
    * A static starter, similar to a constructor, but without the need of creating an instance to start this service
    */
-  constructor(private fmsDataService: FmsDataService) {
+  constructor() {
     // Open a websocket to the server, which will last over the whole application
-    WebSocketService.connectWebSocket(CardsService.webSocketSubject, ServerProperties.SERVER_CARDS_PROPERTIES, CardsService.onMessage);
-    CardsService.presentSubject.asObservable().subscribe(bool => this.isDataPresent = bool);
+    CardsService.newConnection(ServerProperties.SERVER_CARDS_PROPERTIES);
+    CardsService.subscribeToObservables();
   }
 
   /**
@@ -69,5 +71,33 @@ export class CardsService {
 
     // Send to all subscribers, that there is a new FMS object
     CardsService.presentSubject.next(Utils.hasData(CardsService.cards));
+  }
+
+  private static onError(err: any): any {
+    Logger.error(err);
+  }
+
+  /**
+   * Creates a new connection to a server and overrides the default connection defined in environment.ts
+   * @param webSocketProperties the properties containing the necessary data for connecting to the server
+   */
+  public static newConnection(webSocketProperties: WebSocketProperties): void {
+
+    // Clear the current Cards object
+    // CardsService.resetService();
+
+    // Connect the service to the server
+    WebSocketService.connectWebSocket(
+      CardsService.webSocketSubject,
+      webSocketProperties,
+      CardsService.onMessage,
+      CardsService.onError
+    );
+
+    // CardsService.subscribeToObservables();
+  }
+
+  private static subscribeToObservables(): void {
+    CardsService.presentSubject.asObservable().subscribe(bool => this.isDataPresent = bool);
   }
 }

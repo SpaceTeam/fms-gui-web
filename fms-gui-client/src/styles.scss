@@ -9,6 +9,10 @@
 $small: 500px;
 $medium: 800px;
 
+.display-none {
+  display: none;
+}
+
 .flex, .flex-column, .flex-row {
   display: flex;
 }
@@ -28,6 +32,10 @@ $medium: 800px;
 
 .flex-column { flex-flow: column wrap; }
 .flex-row { flex-direction: row; }
+
+.flex-space-between {
+  justify-content: space-between;
+}
 
 .margin-1em { margin: 1em; }
 .margin-side-1em { margin: 0 1em;}

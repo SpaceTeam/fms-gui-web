@@ -2,7 +2,7 @@
   <mat-toolbar>
     <span>{{ title }}</span>
   </mat-toolbar>
-  <div *ngIf="fmsDataService.isDataPresent" class="margin-side-1em">
+  <div *ngIf="FmsDataService.isDataPresent" class="margin-side-1em">
     <div id="status-panel">
       <!-- Contains the status bytes, which indicate if something is on or off -->
       <h2>Flags</h2>
@@ -10,13 +10,15 @@
         <div *ngFor='let item of Utils.castToArrayNameValuePair(FmsDataService.getValue("status/flags"))'>
           <span
             class="badge"
-            [class.badge-success]="item.value"
-            [class.badge-danger]="!item.value"
+            [ngClass]="{
+              'badge-success': item.value,
+              'badge-danger': !item.value
+            }"
           >&nbsp;</span>&nbsp;
           <span>{{item.name}}</span>
         </div>
       </div>
     </div>
   </div>
-  <app-loading *ngIf="!fmsDataService.isDataPresent"></app-loading>
+  <app-loading *ngIf="!FmsDataService.isDataPresent"></app-loading>
 </main>

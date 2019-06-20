@@ -34,14 +34,16 @@ export class WebSocketService {
    * @param socket
    * @param socketProperties
    * @param onMessage
+   * @param onError
    */
   public static connectWebSocket<T>(
     socket: WebSocketSubject<T>,
     socketProperties: WebSocketProperties,
-    onMessage: (msg: T) => any
+    onMessage: (msg: T) => any,
+    onError: (err: any) => any
   ): WebSocketSubject<T> {
     if (!socket) {
-      return this.createWebSocket(socket, socketProperties, onMessage);
+      return this.createWebSocket(socket, socketProperties, onMessage, onError);
     }
     return socket;
   }
@@ -51,23 +53,20 @@ export class WebSocketService {
    * @param socket
    * @param socketProperties
    * @param onMessage
+   * @param onError
    */
   private static createWebSocket<T>(
     socket: WebSocketSubject<T>,
     socketProperties: WebSocketProperties,
-    onMessage: (msg: T) => any
+    onMessage: (msg: T) => any,
+    onError: (err: any) => any
   ): WebSocketSubject<T> {
     socket = webSocket(WebSocketService.createUrl(socketProperties));
 
     // Listening for messages from the server
     socket.subscribe(
       msg => onMessage(msg),            // Called whenever there is a message from the server
-      err => {
-        // Called if the WebSocket API signals some kind of error
-        Logger.error(err);
-
-        // TODO: return an error (so that we can display it in the UI)
-      },
+      err => onError(err),              // Called whenever there is an error
       () => Logger.log('complete')   // Called when connection is closed (for whatever reason)
     );
 

@@ -13,7 +13,7 @@ export class CardsComponent implements OnInit {
   CardsService = CardsService;
   Utils = Utils;
 
-  constructor(private cardsService: CardsService) {
+  constructor() {
   }
 
   ngOnInit() {

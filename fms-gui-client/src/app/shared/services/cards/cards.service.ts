@@ -6,7 +6,6 @@ import {WebSocketService} from '../web-socket/web-socket.service';
 import {ServerProperties} from '../../properties/server.properties';
 import {Utils} from '../../utils/Utils';
 import {FmsDataService} from '../fms-data/fms-data.service';
-import {Logger} from '../../logger/logger';
 import {WebSocketProperties} from '../../model/web-socket/web-socket.properties.model';
 
 @Injectable({
@@ -17,7 +16,7 @@ export class CardsService {
   /**
    * The websocket connection to the server
    */
-  private static readonly webSocketSubject: WebSocketSubject<Array<NameValuePair>>;
+  private static webSocketSubject: WebSocketSubject<Array<NameValuePair>>;
 
   /**
    * The global CardsData
@@ -42,14 +41,13 @@ export class CardsService {
   constructor() {
     // Open a websocket to the server, which will last over the whole application
     CardsService.newConnection(ServerProperties.SERVER_CARDS_PROPERTIES);
-    CardsService.subscribeToObservables();
   }
 
   /**
-   * Returns the actual Cards data
+   * Returns an immutable array of the actual Cards data
    */
   public static getData(): Array<NameValuePair> {
-    return CardsService.cards;
+    return [... CardsService.cards];
   }
 
   /**
@@ -59,6 +57,21 @@ export class CardsService {
    */
   public static getValue(path: string): string | number | boolean | Array<NameValuePair> {
     return FmsDataService.getValue(path);
+  }
+
+  /**
+   * Creates a new connection to a server and overrides the default connection defined in environment.ts
+   * @param webSocketProperties the properties containing the necessary data for connecting to the server
+   */
+  public static newConnection(webSocketProperties: WebSocketProperties): void {
+
+    // Clear the current Cards object
+    CardsService.resetService();
+
+    // Connect the service to the server
+    WebSocketService.connectWebSocket(CardsService.webSocketSubject, webSocketProperties, CardsService.onMessage, CardsService.onError);
+
+    CardsService.presentSubject.asObservable().subscribe(bool => this.isDataPresent = bool);
   }
 
   /**
@@ -74,30 +87,17 @@ export class CardsService {
   }
 
   private static onError(err: any): any {
-    Logger.error(err);
+    // Clear the Cards object
+    CardsService.resetService();
   }
 
   /**
-   * Creates a new connection to a server and overrides the default connection defined in environment.ts
-   * @param webSocketProperties the properties containing the necessary data for connecting to the server
+   * Resets all values to a fresh start
+   * This is needed when we create a new connection or when an error occurred
    */
-  public static newConnection(webSocketProperties: WebSocketProperties): void {
-
-    // Clear the current Cards object
-    // CardsService.resetService();
-
-    // Connect the service to the server
-    WebSocketService.connectWebSocket(
-      CardsService.webSocketSubject,
-      webSocketProperties,
-      CardsService.onMessage,
-      CardsService.onError
-    );
-
-    // CardsService.subscribeToObservables();
-  }
-
-  private static subscribeToObservables(): void {
-    CardsService.presentSubject.asObservable().subscribe(bool => this.isDataPresent = bool);
+  private static resetService(): void {
+    CardsService.cards = null;
+    CardsService.webSocketSubject = null;
+    CardsService.presentSubject = new BehaviorSubject<boolean>(false);
   }
 }

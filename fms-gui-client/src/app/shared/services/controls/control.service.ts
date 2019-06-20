@@ -5,7 +5,7 @@ import {WebSocketSubject} from 'rxjs/webSocket';
 import {WebSocketService} from '../web-socket/web-socket.service';
 import {ServerProperties} from '../../properties/server.properties';
 import {Utils} from '../../utils/Utils';
-import {Logger} from '../../logger/logger';
+import {WebSocketProperties} from '../../model/web-socket/web-socket.properties.model';
 
 /**
  * This service class gets the data from the routes setting file, for adding nav items dynamically
@@ -34,20 +34,14 @@ export class ControlService {
   /**
    * The global indicator for telling, if the Control data is present
    */
-  public isDataPresent: boolean;
+  public static isDataPresent: boolean;
 
   /**
    * A static starter, similar to a constructor, but without the need of creating an instance to start this service
    */
   constructor() {
     // Open a websocket to the server, which will last over the whole application
-    ControlService.webSocketSubject = WebSocketService.connectWebSocket(
-      ControlService.webSocketSubject,
-      ServerProperties.SERVER_CONTROLS_PROPERTIES,
-      ControlService.onMessage,
-      ControlService.onError
-    );
-    ControlService.presentSubject.asObservable().subscribe(bool => this.isDataPresent = bool);
+    ControlService.newConnection(ServerProperties.SERVER_CONTROLS_PROPERTIES);
   }
 
   /**
@@ -55,6 +49,21 @@ export class ControlService {
    */
   public static getData(): Array<Control> {
     return ControlService.controls;
+  }
+
+  /**
+   * Creates a new connection to a server and overrides the default connection defined in environment.ts
+   * @param webSocketProperties the properties containing the necessary data for connecting to the server
+   */
+  public static newConnection(webSocketProperties: WebSocketProperties): void {
+
+    // Clear the current Cards object
+    ControlService.resetService();
+
+    // Connect the service to the server
+    WebSocketService.connectWebSocket(ControlService.webSocketSubject, webSocketProperties, ControlService.onMessage, ControlService.onError);
+
+    ControlService.presentSubject.asObservable().subscribe(bool => this.isDataPresent = bool);
   }
 
   /**
@@ -70,7 +79,20 @@ export class ControlService {
   }
 
   private static onError(err: any): any {
-    Logger.error(err);
+    // Logger.error(err);
+
+    // Clear the Controls object
+    ControlService.resetService();
+  }
+
+  /**
+   * Resets all values to a fresh start
+   * This is needed when we create a new connection or when an error occurred
+   */
+  private static resetService(): void {
+    ControlService.controls = null;
+    ControlService.webSocketSubject = null;
+    ControlService.presentSubject = new BehaviorSubject<boolean>(false);
   }
 
   /**

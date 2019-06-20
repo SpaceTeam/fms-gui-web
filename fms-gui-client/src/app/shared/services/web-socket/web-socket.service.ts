@@ -42,7 +42,7 @@ export class WebSocketService {
     onMessage: (msg: T) => any,
     onError: (err: any) => any
   ): WebSocketSubject<T> {
-    if (!socket) {
+    if (socket === null || socket === undefined) {
       return this.createWebSocket(socket, socketProperties, onMessage, onError);
     }
     return socket;

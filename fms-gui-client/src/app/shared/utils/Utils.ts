@@ -12,7 +12,7 @@ export namespace Utils {
   export function getValueFromTree(path: string, tree: Array<NameValuePair>): NameValuePairType {
 
     // Error case: Tree is non existent or empty
-    if (!hasData(tree)) {
+    if (!hasData(tree) || isEmpty(path)) {
       return null;
     }
 
@@ -69,5 +69,10 @@ export namespace Utils {
 
   export function hasData<T>(array: Array<T>): boolean {
     return array !== null && array !== undefined && array.length > 0;
+  }
+
+  function isEmpty(msg: string): boolean {
+    msg = msg.trim();
+    return msg === null || msg === undefined || msg.length === 0;
   }
 }

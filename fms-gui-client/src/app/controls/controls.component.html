@@ -3,7 +3,7 @@
   <mat-toolbar>
     <span>{{ title }}</span>
   </mat-toolbar>
-  <div  *ngIf="controlService.isDataPresent">
+  <div  *ngIf="ControlService.isDataPresent">
     <div class="grid grid-cols-5">
     <button mat-button *ngFor="let control of ControlService.getData()" (click)="onControlButtonClicked(control)">
       <span>{{control.code}}</span>
@@ -15,5 +15,5 @@
     </div>
   </div>
   <!-- Display Loading screen -->
-  <app-loading *ngIf="!controlService.isDataPresent"></app-loading>
+  <app-loading *ngIf="!ControlService.isDataPresent"></app-loading>
 </main>

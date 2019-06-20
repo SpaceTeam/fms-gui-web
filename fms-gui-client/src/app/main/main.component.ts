@@ -37,7 +37,7 @@ export class MainComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.setMessages(ServerProperties.SERVER_FMS_PROPERTIES);
+    this.setMessages(ServerProperties.SERVER_FMS_PROPERTIES, 'No connection');
   }
 
   onSubmit() {
@@ -50,10 +50,10 @@ export class MainComponent implements OnInit {
     });
   }
 
-  private setAlertErrorMessage(webSocketProperties?: WebSocketProperties): void {
+  private setAlertErrorMessage(webSocketProperties?: WebSocketProperties, defaultMsg?: string): void {
     let host = (webSocketProperties ? webSocketProperties.host : this.addressForm.controls['host'].value);
     let port = (webSocketProperties ? webSocketProperties.port : this.addressForm.controls['port'].value);
-    this.alertErrorMessage = `Connection to ${host}:${port} failed`;
+    this.alertErrorMessage = defaultMsg ? defaultMsg : `Connection to ${host}:${port} failed`;
   }
 
   private setAlertSuccessMessage(webSocketProperties?: WebSocketProperties): void {
@@ -62,16 +62,16 @@ export class MainComponent implements OnInit {
     this.alertSuccessMessage = `Connected to ${host}:${port}`;
   }
 
-  public setMessages(webSocketProperties?: WebSocketProperties): void {
+  public setMessages(webSocketProperties?: WebSocketProperties, defaultMsg?: string): void {
     // TODO: Only set this error message, if an error occurred
-    this.setAlertErrorMessage(webSocketProperties);
+    this.setAlertErrorMessage(webSocketProperties, defaultMsg);
 
     // TODO: Only set this success message, if the connection was successful
     this.setAlertSuccessMessage(webSocketProperties);
   }
 
   public disconnect(): void {
-    FmsDataService.newConnection(null);
     this.alertErrorMessage = "Disconnected";
+    FmsDataService.newConnection(null);
   }
 }

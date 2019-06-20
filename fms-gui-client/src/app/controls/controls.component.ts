@@ -13,7 +13,7 @@ export class ControlsComponent implements OnInit {
 
   ControlService = ControlService;
 
-  constructor(private controlService: ControlService) { }
+  constructor() { }
 
   ngOnInit() {}
 

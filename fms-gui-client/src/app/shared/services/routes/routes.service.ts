@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {NavItem} from '../../model/nav-item.model';
@@ -19,7 +19,8 @@ export class RoutesService {
 
   constructor(
     private http: HttpClient
-  ) { }
+  ) {
+  }
 
   /**
    * Gets the route elements from the given url

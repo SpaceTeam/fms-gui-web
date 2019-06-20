@@ -21,7 +21,7 @@ export class MainComponent implements OnInit {
    */
   separator = ':';
 
-  errorMessage: string = "You must enter a value";
+  errorMessage: string = 'You must enter a value';
 
   alertErrorMessage: string;
   alertSuccessMessage: string;
@@ -71,7 +71,7 @@ export class MainComponent implements OnInit {
   }
 
   public disconnect(): void {
-    this.alertErrorMessage = "Disconnected";
+    this.alertErrorMessage = 'Disconnected';
     FmsDataService.newConnection(null);
   }
 }

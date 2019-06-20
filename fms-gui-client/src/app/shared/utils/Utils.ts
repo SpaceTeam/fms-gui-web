@@ -2,6 +2,9 @@ import {NameValuePair} from '../model/name-value-pair/name-value-pair.model';
 import {NameValuePairType} from '../model/name-value-pair/name-value-pair.type';
 import {Logger} from '../logger/logger';
 
+/**
+ * This is a static class, providing additional functionality for the traversing of NameValuePairs
+ */
 export namespace Utils {
 
   /**
@@ -67,10 +70,20 @@ export namespace Utils {
     }
   }
 
+  /**
+   * Checks whether the given array exists and is not empty
+   * @param array the array to be checked
+   * @return {boolean} true, if the array contains data; otherwise false
+   */
   export function hasData<T>(array: Array<T>): boolean {
     return array !== null && array !== undefined && array.length > 0;
   }
 
+  /**
+   * Checks whether the given string is empty
+   * @param {string} msg the message to be checked
+   * @return {boolean} true, if the string is empty or does not exist; false otherwise
+   */
   function isEmpty(msg: string): boolean {
     msg = msg.trim();
     return msg === null || msg === undefined || msg.length === 0;

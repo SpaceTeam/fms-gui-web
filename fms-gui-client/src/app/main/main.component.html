@@ -2,10 +2,10 @@
   <mat-toolbar>{{ title }}</mat-toolbar>
   <div class="grid">
     <app-alert *ngIf="FmsDataService.isDataPresent !== undefined"
-      [errorMessage]="alertErrorMessage"
-      [successMessage]="alertSuccessMessage"
-      [conditionError]="!FmsDataService.hasErrorOccurred"
-      [conditionSuccess]="FmsDataService.hasErrorOccurred"
+               [errorMessage]="alertErrorMessage"
+               [successMessage]="alertSuccessMessage"
+               [conditionError]="!FmsDataService.hasErrorOccurred"
+               [conditionSuccess]="FmsDataService.hasErrorOccurred"
     ></app-alert>
     <mat-card id="connection">
       <mat-card-header>
@@ -38,8 +38,8 @@
             <!-- Disconnect -->
             <!-- <button mat-button type="reset" (click)="disconnect()">Disconnect</button> -->
 
-          <!-- Connect -->
-          <button mat-button type="submit" [disabled]="!addressForm.valid">Connect</button>
+            <!-- Connect -->
+            <button mat-button type="submit" [disabled]="!addressForm.valid">Connect</button>
           </div>
         </form>
       </mat-card-content>

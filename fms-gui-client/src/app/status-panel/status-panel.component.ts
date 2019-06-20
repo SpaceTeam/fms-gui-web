@@ -21,6 +21,5 @@ export class StatusPanelComponent implements OnInit {
   }
 
   ngOnInit() {
-
   }
 }

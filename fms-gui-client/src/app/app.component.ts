@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {FmsDataService} from './shared/services/fms-data/fms-data.service';
 import {CardsService} from './shared/services/cards/cards.service';
 import {ControlService} from './shared/services/controls/control.service';

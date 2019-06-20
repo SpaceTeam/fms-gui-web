@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {WebSocketSubject} from 'rxjs/webSocket';
 import {NameValuePair} from '../../model/name-value-pair/name-value-pair.model';
 import {BehaviorSubject} from 'rxjs';
@@ -47,7 +47,7 @@ export class CardsService {
    * Returns an immutable array of the actual Cards data
    */
   public static getData(): Array<NameValuePair> {
-    return [... CardsService.cards];
+    return [...CardsService.cards];
   }
 
   /**

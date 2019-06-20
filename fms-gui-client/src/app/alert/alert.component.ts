@@ -30,6 +30,6 @@ export class AlertComponent implements OnInit {
    * @param event the mouse click
    */
   close(event: MouseEvent): void {
-    (<any>(event.target)).closest(".alert").classList.toggle("display-none");
+    (<any>(event.target)).closest('.alert').classList.toggle('display-none');
   }
 }

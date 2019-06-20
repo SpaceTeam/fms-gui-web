@@ -18,5 +18,6 @@ export class FlightModeComponent implements OnInit {
   constructor() {
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+  }
 }

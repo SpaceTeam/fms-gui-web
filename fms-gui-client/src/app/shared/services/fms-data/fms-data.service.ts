@@ -53,7 +53,7 @@ export class FmsDataService {
    * Returns an immutable array of the actual FMS data
    */
   public static getData(): Array<NameValuePair> {
-    return [ ...FmsDataService.fms];
+    return [...FmsDataService.fms];
   }
 
   /**

@@ -1,17 +1,17 @@
-<!-- Contains the control buttons on the left side of the panel -->
+<!-- Contains the control buttons from the left side of the old status panel -->
 <main>
   <mat-toolbar>
     <span>{{ title }}</span>
   </mat-toolbar>
-  <div  *ngIf="ControlService.isDataPresent">
+  <div *ngIf="ControlService.isDataPresent">
     <div class="grid grid-cols-5">
-    <button mat-button *ngFor="let control of ControlService.getData()" (click)="onControlButtonClicked(control)">
-      <span>{{control.code}}</span>
-      &nbsp;
-      <span>{{control.name}}</span>
-      &nbsp;
-      <mat-icon matListIcon [class.md-inactive]="control.inactive">{{control.icon}}</mat-icon>
-    </button>
+      <button mat-button *ngFor="let control of ControlService.getData()" (click)="onControlButtonClicked(control)">
+        <span>{{control.code}}</span>
+        &nbsp;
+        <span>{{control.name}}</span>
+        &nbsp;
+        <mat-icon matListIcon [class.md-inactive]="control.inactive">{{control.icon}}</mat-icon>
+      </button>
     </div>
   </div>
   <!-- Display Loading screen -->

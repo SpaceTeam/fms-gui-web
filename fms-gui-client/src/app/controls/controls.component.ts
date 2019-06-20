@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ControlService} from '../shared/services/controls/control.service';
 import {Control} from '../shared/model/control.model';
 
@@ -13,9 +13,11 @@ export class ControlsComponent implements OnInit {
 
   ControlService = ControlService;
 
-  constructor() { }
+  constructor() {
+  }
 
-  ngOnInit() {}
+  ngOnInit() {
+  }
 
   /**
    * Defines what should happen, if a control button was clicked

@@ -9,7 +9,7 @@ export const environment = {
     host: 'localhost',
     port: 9000,
     subscribe: {
-      fms: "subscribe/fms",
+      fms: "ws/",
       cards: "subscribe/cards",
       controls: "subscribe/controls"
     }

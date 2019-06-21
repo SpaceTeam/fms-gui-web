@@ -69,7 +69,17 @@ export class WebSocketUtil {
       properties.path = '';
     }
 
-    return protocol + '://' + properties.host + ':' + properties.port + '/' + properties.path;
+    // Check, whether we have just a host, e.g. localhost, or a path to a specific directory, like localhost/ws
+    let path = '';
+    if (properties.host.indexOf('/') > 1) {
+      path = properties.host.substring(properties.host.indexOf('/'));
+      properties.host = properties.host.substring(0, properties.host.indexOf('/'));
+    }
+    if (path.length === 0) {
+      path = '/' + properties.path;
+    }
+
+    return protocol + '://' + properties.host + ':' + properties.port + path;
   }
 
   /**

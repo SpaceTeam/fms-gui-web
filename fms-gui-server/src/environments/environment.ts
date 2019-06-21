@@ -19,6 +19,7 @@ export const environment = {
         port: 9000,
         paths: {
             subscribe: {
+                //fms: "/ws",
                 fms: "/subscribe/fms",
                 cards: "/subscribe/cards",
                 controls: "/subscribe/controls"

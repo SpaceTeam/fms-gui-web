@@ -11,9 +11,7 @@ export class ControlsComponent implements OnInit {
 
   title = 'Controls';
 
-  ControlService = ControlService;
-
-  constructor() {
+  constructor(private controlService: ControlService) {
   }
 
   ngOnInit() {
@@ -24,6 +22,6 @@ export class ControlsComponent implements OnInit {
    * @param control the control which was clicked
    */
   onControlButtonClicked(control: Control) {
-    ControlService.sendMessage(control);
+    this.controlService.sendMessage(control);
   }
 }

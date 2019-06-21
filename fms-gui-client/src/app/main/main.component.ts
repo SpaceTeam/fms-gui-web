@@ -3,6 +3,7 @@ import {FmsDataService} from '../shared/services/fms-data/fms-data.service';
 import {FormBuilder, Validators} from '@angular/forms';
 import {ServerProperties} from '../shared/properties/server.properties';
 import {WebSocketProperties} from '../shared/model/web-socket/web-socket.properties.model';
+import {WebSocketUtil} from '../shared/utils/web-socket/web-socket.util';
 
 @Component({
   selector: 'app-main',
@@ -26,14 +27,12 @@ export class MainComponent implements OnInit {
   alertErrorMessage: string;
   alertSuccessMessage: string;
 
-  FmsDataService = FmsDataService;
-
   addressForm = this.fb.group({
     host: ['', [Validators.required]],
     port: ['', [Validators.required]]
   });
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private fmsDataService: FmsDataService) {
   }
 
   ngOnInit() {
@@ -44,7 +43,9 @@ export class MainComponent implements OnInit {
 
     this.setMessages();
 
-    FmsDataService.newConnection({
+    WebSocketUtil.newConnection(
+      this.fmsDataService,
+      {
       host: this.addressForm.controls['host'].value,
       port: this.addressForm.controls['port'].value
     });
@@ -72,6 +73,6 @@ export class MainComponent implements OnInit {
 
   public disconnect(): void {
     this.alertErrorMessage = 'Disconnected';
-    FmsDataService.newConnection(null);
+    WebSocketUtil.newConnection(this.fmsDataService,null);
   }
 }

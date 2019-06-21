@@ -4,7 +4,13 @@ import { FmsDataService } from './fms-data.service';
 import {NameValuePair} from '../../model/name-value-pair/name-value-pair.model';
 
 describe('FmsDataService', () => {
-  beforeEach(() => TestBed.configureTestingModule({}));
+
+  let service: FmsDataService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.get(FmsDataService);
+  });
 
   it('should be created', () => {
     const service: FmsDataService = TestBed.get(FmsDataService);
@@ -12,10 +18,10 @@ describe('FmsDataService', () => {
   });
 
   it('FMS JSON should be present', () => {
-    const service: FmsDataService = TestBed.get(FmsDataService);
+
 
     // Requires: Server to be running
-    expect(FmsDataService.isDataPresent).toBeTruthy();
+    expect(service.isDataPresent).toBeTruthy();
   });
 
   it('should traverse FMS JSON tree successfully', () => {
@@ -32,7 +38,7 @@ describe('FmsDataService', () => {
 
     tuples.forEach(tuple => {
       // Requires: Server to be running
-      expect(FmsDataService.getValue(tuple[0]) === tuple[1]).toBeTruthy();
+      expect(service.getValue(tuple[0]) === tuple[1]).toBeTruthy();
     });
   });
 });

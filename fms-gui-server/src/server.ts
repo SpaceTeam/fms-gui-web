@@ -112,6 +112,10 @@ expressWs.app.ws(paths.subscribe.controls, (ws: wsWebSocket) => {
     controlsClients.push(ws);
 });
 
+expressWs.getWss().on('connection', function () {
+   Logger.log('Connection open');
+});
+
 /**
  * Sends the newest FMS data to the connected clients
  */

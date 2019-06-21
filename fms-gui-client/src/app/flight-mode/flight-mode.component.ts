@@ -13,9 +13,7 @@ export class FlightModeComponent implements OnInit {
    */
   title = 'Flight mode';
 
-  FmsDataService = FmsDataService;
-
-  constructor() {
+  constructor(private fmsDataService: FmsDataService) {
   }
 
   ngOnInit() {

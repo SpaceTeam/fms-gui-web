@@ -1,11 +1,11 @@
 <main>
   <mat-toolbar>{{ title }}</mat-toolbar>
-  <div class="grid">
-    <app-alert *ngIf="FmsDataService.isDataPresent !== undefined"
+  <div>
+    <app-alert *ngIf="fmsDataService.isDataPresent !== undefined"
                [errorMessage]="alertErrorMessage"
                [successMessage]="alertSuccessMessage"
-               [conditionError]="!FmsDataService.hasErrorOccurred"
-               [conditionSuccess]="FmsDataService.hasErrorOccurred"
+               [conditionError]="!fmsDataService.hasErrorOccurred"
+               [conditionSuccess]="fmsDataService.hasErrorOccurred"
     ></app-alert>
     <mat-card id="connection">
       <mat-card-header>

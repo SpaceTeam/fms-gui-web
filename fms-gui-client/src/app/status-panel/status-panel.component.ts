@@ -14,10 +14,9 @@ export class StatusPanelComponent implements OnInit {
    */
   title = 'Status Panel';
 
-  FmsDataService = FmsDataService;
   Utils = Utils;
 
-  constructor() {
+  constructor(private fmsDataService: FmsDataService) {
   }
 
   ngOnInit() {

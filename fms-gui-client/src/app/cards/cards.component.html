@@ -3,21 +3,21 @@
   <mat-toolbar>
     <span>{{ title }}</span>
   </mat-toolbar>
-  <div *ngIf="CardsService.isDataPresent" class="margin-side-1em">
+  <div *ngIf="cardsService.isDataPresent" class="margin-side-1em">
     <div id="cards" class="flex">
-      <mat-card *ngFor="let card of CardsService.getData()">
+      <mat-card *ngFor="let card of cardsService.getData()">
         <mat-card-header>
           <mat-card-title>{{card.name}}</mat-card-title>
         </mat-card-header>
         <mat-card-content>
           <ul>
             <li *ngFor="let item of Utils.castToArrayNameValuePair(card.value)">
-              {{item.name}}: {{CardsService.getValue(item.value)}}
+              {{item.name}}: {{cardsService.getValue(item.value)}}
             </li>
           </ul>
         </mat-card-content>
       </mat-card>
     </div>
   </div>
-  <app-loading *ngIf="!CardsService.isDataPresent"></app-loading>
+  <app-loading *ngIf="!cardsService.isDataPresent"></app-loading>
 </main>

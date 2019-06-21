@@ -11,10 +11,9 @@ export class CardsComponent implements OnInit {
 
   title = 'Cards';
 
-  CardsService = CardsService;
   Utils = Utils;
 
-  constructor() {
+  constructor(private cardsService: CardsService) {
   }
 
   ngOnInit() {

@@ -17,11 +17,11 @@
   {
     "path": "controls",
     "title": "Controls",
-    "icon": "settings_input_component"
+    "icon": "games"
   },
   {
     "path": "cards",
     "title": "Cards",
-    "icon": "view_module"
+    "icon": "view_column"
   }
 ]

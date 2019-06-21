@@ -33,6 +33,11 @@ export abstract class WebSocketService<T> implements Service {
   data: Array<T>;
 
   /**
+   * The path to the server for this service
+   */
+  path: string;
+
+  /**
    * Defines what happens, if a message was received
    * @param msg the message
    */

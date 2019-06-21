@@ -15,7 +15,7 @@ export namespace Utils {
   export function getValueFromTree(path: string, tree: Array<NameValuePair>): NameValuePairType {
 
     // Error case: Tree is non existent or empty
-    if (!hasData(tree) || isEmpty(path)) {
+    if (isEmpty(tree) || isEmpty(path)) {
       return null;
     }
 
@@ -24,8 +24,6 @@ export namespace Utils {
 
     // 2) Find the next element, e.g. 'Flags'
     let next = arr.shift();
-
-    // console.log(tree);
 
     // 3) Get the tree with the given path
     // e.g. next = "Flags" should return the array with "Flags"
@@ -80,12 +78,14 @@ export namespace Utils {
   }
 
   /**
-   * Checks whether the given string is empty
-   * @param {string} msg the message to be checked
-   * @return {boolean} true, if the string is empty or does not exist; false otherwise
+   * Checks whether the given object is empty
+   * @param obj the object to be checked
+   * @return {boolean} true, if the object is empty or does not exist; false otherwise
    */
-  function isEmpty(msg: string): boolean {
-    msg = msg.trim();
-    return msg === null || msg === undefined || msg.length === 0;
+  function isEmpty<T>(obj: string | Array<T>): boolean {
+    if (typeof obj === 'string') {
+      obj = obj.trim();
+    }
+    return obj === null || obj === undefined || obj.length === 0;
   }
 }

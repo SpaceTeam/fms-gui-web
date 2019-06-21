@@ -18,8 +18,12 @@ export class ControlService extends WebSocketService<Control> {
   constructor() {
     super();
 
+    WebSocketUtil.registerService(this);
+
+    this.path = ServerProperties.SERVER_CONTROLS_PROPERTIES.path;
+
     // Open a websocket to the server, which will last over the whole application
-    WebSocketUtil.newConnection(this, ServerProperties.SERVER_CONTROLS_PROPERTIES);
+    WebSocketUtil.newConnection(ServerProperties.SERVER_CONTROLS_PROPERTIES);
   }
 
   /**

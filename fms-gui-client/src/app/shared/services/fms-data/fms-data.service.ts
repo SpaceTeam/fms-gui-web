@@ -19,8 +19,13 @@ export class FmsDataService extends WebSocketService<NameValuePair> {
   constructor() {
     super();
 
+    // Register this service
+    WebSocketUtil.registerService(this);
+
+    this.path = ServerProperties.SERVER_FMS_PROPERTIES.path;
+
     // Open a websocket to the server,which will last over the whole application
-    WebSocketUtil.newConnection(this, ServerProperties.SERVER_FMS_PROPERTIES);
+    WebSocketUtil.newConnection(ServerProperties.SERVER_FMS_PROPERTIES);
   }
 
   /**

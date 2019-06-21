@@ -43,9 +43,7 @@ export class MainComponent implements OnInit {
 
     this.setMessages();
 
-    WebSocketUtil.newConnection(
-      this.fmsDataService,
-      {
+    WebSocketUtil.newConnection({
       host: this.addressForm.controls['host'].value,
       port: this.addressForm.controls['port'].value
     });
@@ -73,6 +71,6 @@ export class MainComponent implements OnInit {
 
   public disconnect(): void {
     this.alertErrorMessage = 'Disconnected';
-    WebSocketUtil.newConnection(this.fmsDataService,null);
+    WebSocketUtil.newConnection(null);
   }
 }

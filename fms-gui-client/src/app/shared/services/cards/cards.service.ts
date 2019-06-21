@@ -16,8 +16,12 @@ export class CardsService extends WebSocketService<NameValuePair> {
   constructor(private fmsDataService: FmsDataService) {
     super();
 
+    WebSocketUtil.registerService(this);
+
+    this.path = ServerProperties.SERVER_CARDS_PROPERTIES.path;
+
     // Open a websocket to the server, which will last over the whole application
-    WebSocketUtil.newConnection(this, ServerProperties.SERVER_CARDS_PROPERTIES);
+    WebSocketUtil.newConnection(ServerProperties.SERVER_CARDS_PROPERTIES);
   }
 
   /**

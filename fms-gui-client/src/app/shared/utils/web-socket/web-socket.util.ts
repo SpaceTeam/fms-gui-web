@@ -13,6 +13,14 @@ export class WebSocketUtil {
   private static webSocketServiceArray: Array<WebSocketService<any>> = [];
 
   /**
+   * Contains the current host and port of the connection
+   */
+  private static currentWebSocketProperties: WebSocketProperties = {
+    host: '',
+    port: 0
+  };
+
+  /**
    * Opens a WebSocket to the server and reacts to changes
    * @param webSocketService
    * @param socketProperties
@@ -97,6 +105,11 @@ export class WebSocketUtil {
    * @param webSocketProperties the properties containing the necessary data for connecting to the server
    */
   public static newConnection(webSocketProperties: WebSocketProperties): void {
+
+    // Set the current connection properties
+    this.currentWebSocketProperties.host = webSocketProperties.host;
+    this.currentWebSocketProperties.port = webSocketProperties.port;
+
     // Connect all services to the server
     this.webSocketServiceArray.forEach(service => {
       // Clear the current service object
@@ -122,5 +135,12 @@ export class WebSocketUtil {
     webSocketService.data = null;
     webSocketService.webSocketSubject = null;
     webSocketService.presentSubject = new BehaviorSubject<boolean>(false);
+  }
+
+  /**
+   * Returns the current connection properties
+   */
+  public static getCurrentWebSocketProperties(): WebSocketProperties {
+    return this.currentWebSocketProperties;
   }
 }

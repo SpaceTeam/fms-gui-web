@@ -1,8 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {FmsDataService} from '../shared/services/fms-data/fms-data.service';
 import {FormBuilder, Validators} from '@angular/forms';
-import {ServerProperties} from '../shared/properties/server.properties';
-import {WebSocketProperties} from '../shared/model/web-socket/web-socket.properties.model';
 import {WebSocketUtil} from '../shared/utils/web-socket/web-socket.util';
 
 @Component({
@@ -36,37 +34,35 @@ export class MainComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.setMessages(ServerProperties.SERVER_FMS_PROPERTIES, 'No connection');
+    this.setMessages('No connection');
   }
 
   onSubmit() {
-
-    this.setMessages();
 
     WebSocketUtil.newConnection({
       host: this.addressForm.controls['host'].value,
       port: this.addressForm.controls['port'].value
     });
+
+    this.setMessages();
   }
 
-  private setAlertErrorMessage(webSocketProperties?: WebSocketProperties, defaultMsg?: string): void {
-    let host = (webSocketProperties ? webSocketProperties.host : this.addressForm.controls['host'].value);
-    let port = (webSocketProperties ? webSocketProperties.port : this.addressForm.controls['port'].value);
-    this.alertErrorMessage = defaultMsg ? defaultMsg : `Connection to ${host}:${port} failed`;
+  private setAlertErrorMessage(defaultMsg?: string): void {
+    let properties = WebSocketUtil.getCurrentWebSocketProperties();
+    this.alertErrorMessage = defaultMsg ? defaultMsg : `Connection to ${properties.host}:${properties.port} failed`;
   }
 
-  private setAlertSuccessMessage(webSocketProperties?: WebSocketProperties): void {
-    let host = (webSocketProperties ? webSocketProperties.host : this.addressForm.controls['host'].value);
-    let port = (webSocketProperties ? webSocketProperties.port : this.addressForm.controls['port'].value);
-    this.alertSuccessMessage = `Connected to ${host}:${port}`;
+  private setAlertSuccessMessage(): void {
+    let properties = WebSocketUtil.getCurrentWebSocketProperties();
+    this.alertSuccessMessage = `Connected to ${properties.host}:${properties.port}`;
   }
 
-  public setMessages(webSocketProperties?: WebSocketProperties, defaultMsg?: string): void {
+  public setMessages(defaultMsg?: string): void {
     // TODO: Only set this error message, if an error occurred
-    this.setAlertErrorMessage(webSocketProperties, defaultMsg);
+    this.setAlertErrorMessage(defaultMsg);
 
     // TODO: Only set this success message, if the connection was successful
-    this.setAlertSuccessMessage(webSocketProperties);
+    this.setAlertSuccessMessage();
   }
 
   public disconnect(): void {

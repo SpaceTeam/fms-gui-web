@@ -27,7 +27,8 @@ export class MainComponent implements OnInit {
 
   addressForm = this.fb.group({
     host: ['', [Validators.required]],
-    port: ['', [Validators.required]]
+    port: ['', [Validators.required]],
+    path: ['']
   });
 
   constructor(private fb: FormBuilder, private fmsDataService: FmsDataService) {
@@ -41,7 +42,8 @@ export class MainComponent implements OnInit {
 
     WebSocketUtil.newConnection({
       host: this.addressForm.controls['host'].value,
-      port: this.addressForm.controls['port'].value
+      port: this.addressForm.controls['port'].value,
+      // path: this.addressForm.controls['path'].value
     });
 
     this.setMessages();

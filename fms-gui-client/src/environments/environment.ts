@@ -10,8 +10,13 @@ export const environment = {
     port: 9000,
     subscribe: {
       fms: "ws/",
+      cards: "ws/cards",
+      controls: "ws/controls",
+      /*
+      fms: "subscribe/fms",
       cards: "subscribe/cards",
       controls: "subscribe/controls"
+       */
     }
   }
 };

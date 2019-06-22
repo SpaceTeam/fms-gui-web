@@ -19,10 +19,14 @@ export const environment = {
         port: 9000,
         paths: {
             subscribe: {
-                //fms: "/ws",
+                fms: "/ws/",
+                cards: "/ws/cards",
+                controls: "/ws/controls",
+                /*
                 fms: "/subscribe/fms",
                 cards: "/subscribe/cards",
                 controls: "/subscribe/controls"
+                 */
             },
             data: {
                 fms: '/assets/json/fms-name-value-pairs.json',

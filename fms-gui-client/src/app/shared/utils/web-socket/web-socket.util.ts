@@ -17,7 +17,8 @@ export class WebSocketUtil {
    */
   private static currentWebSocketProperties: WebSocketProperties = {
     host: '',
-    port: 0
+    port: 0,
+    path: ''
   };
 
   /**
@@ -77,17 +78,9 @@ export class WebSocketUtil {
       properties.path = '';
     }
 
-    // Check, whether we have just a host, e.g. localhost, or a path to a specific directory, like localhost/ws
-    let path = '';
-    if (properties.host.indexOf('/') > 1) {
-      path = properties.host.substring(properties.host.indexOf('/'));
-      properties.host = properties.host.substring(0, properties.host.indexOf('/'));
-    }
-    if (path.length === 0) {
-      path = '/' + properties.path;
-    }
+    console.log(protocol + '://' + properties.host + ':' + properties.port + '/' + properties.path);
 
-    return protocol + '://' + properties.host + ':' + properties.port + path;
+    return protocol + '://' + properties.host + ':' + properties.port + '/' + properties.path;
   }
 
   /**
@@ -107,8 +100,7 @@ export class WebSocketUtil {
   public static newConnection(webSocketProperties: WebSocketProperties): void {
 
     // Set the current connection properties
-    this.currentWebSocketProperties.host = webSocketProperties.host;
-    this.currentWebSocketProperties.port = webSocketProperties.port;
+    this.currentWebSocketProperties = webSocketProperties;
 
     // Connect all services to the server
     this.webSocketServiceArray.forEach(service => {

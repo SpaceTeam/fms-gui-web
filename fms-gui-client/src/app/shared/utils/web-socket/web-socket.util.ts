@@ -10,6 +10,10 @@ import {BehaviorSubject} from 'rxjs';
 })
 export class WebSocketUtil {
 
+  /**
+   * This contains all WebSocket connections to the server
+   * It is needed for updating all services about a connection change
+   */
   private static webSocketServiceArray: Array<WebSocketService<any>> = [];
 
   /**
@@ -23,8 +27,8 @@ export class WebSocketUtil {
 
   /**
    * Opens a WebSocket to the server and reacts to changes
-   * @param webSocketService
-   * @param socketProperties
+   * @param webSocketService the service to connect to, e.g. {@link FmsDataService} or {@link CardsService}
+   * @param socketProperties the properties
    */
   public static connectWebSocket<T>(
     webSocketService: WebSocketService<T>,
@@ -50,7 +54,7 @@ export class WebSocketUtil {
     webSocketService.webSocketSubject.subscribe(
       msg => webSocketService.onMessage(msg),
       err => webSocketService.onError(err),
-      () => Logger.log('complete')
+      () => Logger.log('Close connection')
     );
 
     return webSocketService.webSocketSubject;
@@ -78,8 +82,6 @@ export class WebSocketUtil {
       properties.path = '';
     }
 
-    console.log(protocol + '://' + properties.host + ':' + properties.port + '/' + properties.path);
-
     return protocol + '://' + properties.host + ':' + properties.port + '/' + properties.path;
   }
 
@@ -104,11 +106,18 @@ export class WebSocketUtil {
 
     // Connect all services to the server
     this.webSocketServiceArray.forEach(service => {
+
+      // Close the previous connections
+      if (service.webSocketSubject) {
+        service.webSocketSubject.complete();
+      }
+
       // Clear the current service object
       WebSocketUtil.resetService(service);
 
       service.hasErrorOccurred = false;
 
+      // Set the correct path for the service, e.g. /subscribe/fms for the FmsDataService
       webSocketProperties.path = service.path;
 
       // Connect the service to the server with the given properties

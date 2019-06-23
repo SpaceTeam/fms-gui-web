@@ -13,9 +13,15 @@ export class AlertComponent implements OnInit {
   @Input()
   successMessage: string;
 
+  /**
+   * This will contain the boolean for displaying the error part of the alert component
+   */
   @Input()
   conditionError: boolean;
 
+  /**
+   * This will contain the boolean for displaying the success part of the alert component
+   */
   @Input()
   conditionSuccess: boolean;
 

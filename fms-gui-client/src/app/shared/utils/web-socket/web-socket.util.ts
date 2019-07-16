@@ -82,7 +82,7 @@ export class WebSocketUtil {
       properties.path = '';
     }
 
-    return protocol + '://' + properties.host + ':' + properties.port + '/' + properties.path;
+    return protocol + '://' + properties.host + ':' + properties.port + properties.path;
   }
 
   /**

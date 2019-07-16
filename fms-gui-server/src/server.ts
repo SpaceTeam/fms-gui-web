@@ -49,7 +49,7 @@ app.get('/', (req, res) => {
 /**
  * FMS ws communication
  */
-expressWs.app.ws(paths.subscribe.fms, (ws: wsWebSocket) => {
+expressWs.app.ws(paths.subscribe.basePath + paths.subscribe.fms, (ws: wsWebSocket) => {
     // on('open') is not an event!
 
     ws.on('message', (msg: string) => {
@@ -71,7 +71,7 @@ expressWs.app.ws(paths.subscribe.fms, (ws: wsWebSocket) => {
 /**
  * Cards ws communication
  */
-expressWs.app.ws(paths.subscribe.cards, (ws: wsWebSocket) => {
+expressWs.app.ws(paths.subscribe.basePath + paths.subscribe.cards, (ws: wsWebSocket) => {
     // on('open') is not an event!
 
     ws.on('message', (msg: string) => {
@@ -93,7 +93,7 @@ expressWs.app.ws(paths.subscribe.cards, (ws: wsWebSocket) => {
 /**
  * Controls ws communication
  */
-expressWs.app.ws(paths.subscribe.controls, (ws: wsWebSocket) => {
+expressWs.app.ws(paths.subscribe.basePath + paths.subscribe.controls, (ws: wsWebSocket) => {
     // on('open') is not an event!
 
     ws.on('message', (msg: string) => {

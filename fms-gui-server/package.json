@@ -4,7 +4,7 @@
   "description": "Server side for the fms-gui-web",
   "main": "src/server.ts",
   "scripts": {
-    "start-server": "ts-node .",
+    "start": "ts-node .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Thomas Khlebovitch",
@@ -13,18 +13,18 @@
     "body-parser": "^1.18.3",
     "bootstrap": "^4.3.1",
     "chokidar": "^2.0.4",
+    "cors": "^2.8.5",
     "express": "^4.16.4",
     "express-ws": "^4.0.0",
-    "cors": "^2.8.5",
+    "https": "^1.0.0",
     "js-yaml": "latest",
-    "lodash": "^4.17.11",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.15",
     "node": "^11.13.0",
+    "rxjs": "^6.5.1",
     "sockjs": "^0.3.19",
     "tslint": "^5.15.0",
-    "jsonwebtoken": "^8.5.1",
-    "https": "^1.0.0",
-    "uuid": "^3.3.2",
-    "rxjs": "^6.5.1"
+    "uuid": "^3.3.2"
   },
   "keywords": [],
   "devDependencies": {

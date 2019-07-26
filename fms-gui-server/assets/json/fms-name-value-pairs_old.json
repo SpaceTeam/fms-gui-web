@@ -1,39 +1,14 @@
 [
   {
-    "name": "Message",
-    "value": [
-      {
-        "name": "FMSMessage",
-        "value": [
-          "Inits...",
-          "Config Data loaded from EEPROM!",
-          "Event Actions loaded from EEPROM!",
-          "Inits ready.",
-          "Startup ready.",
-          "RADIO enabled.",
-          "State ready for takeoff initialized."
-        ]
-      },
-      {
-        "name": "GetLastMessage",
-        "value": "State ready for takeoff initialized."
-      }
-    ]
-  },
-  {
     "name": "Power",
     "value": [
       {
         "name": "Voltage",
-        "value": 8.288
+        "value": 0.0
       },
       {
         "name": "Current",
-        "value": 0.1575
-      },
-      {
-        "name": "GetLastMessage",
-        "value": "8,288V 0,158A"
+        "value": -0.002
       }
     ]
   },
@@ -77,11 +52,11 @@
           },
           {
             "name": "Uart1 initialized",
-            "value": true
+            "value": false
           },
           {
             "name": "Uart2 initialized",
-            "value": false
+            "value": true
           },
           {
             "name": "Uart3 initialized",
@@ -113,11 +88,11 @@
           },
           {
             "name": "Eeprom initialized",
-            "value": true
+            "value": false
           },
           {
             "name": "Ars initialized",
-            "value": false
+            "value": true
           },
           {
             "name": "Power management initialized",
@@ -129,11 +104,11 @@
           },
           {
             "name": "Seven segment intern initialized",
-            "value": true
+            "value": false
           },
           {
             "name": "Seven segment extern initialized",
-            "value": false
+            "value": true
           },
           {
             "name": "Startup success",
@@ -149,11 +124,11 @@
           },
           {
             "name": "Sensor imu initialized",
-            "value": true
+            "value": false
           },
           {
             "name": "Sensor tmp100 initialized",
-            "value": false
+            "value": true
           },
           {
             "name": "Sensor hig initialized",
@@ -165,11 +140,11 @@
           },
           {
             "name": "Gnss initialized",
-            "value": true
+            "value": false
           },
           {
             "name": "Servo initialized all",
-            "value": false
+            "value": true
           },
           {
             "name": "Pwm initialized",
@@ -177,11 +152,11 @@
           },
           {
             "name": "Afs initialized",
-            "value": true
+            "value": false
           },
           {
             "name": "Camera initialized",
-            "value": false
+            "value": true
           },
           {
             "name": "Sensor current initialized",
@@ -193,15 +168,15 @@
           },
           {
             "name": "Separation detection initialized",
-            "value": true
-          },
-          {
-            "name": "Servo configured",
             "value": false
           },
           {
-            "name": "Igniter configured",
+            "name": "Servo configured",
             "value": true
+          },
+          {
+            "name": "Igniter configured",
+            "value": false
           },
           {
             "name": "Igniter 1 fired",
@@ -241,11 +216,11 @@
           },
           {
             "name": "Igniter 1 connected",
-            "value": true
+            "value": false
           },
           {
             "name": "Igniter 2 connected",
-            "value": true
+            "value": false
           },
           {
             "name": "Igniter 3 connected",
@@ -265,15 +240,15 @@
           },
           {
             "name": "Gnss powersave",
-            "value": false
-          },
-          {
-            "name": "Flash erased",
             "value": true
           },
           {
-            "name": "Flash store data",
+            "name": "Flash erased",
             "value": false
+          },
+          {
+            "name": "Flash store data",
+            "value": true
           },
           {
             "name": "Radio on",
@@ -281,19 +256,19 @@
           },
           {
             "name": "Radio tx active",
-            "value": true
+            "value": false
           },
           {
             "name": "Flash flight header written",
-            "value": false
-          },
-          {
-            "name": "Timer1 running",
             "value": true
           },
           {
-            "name": "Rtc synchronized",
+            "name": "Timer1 running",
             "value": false
+          },
+          {
+            "name": "Rtc synchronized",
+            "value": true
           },
           {
             "name": "Usb connection detected",
@@ -305,11 +280,11 @@
           },
           {
             "name": "Flash full",
-            "value": false
+            "value": true
           },
           {
             "name": "Crystal oszillator used",
-            "value": true
+            "value": false
           },
           {
             "name": "Liftoff detected",
@@ -329,11 +304,11 @@
           },
           {
             "name": "Eagle landed",
-            "value": false
+            "value": true
           },
           {
             "name": "Rocket is stable",
-            "value": true
+            "value": false
           },
           {
             "name": "Apogee detected by kalman",
@@ -345,15 +320,15 @@
           },
           {
             "name": "Check stability executed",
-            "value": false
+            "value": true
           },
           {
             "name": "Config intialized",
-            "value": true
+            "value": false
           },
           {
             "name": "Stages separated",
-            "value": true
+            "value": false
           },
           {
             "name": "Igniter hpower fired",
@@ -369,11 +344,11 @@
           },
           {
             "name": "Reset during flight",
-            "value": false
+            "value": true
           },
           {
             "name": "Housekeeping data read",
-            "value": true
+            "value": false
           },
           {
             "name": "Mbb satcom configured",
@@ -385,19 +360,19 @@
           },
           {
             "name": "Mbb cameras configured",
-            "value": true
-          },
-          {
-            "name": "Mbb cameras initialized",
-            "value": true
-          },
-          {
-            "name": "Power management operational",
             "value": false
           },
           {
-            "name": "Rail 5v enabled",
+            "name": "Mbb cameras initialized",
+            "value": false
+          },
+          {
+            "name": "Power management operational",
             "value": true
+          },
+          {
+            "name": "Rail 5v enabled",
+            "value": false
           },
           {
             "name": "Padding1",
@@ -413,11 +388,11 @@
           },
           {
             "name": "Battery only attached",
-            "value": true
+            "value": false
           },
           {
             "name": "Rail 3v3 sensor enabled",
-            "value": false
+            "value": true
           },
           {
             "name": "Rail 3v3 gnss enabled",
@@ -425,7 +400,7 @@
           },
           {
             "name": "Rail 3v3 external enabled",
-            "value": true
+            "value": false
           },
           {
             "name": "Cmd buffer overrun",
@@ -513,7 +488,7 @@
           },
           {
             "name": "Struct size overflows uart buffer",
-            "value": false
+            "value": true
           },
           {
             "name": "Config from eeprom",
@@ -521,7 +496,7 @@
           },
           {
             "name": "Event actions from eeprom",
-            "value": true
+            "value": false
           },
           {
             "name": "Brown out warning level interrupt hit",
@@ -541,7 +516,7 @@
           },
           {
             "name": "Mbb cameras running",
-            "value": false
+            "value": true
           },
           {
             "name": "Development mode",
@@ -558,12 +533,12 @@
         ]
       },
       {
-        "name": "FMSTimestamp",
-        "value": 11991
+        "name": "Timestamp",
+        "value": 0
       },
       {
         "name": "Rocket state",
-        "value": 1
+        "value": 0
       },
       {
         "name": "Flight substate",
@@ -572,14 +547,23 @@
       {
         "name": "Servo pos",
         "value": [
-          0,
-          0,
-          0
+          {
+            "name": "x",
+            "value": 0
+          },
+          {
+            "name": "y",
+            "value": 0
+          },
+          {
+            "name": "z",
+            "value": 0
+          }
         ]
       },
       {
         "name": "Sepadet adc value",
-        "value": 4095
+        "value": 0
       },
       {
         "name": "Radio tx byte counter",
@@ -591,7 +575,7 @@
       },
       {
         "name": "Seven segment value",
-        "value": "U"
+        "value": "\u0000"
       },
       {
         "name": "Cpu load",
@@ -619,11 +603,11 @@
       },
       {
         "name": "Igniter 1 voltage",
-        "value": 823
+        "value": 0
       },
       {
         "name": "Igniter 2 voltage",
-        "value": 823
+        "value": 0
       },
       {
         "name": "Igniter 3 voltage",
@@ -639,7 +623,7 @@
       },
       {
         "name": "Orientation of fms",
-        "value": "Y-"
+        "value": "X-"
       }
     ]
   }

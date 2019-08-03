@@ -18,7 +18,6 @@ export abstract class WebSocketService<T> implements Service {
 
   /**
    * The global indicator for telling, if the cards data is present
-   *
    */
   isDataPresent: boolean;
 
@@ -33,6 +32,11 @@ export abstract class WebSocketService<T> implements Service {
   data: Array<T>;
 
   /**
+   * Contains all data, that was ever received since the start of the application
+   */
+  previousData: Array<Array<T>> = [];
+
+  /**
    * The path to the server for this service
    */
   path: string;
@@ -44,6 +48,9 @@ export abstract class WebSocketService<T> implements Service {
   onMessage(msg: Array<T>): any {
     // Parse the received message to a FMS object
     this.data = msg;
+
+    // Add the data to the array containing all the data since the beginning
+    this.previousData.push(msg);
 
     // Send to all subscribers, that there is a new FMS object
     this.presentSubject.next(Utils.hasData(this.data));
@@ -68,5 +75,12 @@ export abstract class WebSocketService<T> implements Service {
    */
   getData(): Array<T> {
     return [...this.data];
+  }
+
+  /**
+   * Returns an immutable array of all data received since the start of the application
+   */
+  getAllData(): Array<Array<T>> {
+    return [...this.previousData];
   }
 }

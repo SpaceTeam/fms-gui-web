@@ -42,8 +42,8 @@ export class WebSocketUtil {
 
   /**
    * Creates a new {@link WebSocketSubject}
-   * @param webSocketService
-   * @param socketProperties
+   * @param webSocketService the websocket service reference needed for creating a new connection
+   * @param socketProperties the properties object containing the information for the connection
    */
   private static createWebSocket<T>(
     webSocketService: WebSocketService<T>,
@@ -114,7 +114,6 @@ export class WebSocketUtil {
 
       // Clear the current service object
       WebSocketUtil.resetService(service);
-
       service.hasErrorOccurred = false;
 
       // Set the correct path for the service, e.g. /subscribe/fms for the FmsDataService

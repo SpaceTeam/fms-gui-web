@@ -2,4 +2,18 @@
   grid-gap: 4px;
 }
 
-button { width: 100%;}
+button { 
+	width: 100%;
+}
+
+.status-element {
+	display: flex;
+	align-items: center;
+	padding-left: 4px;
+}
+
+.status-element:hover {
+	background: #f8f8f8;
+	filter: brightness(90%);
+	border-radius: 4px;
+}

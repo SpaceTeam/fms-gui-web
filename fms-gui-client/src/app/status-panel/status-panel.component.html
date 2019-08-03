@@ -7,7 +7,7 @@
       <!-- Contains the status bytes, which indicate if something is on or off -->
       <h2>Flags</h2>
       <div class="grid grid-cols-4 grid-gap-sm">
-        <div *ngFor='let item of Utils.castToArrayNameValuePair(fmsDataService.getValue("status/flags1"))'>
+        <div class="status-element" *ngFor='let item of Utils.castToArrayNameValuePair(fmsDataService.getValue("status/flags1"))'>
           <span
             class="badge"
             [ngClass]="{

@@ -7,15 +7,20 @@
       <!-- Contains the status bytes, which indicate if something is on or off -->
       <h2>Flags</h2>
       <div class="grid grid-cols-4 grid-gap-sm">
-        <div class="status-element" *ngFor='let item of Utils.castToArrayNameValuePair(fmsDataService.getValue("status/flags1"))'>
-          <span
-            class="badge"
-            [ngClass]="{
+        <div *ngFor='let item of Utils.castToArray(fmsDataService.getValue("status/flags1"))'>
+          <!-- TODO: Remove the ngClass of the .status-element after one second -->
+          <div class="status-element flex left" [ngClass]="{
+            'changed': fmsDataService.isDifferentValue('status/flags1/' + item.name),
+            'badge-success': item.value,
+            'badge-danger': !item.value
+          }">
+            <span class="badge" [ngClass]="{
               'badge-success': item.value,
               'badge-danger': !item.value
-            }"
-          >&nbsp;</span>&nbsp;
-          <span>{{item.name}}</span>
+            }">
+            </span>
+            <span>{{item.name}}</span>
+          </div>
         </div>
       </div>
     </div>

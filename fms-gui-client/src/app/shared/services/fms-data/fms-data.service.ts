@@ -2,8 +2,8 @@ import {Injectable} from '@angular/core';
 import {WebSocketUtil} from '../../utils/web-socket/web-socket.util';
 import {ServerProperties} from '../../properties/server.properties';
 import {NameValuePair} from '../../model/name-value-pair/name-value-pair.model';
-import {Utils} from '../../utils/Utils';
-import {WebSocketService} from '../../model/service/web-socket.model';
+import {NameValuePairUtils} from '../../utils/NameValuePairUtils';
+import {WebSocketService} from '../../model/service/web-socket.service.model';
 
 /**
  * This service class gets the data from an FMS end point and provides functions for that data
@@ -34,6 +34,18 @@ export class FmsDataService extends WebSocketService<NameValuePair> {
    * @use get("status/flags") returns an array
    */
   public getValue(path: string): string | number | boolean | Array<NameValuePair> {
-    return Utils.getValueFromTree(path, this.data);
+    return NameValuePairUtils.getValueFromTree(path, this.data);
+  }
+
+  /**
+   * Checks, whether the current value is different from the previous one
+   * @param path the path to the value to be checked
+   * @return true, if the current value is different from the previous one
+   */
+  public isDifferentValue(path: string): boolean {
+    return NameValuePairUtils.isDifferent(
+      NameValuePairUtils.getValueFromTree(path, this.allData[this.allData.length - 1]),
+      NameValuePairUtils.getValueFromTree(path, this.allData[this.allData.length - 2])
+    );
   }
 }

@@ -2,7 +2,7 @@ import {Service} from './service.model';
 import {WebSocketSubject} from 'rxjs/webSocket';
 import {BehaviorSubject} from 'rxjs';
 import {WebSocketUtil} from '../../utils/web-socket/web-socket.util';
-import {Utils} from '../../utils/Utils';
+import {NameValuePairUtils} from '../../utils/NameValuePairUtils';
 
 export abstract class WebSocketService<T> implements Service {
 
@@ -34,7 +34,7 @@ export abstract class WebSocketService<T> implements Service {
   /**
    * Contains all data, that was ever received since the start of the application
    */
-  previousData: Array<Array<T>> = [];
+  allData: Array<Array<T>> = [];
 
   /**
    * The path to the server for this service
@@ -50,19 +50,18 @@ export abstract class WebSocketService<T> implements Service {
     this.data = msg;
 
     // Add the data to the array containing all the data since the beginning
-    this.previousData.push(msg);
+    this.allData.push(msg);
 
-    // Send to all subscribers, that there is a new FMS object
-    this.presentSubject.next(Utils.hasData(this.data));
+    // Send to all subscribers, that there is new data
+    this.presentSubject.next(NameValuePairUtils.hasData(this.data));
   }
 
   /**
    * Defines what happens, if an error occurred during the web socket connection
+   * Called if the WebSocket API signals some kind of error
    * @param err the error
    */
   onError(err: any): any {
-    // Called if the WebSocket API signals some kind of error
-
     // Clear the service object
     WebSocketUtil.resetService(this);
 
@@ -81,6 +80,36 @@ export abstract class WebSocketService<T> implements Service {
    * Returns an immutable array of all data received since the start of the application
    */
   getAllData(): Array<Array<T>> {
-    return [...this.previousData];
+    return [...this.allData];
+  }
+
+  /**
+   * Returns the indices of the changed entries in the received data
+   */
+  getIndicesOfChangedData(): Array<number> {
+
+    const changedValues: Array<number> = [];
+
+    const currentData = this.allData[this.allData.length - 1];
+    const lastData = this.allData[this.allData.length - 2];
+
+    // TODO: It should be possible to change this into a filter operation -> Do it as soon as you have an internet connection
+    for (let i = 0; i < this.allData.length; i++) {
+      if (currentData[i] !== lastData[i]) {
+        changedValues.push(i);
+      }
+    }
+
+    return changedValues;
+  }
+
+  /**
+   * Prints all previous data into the file name provided
+   * @param path the path to the file
+   * @param fileName the name of the new file
+   */
+  printData(path: string, fileName: string): void {
+    // TODO: Create a dialog for saving the data (download functionality)
+    // TODO: Provide the possibility to save it as CSV
   }
 }

@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Control} from '../../model/control.model';
 import {WebSocketUtil} from '../../utils/web-socket/web-socket.util';
 import {ServerProperties} from '../../properties/server.properties';
-import {WebSocketService} from '../../model/service/web-socket.model';
+import {WebSocketService} from '../../model/service/web-socket.service.model';
 
 /**
  * This service class gets the data from the routes setting file, for adding nav items dynamically

@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Logger} from '../../logger/logger';
 import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
 import {WebSocketProperties} from '../../model/web-socket/web-socket.properties.model';
-import {WebSocketService} from '../../model/service/web-socket.model';
+import {WebSocketService} from '../../model/service/web-socket.service.model';
 import {BehaviorSubject} from 'rxjs';
 
 @Injectable({

@@ -3,7 +3,7 @@ import {NameValuePair} from '../../model/name-value-pair/name-value-pair.model';
 import {WebSocketUtil} from '../../utils/web-socket/web-socket.util';
 import {ServerProperties} from '../../properties/server.properties';
 import {FmsDataService} from '../fms-data/fms-data.service';
-import {WebSocketService} from '../../model/service/web-socket.model';
+import {WebSocketService} from '../../model/service/web-socket.service.model';
 
 @Injectable({
   providedIn: 'root'

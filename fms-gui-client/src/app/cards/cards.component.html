@@ -11,7 +11,7 @@
         </mat-card-header>
         <mat-card-content>
           <ul>
-            <li *ngFor="let item of Utils.castToArrayNameValuePair(card.value)">
+            <li *ngFor="let item of Utils.castToArray(card.value)">
               {{item.name}}: {{cardsService.getValue(item.value)}}
             </li>
           </ul>

@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {FmsDataService} from '../shared/services/fms-data/fms-data.service';
-import {Utils} from '../shared/utils/Utils';
+import {NameValuePairUtils} from '../shared/utils/NameValuePairUtils';
 
 @Component({
   selector: 'app-status-panel',
@@ -14,7 +14,7 @@ export class StatusPanelComponent implements OnInit {
    */
   title = 'Status Panel';
 
-  Utils = Utils;
+  Utils = NameValuePairUtils;
 
   constructor(private fmsDataService: FmsDataService) {
   }

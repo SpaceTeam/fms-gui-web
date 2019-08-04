@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {CardsService} from '../shared/services/cards/cards.service';
-import {Utils} from '../shared/utils/Utils';
+import {NameValuePairUtils} from '../shared/utils/NameValuePairUtils';
 
 @Component({
   selector: 'app-cards',
@@ -11,7 +11,7 @@ export class CardsComponent implements OnInit {
 
   title = 'Cards';
 
-  Utils = Utils;
+  Utils = NameValuePairUtils;
 
   constructor(private cardsService: CardsService) {
   }

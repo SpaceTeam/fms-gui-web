@@ -14,6 +14,11 @@ export class StatusPanelComponent implements OnInit {
    */
   title = 'Status Panel';
 
+  /**
+   * The base path for the status flag tree
+   */
+  basePath = 'status/flags1';
+
   Utils = NameValuePairUtils;
 
   constructor(private fmsDataService: FmsDataService) {

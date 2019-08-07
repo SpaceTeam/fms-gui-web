@@ -16,6 +16,7 @@ import {PageNotFoundComponent} from './page-not-found/page-not-found.component';
 import {CardsComponent} from './cards/cards.component';
 import {LoadingComponent} from './loading/loading.component';
 import {AlertComponent} from './alert/alert.component';
+import {StatusHighlightDirective} from './shared/directives/status-highlight/status-highlight.directive';
 
 @NgModule({
   imports: [
@@ -37,7 +38,8 @@ import {AlertComponent} from './alert/alert.component';
     PageNotFoundComponent,
     CardsComponent,
     LoadingComponent,
-    AlertComponent
+    AlertComponent,
+    StatusHighlightDirective
   ],
   bootstrap: [AppComponent]
 })

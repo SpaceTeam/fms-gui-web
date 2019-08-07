@@ -2,25 +2,20 @@
   <mat-toolbar>
     <span>{{ title }}</span>
   </mat-toolbar>
-  <div *ngIf="fmsDataService.isDataPresent" class="margin-side-1em">
-    <div id="status-panel">
-      <!-- Contains the status bytes, which indicate if something is on or off -->
-      <h2>Flags</h2>
-      <div class="grid grid-cols-4 grid-gap-sm">
-        <div *ngFor='let item of Utils.castToArray(fmsDataService.getValue("status/flags1"))'>
-          <!-- TODO: Remove the ngClass of the .status-element after one second -->
-          <div class="status-element flex left" [ngClass]="{
-            'changed': fmsDataService.isDifferentValue('status/flags1/' + item.name),
+  <div id="status-panel" class="margin-side-1em" *ngIf="fmsDataService.isDataPresent">
+    <!-- Contains the status bytes, which indicate if something is on or off -->
+    <h2>Flags</h2>
+    <div class="grid grid-cols-4 grid-gap-sm">
+      <div *ngFor='let item of Utils.castToArray(fmsDataService.getValue(basePath))'>
+        <div class="status-element flex left align-items-center" [id]="item.name"
+             [appStatusHighlight]="(this.fmsDataService.isDifferentValue(this.basePath + '/' + item.name)) ? item : null">
+          <span class="badge" [ngClass]="{
             'badge-success': item.value,
             'badge-danger': !item.value
           }">
-            <span class="badge" [ngClass]="{
-              'badge-success': item.value,
-              'badge-danger': !item.value
-            }">
-            </span>
-            <span>{{item.name}}</span>
-          </div>
+            &nbsp;
+          </span>
+          <span class="margin-left-0-5em">{{item.name}}</span>
         </div>
       </div>
     </div>

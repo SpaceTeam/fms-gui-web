@@ -43,9 +43,13 @@ export class FmsDataService extends WebSocketService<NameValuePair> {
    * @return true, if the current value is different from the previous one
    */
   public isDifferentValue(path: string): boolean {
-    return NameValuePairUtils.isDifferent(
-      NameValuePairUtils.getValueFromTree(path, this.allData[this.allData.length - 1]),
-      NameValuePairUtils.getValueFromTree(path, this.allData[this.allData.length - 2])
-    );
+    if (this.allData.length <= 1) {
+      return false;
+    } else {
+      return NameValuePairUtils.isDifferent(
+        NameValuePairUtils.getValueFromTree(path, this.allData[this.allData.length - 1]),
+        NameValuePairUtils.getValueFromTree(path, this.allData[this.allData.length - 2])
+      );
+    }
   }
 }

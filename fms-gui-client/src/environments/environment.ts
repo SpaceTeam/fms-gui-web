@@ -9,12 +9,10 @@ export const environment = {
     host: 'localhost',
     port: 9000,
     subscribe: {
-      // basePath: "/subscribe/"
-      // basePath: "/ws/",
-      basePath: "/",
-      fms: "",
-      cards: "cards",
-      controls: "controls"
+      basePath: '/',
+      fms: '',
+      cards: 'cards',
+      controls: 'controls'
     }
   }
 };

@@ -5,9 +5,10 @@ export const environment = {
     host: 'localhost',
     port: 9000,
     subscribe: {
-      fms: "subscribe/fms",
-      cards: "subscribe/cards",
-      controls: "subscribe/controls"
+      basePath: '/',
+      fms: '',
+      cards: 'cards',
+      controls: 'controls'
     }
   }
 };

@@ -2,6 +2,8 @@ import {Injectable} from '@angular/core';
 import {NameValuePair} from '../../model/name-value-pair/name-value-pair.model';
 import {NameValuePairUtils} from '../../utils/NameValuePairUtils';
 import {WebSocketService} from '../../model/service/web-socket.service.model';
+import {ServerProperties} from '../../properties/server.properties';
+import SERVER_FMS_PROPERTIES = ServerProperties.SERVER_FMS_PROPERTIES;
 
 /**
  * This service class gets the data from an FMS end point and provides functions for that data
@@ -10,6 +12,10 @@ import {WebSocketService} from '../../model/service/web-socket.service.model';
   providedIn: 'root'
 })
 export class FmsDataService extends WebSocketService<NameValuePair> {
+
+  constructor() {
+    super(SERVER_FMS_PROPERTIES.path);
+  }
 
   /**
    * Returns the value to a given path

@@ -41,7 +41,7 @@
     "name": "Status",
     "value": [
       {
-        "name": "Flags",
+        "name": "Flags1",
         "value": [
           {
             "name": "Adc initialized",

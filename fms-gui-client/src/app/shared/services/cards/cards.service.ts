@@ -2,6 +2,8 @@ import {Injectable} from '@angular/core';
 import {NameValuePair} from '../../model/name-value-pair/name-value-pair.model';
 import {FmsDataService} from '../fms-data/fms-data.service';
 import {WebSocketService} from '../../model/service/web-socket.service.model';
+import {ServerProperties} from '../../properties/server.properties';
+import SERVER_CARDS_PROPERTIES = ServerProperties.SERVER_CARDS_PROPERTIES;
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +11,7 @@ import {WebSocketService} from '../../model/service/web-socket.service.model';
 export class CardsService extends WebSocketService<NameValuePair> {
 
   constructor(private fmsDataService: FmsDataService) {
-    super();
+    super(SERVER_CARDS_PROPERTIES.path);
   }
 
   /**

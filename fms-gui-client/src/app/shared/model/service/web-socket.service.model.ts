@@ -41,7 +41,10 @@ export abstract class WebSocketService<T> implements Service {
    */
   path: string;
 
-  protected constructor() {
+  protected constructor(path?: string) {
+    if (path) {
+      this.path = path;
+    }
     // Register this service
     WebSocketUtil.registerService(this);
   }

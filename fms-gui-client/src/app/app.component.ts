@@ -10,10 +10,11 @@ import {ControlService} from './shared/services/controls/control.service';
 })
 export class AppComponent {
   title = 'FMS Client';
-  opened: boolean = true;
+  opened = true;
 
   /**
-   * The constructor containing all necessary services, which also need to be opened at least once
+   * The constructor containing all necessary services throughout the application
+   * The service need to be created at least once
    * @param fmsDataService the FMS data service for the whole application, needs to be injected once
    * @param cardsService the Cards service for the whole application
    * @param controlService the Controls service for the whole application

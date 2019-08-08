@@ -15,12 +15,7 @@ export class MainComponent implements OnInit {
    */
   title = 'Ground Station - Space Team';
 
-  /**
-   * The separator between labels and texts
-   */
-  separator = ':';
-
-  errorMessage: string = 'You must enter a value';
+  errorMessage = 'You must enter a value';
 
   alertErrorMessage: string;
   alertSuccessMessage: string;
@@ -39,23 +34,21 @@ export class MainComponent implements OnInit {
   }
 
   onSubmit() {
-
     WebSocketUtil.newConnection({
       host: this.addressForm.controls['host'].value,
-      port: this.addressForm.controls['port'].value,
-      // path: this.addressForm.controls['path'].value
+      port: this.addressForm.controls['port'].value
     });
 
     this.setMessages();
   }
 
   private setAlertErrorMessage(defaultMsg?: string): void {
-    let properties = WebSocketUtil.getCurrentWebSocketProperties();
+    const properties = WebSocketUtil.getCurrentWebSocketProperties();
     this.alertErrorMessage = defaultMsg ? defaultMsg : `Connection to ${properties.host}:${properties.port} failed`;
   }
 
   private setAlertSuccessMessage(): void {
-    let properties = WebSocketUtil.getCurrentWebSocketProperties();
+    const properties = WebSocketUtil.getCurrentWebSocketProperties();
     this.alertSuccessMessage = `Connected to ${properties.host}:${properties.port}`;
   }
 
@@ -68,7 +61,6 @@ export class MainComponent implements OnInit {
   }
 
   public disconnect(): void {
-    this.alertErrorMessage = 'Disconnected';
-    WebSocketUtil.newConnection(null);
+    // TODO: Implement me!
   }
 }

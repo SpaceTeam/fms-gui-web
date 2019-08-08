@@ -1,7 +1,5 @@
 import {Injectable} from '@angular/core';
 import {NameValuePair} from '../../model/name-value-pair/name-value-pair.model';
-import {WebSocketUtil} from '../../utils/web-socket/web-socket.util';
-import {ServerProperties} from '../../properties/server.properties';
 import {FmsDataService} from '../fms-data/fms-data.service';
 import {WebSocketService} from '../../model/service/web-socket.service.model';
 
@@ -10,18 +8,8 @@ import {WebSocketService} from '../../model/service/web-socket.service.model';
 })
 export class CardsService extends WebSocketService<NameValuePair> {
 
-  /**
-   * A static starter, similar to a constructor, but without the need of creating an instance to start this service
-   */
   constructor(private fmsDataService: FmsDataService) {
     super();
-
-    WebSocketUtil.registerService(this);
-
-    this.path = ServerProperties.SERVER_CARDS_PROPERTIES.path;
-
-    // Open a websocket to the server, which will last over the whole application
-    WebSocketUtil.newConnection(ServerProperties.SERVER_CARDS_PROPERTIES);
   }
 
   /**

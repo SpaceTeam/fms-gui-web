@@ -1,6 +1,4 @@
 import {Injectable} from '@angular/core';
-import {WebSocketUtil} from '../../utils/web-socket/web-socket.util';
-import {ServerProperties} from '../../properties/server.properties';
 import {NameValuePair} from '../../model/name-value-pair/name-value-pair.model';
 import {NameValuePairUtils} from '../../utils/NameValuePairUtils';
 import {WebSocketService} from '../../model/service/web-socket.service.model';
@@ -12,21 +10,6 @@ import {WebSocketService} from '../../model/service/web-socket.service.model';
   providedIn: 'root'
 })
 export class FmsDataService extends WebSocketService<NameValuePair> {
-
-  /**
-   * A static starter, similar to a constructor, but without the need of creating an instance to start this service
-   */
-  constructor() {
-    super();
-
-    // Register this service
-    WebSocketUtil.registerService(this);
-
-    this.path = ServerProperties.SERVER_FMS_PROPERTIES.path;
-
-    // Open a websocket to the server,which will last over the whole application
-    WebSocketUtil.newConnection(ServerProperties.SERVER_FMS_PROPERTIES);
-  }
 
   /**
    * Returns the value to a given path

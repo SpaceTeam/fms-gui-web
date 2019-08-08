@@ -5,8 +5,8 @@
                [errorMessage]="alertErrorMessage"
                [successMessage]="alertSuccessMessage"
                [conditionError]="!fmsDataService.hasErrorOccurred"
-               [conditionSuccess]="fmsDataService.hasErrorOccurred"
-    ></app-alert>
+               [conditionSuccess]="fmsDataService.hasErrorOccurred">
+    </app-alert>
     <mat-card id="connection">
       <mat-card-header>
         <mat-card-title>Connection</mat-card-title>
@@ -31,17 +31,6 @@
             </label>
             <mat-error *ngIf="addressForm.controls['port'].invalid">{{ errorMessage }}</mat-error>
           </mat-form-field>
-
-          <!-- Path -->
-          <!--
-          <mat-form-field>
-            <mat-label>Path</mat-label>
-            <label>
-              <input type="text" formControlName="path" matInput placeholder="">
-            </label>
-            <mat-error *ngIf="addressForm.controls['path'].invalid">{{ errorMessage }}</mat-error>
-          </mat-form-field>
-          -->
 
           <div class="grid-cols-2">
             <!-- TODO: Implement me -->

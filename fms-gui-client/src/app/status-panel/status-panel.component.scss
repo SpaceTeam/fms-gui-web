@@ -1,18 +1,10 @@
-#status-panel {
-  grid-gap: 4px;
-}
-
-button {
-  width: 100%;
-}
-
 .status-element {
   align-items: center;
   padding-left: 4px;
   border-radius: 4px;
-}
 
-.status-element:hover {
-  background: #f8f8f8;
-  filter: brightness(90%);
+  &:hover {
+    background: #f8f8f8;
+    filter: brightness(90%);
+  }
 }

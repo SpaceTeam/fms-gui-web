@@ -14,16 +14,10 @@ export class AlertComponent implements OnInit {
   successMessage: string;
 
   /**
-   * This will contain the boolean for displaying the error part of the alert component
+   * Tells, if an error has occurred
    */
   @Input()
-  conditionError: boolean;
-
-  /**
-   * This will contain the boolean for displaying the success part of the alert component
-   */
-  @Input()
-  conditionSuccess: boolean;
+  isError: boolean;
 
   constructor() {
   }
@@ -36,6 +30,6 @@ export class AlertComponent implements OnInit {
    * @param event the mouse click
    */
   close(event: MouseEvent): void {
-    (<any>(event.target)).closest('.alert').classList.toggle('display-none');
+    (<any>(event.target)).closest('.alert').classList.toggle('d-none');
   }
 }

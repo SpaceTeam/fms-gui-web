@@ -1,8 +1,9 @@
-<div id="alert-warning" class="alert alert-warning"
+<!-- Displays diverse error, success and other messages, which do not need to be displayed the whole time -->
+<div id="alert-warning" class="alert alert-warning" role="alert"
      [ngClass]="{
-      'display-none': conditionError
-     }" role="alert">
-  <div class="flex space-between">
+      'd-none': !isError
+     }">
+  <div class="d-flex justify-content-between">
     <mat-icon matListIcon aria-hidden="false" aria-label="Error icon">
       error_outline
     </mat-icon>
@@ -16,11 +17,11 @@
     </button>
   </div>
 </div>
-<div id="alert-success" class="alert alert-success"
+<div id="alert-success" class="alert alert-success" role="alert"
      [ngClass]="{
-      'display-none': conditionSuccess
-      }" role="alert">
-  <div class="flex space-between">
+      'd-none': isError
+      }">
+  <div class="d-flex justify-content-between">
     <mat-icon matListIcon aria-hidden="false" aria-label="Success icon">
       check_circle_outline
     </mat-icon>

@@ -1,10 +1,10 @@
+<!-- Displays the status bytes stored in the FMS JSON -->
 <main>
-  <mat-toolbar>
-    <span>{{ title }}</span>
-  </mat-toolbar>
-  <div id="status-panel" class="margin-side-1em" *ngIf="fmsDataService.isDataPresent">
+  <mat-toolbar>{{ title }}</mat-toolbar>
+  <div class="margin-side-1em" *ngIf="fmsDataService.isDataPresent">
     <!-- Contains the status bytes, which indicate if something is on or off -->
     <h2>Flags</h2>
+    <!-- TODO: Add a grid-gap: 4px -->
     <div class="grid grid-cols-4 grid-gap-sm">
       <div *ngFor='let item of Utils.castToArray(fmsDataService.getValue(basePath))'>
         <div class="status-element flex left align-items-center" [id]="item.name"

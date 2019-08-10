@@ -1,11 +1,11 @@
+<!-- Displays the form for configuring the connection to the server, which delivers the FMS and other JSON -->
 <main>
   <mat-toolbar>{{ title }}</mat-toolbar>
-  <div>
-    <app-alert *ngIf="fmsDataService.isDataPresent !== undefined"
+  <div class="margin-side-1em">
+    <app-alert *ngIf="WebSocketUtil.isConnectionError !== undefined"
                [errorMessage]="alertErrorMessage"
                [successMessage]="alertSuccessMessage"
-               [conditionError]="!fmsDataService.hasErrorOccurred"
-               [conditionSuccess]="fmsDataService.hasErrorOccurred">
+               [isError]="WebSocketUtil.isConnectionError">
     </app-alert>
     <mat-card id="connection">
       <mat-card-header>

@@ -25,75 +25,7 @@ export class WebSocketUtil {
     path: ''
   };
 
-  /**
-   * Opens a WebSocket to the server and reacts to changes
-   * @param webSocketService the service to connect to, e.g. {@link FmsDataService} or {@link CardsService}
-   * @param socketProperties the properties
-   */
-  public static connectWebSocket<T>(
-    webSocketService: WebSocketService<T>,
-    socketProperties: WebSocketProperties
-  ): WebSocketSubject<Array<T>> {
-    if (webSocketService.webSocketSubject === null || webSocketService.webSocketSubject === undefined) {
-      return WebSocketUtil.createWebSocket(webSocketService, socketProperties);
-    }
-    return webSocketService.webSocketSubject;
-  }
-
-  /**
-   * Creates a new {@link WebSocketSubject}
-   * @param webSocketService the websocket service reference needed for creating a new connection
-   * @param socketProperties the properties object containing the information for the connection
-   */
-  private static createWebSocket<T>(
-    webSocketService: WebSocketService<T>,
-    socketProperties: WebSocketProperties
-  ): WebSocketSubject<Array<T>> {
-    webSocketService.webSocketSubject = webSocket(WebSocketUtil.createUrl(socketProperties));
-
-    webSocketService.webSocketSubject.subscribe(
-      msg => webSocketService.onMessage(msg),
-      err => webSocketService.onError(err),
-      () => Logger.log('Close connection')
-    );
-
-    return webSocketService.webSocketSubject;
-  }
-
-  /**
-   * Creates the URL for connecting to a server
-   * @param properties contains the information for connecting to the server
-   */
-  public static createUrl(properties: WebSocketProperties): string {
-    // Define a default port, if the port is not given
-    if (!properties.port) {
-      properties.port = 80;
-    }
-
-    let protocol = 'wss';
-
-    // If security is not given, assume simple TCP connection
-    if (!properties.secure) {
-      protocol = 'ws';
-    }
-
-    // Define default path (root)
-    if (!properties.path) {
-      properties.path = '';
-    }
-
-    return protocol + '://' + properties.host + ':' + properties.port + properties.path;
-  }
-
-  /**
-   * Push the requesting service to the service array, for notifying the remaining services about a connection change
-   * @param webSocketService the service to be included in the array
-   */
-  public static registerService<T>(webSocketService: WebSocketService<T>): void {
-    if (!this.webSocketServiceArray.includes(webSocketService)) {
-      this.webSocketServiceArray.push(webSocketService);
-    }
-  }
+  public static isConnectionError: boolean = undefined;
 
   /**
    * Creates a new connection to a server and overrides the default connection defined in environment.ts
@@ -135,6 +67,80 @@ export class WebSocketUtil {
     webSocketService.data = null;
     webSocketService.webSocketSubject = null;
     webSocketService.presentSubject = new BehaviorSubject<boolean>(false);
+  }
+
+  /**
+   * Opens a WebSocket to the server and reacts to changes
+   * @param webSocketService the service to connect to, e.g. {@link FmsDataService} or {@link CardsService}
+   * @param socketProperties the properties
+   */
+  public static connectWebSocket<T>(
+    webSocketService: WebSocketService<T>,
+    socketProperties: WebSocketProperties
+  ): WebSocketSubject<Array<T>> {
+    if (webSocketService.webSocketSubject === null || webSocketService.webSocketSubject === undefined) {
+      return WebSocketUtil.createWebSocket(webSocketService, socketProperties);
+    }
+    return webSocketService.webSocketSubject;
+  }
+
+  /**
+   * Creates a new {@link WebSocketSubject}
+   * @param webSocketService the websocket service reference needed for creating a new connection
+   * @param socketProperties the properties object containing the information for the connection
+   */
+  private static createWebSocket<T>(
+    webSocketService: WebSocketService<T>,
+    socketProperties: WebSocketProperties
+  ): WebSocketSubject<Array<T>> {
+    webSocketService.webSocketSubject = webSocket(WebSocketUtil.createUrl(socketProperties));
+
+    webSocketService.webSocketSubject.subscribe(
+      msg => {
+        webSocketService.onMessage(msg);
+      },
+      err => {
+        webSocketService.onError(err);
+      },
+      () => Logger.log('Close connection')
+    );
+
+    return webSocketService.webSocketSubject;
+  }
+
+  /**
+   * Creates the URL for connecting to a server
+   * @param properties contains the information for connecting to the server
+   */
+  public static createUrl(properties: WebSocketProperties): string {
+    // Define a default port, if the port is not given
+    if (!properties.port) {
+      properties.port = 80;
+    }
+
+    let protocol = 'wss';
+
+    // If security is not given, assume simple TCP connection
+    if (!properties.secure) {
+      protocol = 'ws';
+    }
+
+    // Define default path (root)
+    if (!properties.path) {
+      properties.path = '';
+    }
+
+    return protocol + '://' + properties.host + ':' + properties.port + properties.path;
+  }
+
+  /**
+   * Push the requesting service to the service array, for notifying the remaining services about a connection change
+   * @param webSocketService the service to be included in the array
+   */
+  public static registerService<T>(webSocketService: WebSocketService<T>): void {
+    if (!this.webSocketServiceArray.includes(webSocketService)) {
+      this.webSocketServiceArray.push(webSocketService);
+    }
   }
 
   /**

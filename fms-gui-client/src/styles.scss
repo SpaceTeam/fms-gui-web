@@ -1,4 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
+/* TODO: Instead of adding the imports here, add them in angular.json (the same as bootstrap.css) */
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 @import "~material-design-icons/iconfont/material-icons.css";
 
@@ -10,10 +11,6 @@
 $small: 500px;
 $medium: 800px;
 
-.display-none {
-  display: none;
-}
-
 .flex, .flex-column, .flex-row {
   display: flex;
 }
@@ -22,10 +19,21 @@ $medium: 800px;
   flex-flow: row wrap;
   justify-content: space-around;
 
-  &.left { justify-content: flex-start; }
-  &.right { justify-content: flex-end; }
-  &.center { justify-content: center; }
-  &.space-between { justify-content: space-between; }
+  &.left {
+    justify-content: flex-start;
+  }
+
+  &.right {
+    justify-content: flex-end;
+  }
+
+  &.center {
+    justify-content: center;
+  }
+
+  &.space-between {
+    justify-content: space-between;
+  }
 
   // Small screens
   @media all and (max-width: $small) {
@@ -33,16 +41,38 @@ $medium: 800px;
   }
 }
 
-.flex-column { flex-flow: column wrap; }
-.flex-row { flex-direction: row; }
+.flex-column {
+  flex-flow: column wrap;
+}
 
-.margin-1em { margin: 1em; }
-.margin-side-1em { margin: 0 1em;}
-.margin-left-0-5em { margin-left: 0.5em; }
+.flex-row {
+  flex-direction: row;
+}
 
-.grid { display: grid; }
-.grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
-.grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+.margin-1em {
+  margin: 1em;
+}
+
+.margin-side-1em {
+  margin: 0 1em;
+}
+
+.margin-left-0-5em {
+  margin-left: 0.5em;
+}
+
+.grid {
+  display: grid;
+}
+
+.grid-cols-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
 .grid-cols-4 {
   grid-template-columns: repeat(4, 1fr);
 
@@ -56,16 +86,27 @@ $medium: 800px;
     grid-template-columns: repeat(2, 1fr);
   }
 }
-.grid-cols-5 { grid-template-columns: repeat(5, 1fr); }
 
-.grid-gap-sm { grid-gap: 2px; }
+.grid-cols-5 {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.grid-gap-sm {
+  grid-gap: 2px;
+}
 
 // Tags
-a, button, button:focus { outline: none !important; }
+a, button, button:focus {
+  outline: none !important;
+}
 
-h2 { font-size: 1.5rem !important; }
+h2 {
+  font-size: 1.5rem !important;
+}
 
-html, body { min-height: 100%; }
+html, body {
+  min-height: 100%;
+}
 
 body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
@@ -73,7 +114,9 @@ body {
   margin: 0;
 }
 
-main { min-height: 25vw; }
+main {
+  min-height: 25vw;
+}
 
 mat-card {
   min-width: 150px;
@@ -86,6 +129,10 @@ mat-card {
   }
 }
 
-ul, ol { list-style-type: none; }
+ul, ol {
+  list-style-type: none;
+}
 
-.material-icons.md-inactive { color: rgba(0, 0, 0, 0.26); }
+.material-icons.md-inactive {
+  color: rgba(0, 0, 0, 0.26);
+}

@@ -92,26 +92,6 @@ export abstract class WebSocketService<T> implements Service {
   }
 
   /**
-   * Returns the indices of the changed entries in the received data
-   */
-  getIndicesOfChangedData(): Array<number> {
-
-    const changedValues: Array<number> = [];
-
-    const currentData = this.allData[this.allData.length - 1];
-    const lastData = this.allData[this.allData.length - 2];
-
-    // TODO: It should be possible to change this into a filter operation -> Do it as soon as you have an internet connection
-    for (let i = 0; i < this.allData.length; i++) {
-      if (currentData[i] !== lastData[i]) {
-        changedValues.push(i);
-      }
-    }
-
-    return changedValues;
-  }
-
-  /**
    * Prints all previous data into the file name provided
    * @param path the path to the file
    * @param fileName the name of the new file

@@ -1,9 +1,9 @@
+<!-- Displays the current flight with the data from the FMS JSON -->
 <main>
-  <mat-toolbar>
-    <span>{{ title }}</span>
-  </mat-toolbar>
+  <mat-toolbar>{{ title }}</mat-toolbar>
   <div *ngIf="fmsDataService.isDataPresent" class="margin-side-1em">
     Ready to go!
   </div>
   <app-loading *ngIf="!fmsDataService.isDataPresent"></app-loading>
 </main>
+dis

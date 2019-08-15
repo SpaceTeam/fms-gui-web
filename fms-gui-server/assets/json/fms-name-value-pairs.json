@@ -45,7 +45,7 @@
         "value": [
           {
             "name": "Adc initialized",
-            "value": true
+            "value": false
           },
           {
             "name": "Dac initialized",

@@ -2,10 +2,10 @@
 <main>
   <mat-toolbar>{{ title }}</mat-toolbar>
   <div class="margin-side-1em">
-    <app-alert *ngIf="WebSocketUtil.isConnectionError !== undefined"
-               [errorMessage]="alertErrorMessage"
-               [successMessage]="alertSuccessMessage"
-               [isError]="WebSocketUtil.isConnectionError">
+    <app-alert [errorMessage]="errorMessage"
+               [successMessage]="successMessage"
+               [informationMessage]="informationMessage"
+               [warningMessage]="warningMessage">
     </app-alert>
     <mat-card id="connection">
       <mat-card-header>
@@ -20,7 +20,7 @@
             <label>
               <input type="text" formControlName="host" matInput placeholder="localhost" required>
             </label>
-            <mat-error *ngIf="addressForm.controls['host'].invalid">{{ errorMessage }}</mat-error>
+            <mat-error *ngIf="addressForm.controls['host'].invalid">{{ errorMessageInput }}</mat-error>
           </mat-form-field>
 
           <!-- Port -->
@@ -29,7 +29,7 @@
             <label>
               <input type="number" formControlName="port" matInput placeholder="9000" min="0" step="1" required>
             </label>
-            <mat-error *ngIf="addressForm.controls['port'].invalid">{{ errorMessage }}</mat-error>
+            <mat-error *ngIf="addressForm.controls['port'].invalid">{{ errorMessageInput }}</mat-error>
           </mat-form-field>
 
           <div class="grid-cols-2">

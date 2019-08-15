@@ -11,13 +11,13 @@ export class AlertComponent implements OnInit {
   errorMessage: string;
 
   @Input()
+  informationMessage: string;
+
+  @Input()
   successMessage: string;
 
-  /**
-   * Tells, if an error has occurred
-   */
   @Input()
-  isError: boolean;
+  warningMessage: string;
 
   constructor() {
   }

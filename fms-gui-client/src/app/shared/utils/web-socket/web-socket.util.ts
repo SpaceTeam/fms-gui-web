@@ -3,7 +3,7 @@ import {Logger} from '../../logger/logger';
 import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
 import {WebSocketProperties} from '../../model/web-socket/web-socket.properties.model';
 import {WebSocketService} from '../../model/service/web-socket.service.model';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, of} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -25,10 +25,9 @@ export class WebSocketUtil {
     path: ''
   };
 
-  public static isConnectionError: boolean = undefined;
-
   /**
-   * Creates a new connection to a server and overrides the default connection defined in environment.ts
+   * Creates a new connection to a server with the given properties and overrides the current one
+   * (only one connection at the same time possible)
    * @param webSocketProperties the properties containing the necessary data for connecting to the server
    */
   public static newConnection(webSocketProperties: WebSocketProperties): void {
@@ -93,18 +92,18 @@ export class WebSocketUtil {
     webSocketService: WebSocketService<T>,
     socketProperties: WebSocketProperties
   ): WebSocketSubject<Array<T>> {
-    webSocketService.webSocketSubject = webSocket(WebSocketUtil.createUrl(socketProperties));
+    try {
+      webSocketService.webSocketSubject = webSocket(WebSocketUtil.createUrl(socketProperties));
 
-    webSocketService.webSocketSubject.subscribe(
-      msg => {
-        webSocketService.onMessage(msg);
-      },
-      err => {
-        webSocketService.onError(err);
-      },
-      () => Logger.log('Close connection')
-    );
-
+      webSocketService.webSocketSubject.subscribe(
+        msg => webSocketService.onMessage(msg),
+        err => webSocketService.onError(err),
+        () => Logger.log('Close connection')
+      );
+    } catch(error) {
+      Logger.error(`Connection failed: ${error}`);
+      webSocketService.webSocketSubject = null;
+    }
     return webSocketService.webSocketSubject;
   }
 
@@ -148,5 +147,13 @@ export class WebSocketUtil {
    */
   public static getCurrentWebSocketProperties(): WebSocketProperties {
     return this.currentWebSocketProperties;
+  }
+
+  /**
+   * Returns an observable, observing the webSocketService's webSocketSubject
+   * @param webSocketService the service containing the subject
+   */
+  public static webSocketSubjectObservable<T>(webSocketService: WebSocketService<T>) {
+    return of(webSocketService.webSocketSubject);
   }
 }

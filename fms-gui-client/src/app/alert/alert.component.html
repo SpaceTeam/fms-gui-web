@@ -1,8 +1,8 @@
 <!-- Displays diverse error, success and other messages, which do not need to be displayed the whole time -->
-<div id="alert-warning" class="alert alert-warning" role="alert"
+<div id="alert-error" class="alert alert-danger" role="alert"
      [ngClass]="{
-      'd-none': !isError
-     }">
+      'd-none': !errorMessage
+      }">
   <div class="d-flex justify-content-between">
     <mat-icon matListIcon aria-hidden="false" aria-label="Error icon">
       error_outline
@@ -17,9 +17,27 @@
     </button>
   </div>
 </div>
+<div id="alert-info" class="alert alert-info" role="alert"
+     [ngClass]="{
+      'd-none': !informationMessage
+      }">
+  <div class="d-flex justify-content-between">
+    <mat-icon matListIcon aria-hidden="false" aria-label="Information icon">
+      info
+    </mat-icon>
+    <div class="alert-text">
+      {{ informationMessage }}
+    </div>
+    <button type="button" class="close" aria-label="Close" (click)="close($event)">
+      <mat-icon matListIcon aria-hidden="true" aria-label="Close icon">
+        close
+      </mat-icon>
+    </button>
+  </div>
+</div>
 <div id="alert-success" class="alert alert-success" role="alert"
      [ngClass]="{
-      'd-none': isError
+      'd-none': !successMessage
       }">
   <div class="d-flex justify-content-between">
     <mat-icon matListIcon aria-hidden="false" aria-label="Success icon">
@@ -27,6 +45,24 @@
     </mat-icon>
     <div class="alert-text">
       {{ successMessage }}
+    </div>
+    <button type="button" class="close" aria-label="Close" (click)="close($event)">
+      <mat-icon matListIcon aria-hidden="true" aria-label="Close icon">
+        close
+      </mat-icon>
+    </button>
+  </div>
+</div>
+<div id="alert-warning" class="alert alert-warning" role="alert"
+     [ngClass]="{
+      'd-none': !warningMessage
+     }">
+  <div class="d-flex justify-content-between">
+    <mat-icon matListIcon aria-hidden="false" aria-label="Warning icon">
+      warning
+    </mat-icon>
+    <div class="alert-text">
+      {{ warningMessage }}
     </div>
     <button type="button" class="close" aria-label="Close" (click)="close($event)">
       <mat-icon matListIcon aria-hidden="true" aria-label="Close icon">

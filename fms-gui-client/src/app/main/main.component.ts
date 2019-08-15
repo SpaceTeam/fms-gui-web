@@ -42,54 +42,54 @@ export class MainComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.setMessages();
-
     this.clicked = false;
+
+    this.setAlertMessages();
 
     this.addMessageListener();
   }
 
   private addMessageListener(): void {
-    WebSocketUtil.webSocketSubjectObservable(this.fmsDataService).subscribe(subject => {
-      this.resetMessages();
-      if (subject) {
-        console.log("Subject available");
-        // Display the information if no click occurred
-        // Otherwise display the success message
+      this.fmsDataService.errorSubject.asObservable().subscribe(hasErrorOccurred => {
+        this.resetMessages();
+
         if (!this.clicked) {
-          this.informationMessage = this.alertInformationMessage;
+          if (this.fmsDataService.webSocketSubject !== null) {
+            // Display the information
+            this.informationMessage = this.alertInformationMessage;
+          } else {
+            // Display the warning
+            this.warningMessage = this.alertWarningMessage;
+          }
         } else {
-          this.successMessage = this.alertSuccessMessage;
+          if (this.fmsDataService.webSocketSubject !== null && !hasErrorOccurred) {
+            this.successMessage = this.alertSuccessMessage;
+          } else {
+            this.errorMessage = this.alertErrorMessage;
+          }
         }
-      } else {
-        console.log("Subject NOT available");
-        // Display the warning if no click occurred
-        // Otherwise display the error message
-        if (!this.clicked) {
-          this.warningMessage = this.alertWarningMessage;
-        } else {
-          this.errorMessage = this.alertErrorMessage;
-        }
-      }
-    });
+      });
   }
 
   onSubmit() {
-
-    //this.clicked = true;
+    this.clicked = true;
 
     WebSocketUtil.newConnection({
       host: this.addressForm.controls['host'].value,
       port: this.addressForm.controls['port'].value
     });
 
-    //this.setMessages();
+    this.setAlertMessages();
+
+    this.resetMessages();
+
+    this.informationMessage = `Connecting`;
   }
 
   /**
    * Sets the messages of the alert component
    */
-  private setMessages(): void {
+  private setAlertMessages(): void {
     const properties = WebSocketUtil.getCurrentWebSocketProperties();
     this.alertErrorMessage = `Failed to connect to ${properties.host}:${properties.port}`;
     this.alertSuccessMessage = `Connection to ${properties.host}:${properties.port} was successful`;

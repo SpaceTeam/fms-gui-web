@@ -27,6 +27,11 @@ export abstract class WebSocketService<T> implements Service {
   hasErrorOccurred: boolean;
 
   /**
+   * The subject for indicating, if an error has occurred or not
+   */
+  errorSubject: BehaviorSubject<boolean>;
+
+  /**
    * The data container for a service
    */
   data: Array<T>;
@@ -47,6 +52,9 @@ export abstract class WebSocketService<T> implements Service {
     }
     // Register this service
     WebSocketUtil.registerService(this);
+
+    // Initialize the service
+    WebSocketUtil.resetService(this);
   }
 
   /**
@@ -62,6 +70,8 @@ export abstract class WebSocketService<T> implements Service {
 
     // Send to all subscribers, that there is new data
     this.presentSubject.next(NameValuePairUtils.hasData(this.data));
+
+    this.errorSubject.next(false);
   }
 
   /**
@@ -75,6 +85,7 @@ export abstract class WebSocketService<T> implements Service {
 
     // Notify the user that an error has occurred
     this.hasErrorOccurred = true;
+    this.errorSubject.next(true);
   }
 
   /**

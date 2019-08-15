@@ -3,7 +3,7 @@ import {Logger} from '../../logger/logger';
 import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
 import {WebSocketProperties} from '../../model/web-socket/web-socket.properties.model';
 import {WebSocketService} from '../../model/service/web-socket.service.model';
-import {BehaviorSubject, of} from 'rxjs';
+import {BehaviorSubject} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -65,7 +65,17 @@ export class WebSocketUtil {
   public static resetService<T>(webSocketService: WebSocketService<T>): void {
     webSocketService.data = null;
     webSocketService.webSocketSubject = null;
-    webSocketService.presentSubject = new BehaviorSubject<boolean>(false);
+
+    // Initialize present subject
+    if (!webSocketService.presentSubject) {
+      webSocketService.presentSubject = new BehaviorSubject<boolean>(false);
+    }
+    webSocketService.presentSubject.next(false);
+
+    // Initialize error subject
+    if (!webSocketService.errorSubject) {
+      webSocketService.errorSubject = new BehaviorSubject<boolean>(false);
+    }
   }
 
   /**
@@ -77,7 +87,7 @@ export class WebSocketUtil {
     webSocketService: WebSocketService<T>,
     socketProperties: WebSocketProperties
   ): WebSocketSubject<Array<T>> {
-    if (webSocketService.webSocketSubject === null || webSocketService.webSocketSubject === undefined) {
+    if ((webSocketService.webSocketSubject === null || webSocketService.webSocketSubject === undefined)) {
       return WebSocketUtil.createWebSocket(webSocketService, socketProperties);
     }
     return webSocketService.webSocketSubject;
@@ -92,18 +102,15 @@ export class WebSocketUtil {
     webSocketService: WebSocketService<T>,
     socketProperties: WebSocketProperties
   ): WebSocketSubject<Array<T>> {
-    try {
-      webSocketService.webSocketSubject = webSocket(WebSocketUtil.createUrl(socketProperties));
+    // Create the WebSocket object
+    webSocketService.webSocketSubject = webSocket(WebSocketUtil.createUrl(socketProperties));
 
-      webSocketService.webSocketSubject.subscribe(
-        msg => webSocketService.onMessage(msg),
-        err => webSocketService.onError(err),
-        () => Logger.log('Close connection')
-      );
-    } catch(error) {
-      Logger.error(`Connection failed: ${error}`);
-      webSocketService.webSocketSubject = null;
-    }
+    // Subscribe to the WebSocket object
+    webSocketService.webSocketSubject.subscribe(
+      msg => webSocketService.onMessage(msg),
+      err => webSocketService.onError(err),
+      () => Logger.log('Close connection')
+    );
     return webSocketService.webSocketSubject;
   }
 
@@ -147,13 +154,5 @@ export class WebSocketUtil {
    */
   public static getCurrentWebSocketProperties(): WebSocketProperties {
     return this.currentWebSocketProperties;
-  }
-
-  /**
-   * Returns an observable, observing the webSocketService's webSocketSubject
-   * @param webSocketService the service containing the subject
-   */
-  public static webSocketSubjectObservable<T>(webSocketService: WebSocketService<T>) {
-    return of(webSocketService.webSocketSubject);
   }
 }

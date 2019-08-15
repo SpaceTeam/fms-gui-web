@@ -53,7 +53,7 @@
           },
           {
             "name": "Dma initialized",
-            "value": true
+            "value": false
           },
           {
             "name": "Flash ssp initialized",

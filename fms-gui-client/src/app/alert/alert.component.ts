@@ -32,7 +32,6 @@ export class AlertComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
     AlertComponent.hideAllAlerts();
     // We first need to check, if the current active value type changed or not and then we can use the current active type
     AlertComponent.showCurrentActiveAlert((changes.activeAlert) ? changes.activeAlert.currentValue : this.activeAlert);

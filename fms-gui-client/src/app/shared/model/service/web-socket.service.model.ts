@@ -3,6 +3,7 @@ import {WebSocketSubject} from 'rxjs/webSocket';
 import {BehaviorSubject} from 'rxjs';
 import {WebSocketUtil} from '../../utils/web-socket/web-socket.util';
 import {NameValuePairUtils} from '../../utils/NameValuePairUtils';
+import {Logger} from '../../logger/logger';
 
 export abstract class WebSocketService<T> implements Service {
 
@@ -20,11 +21,6 @@ export abstract class WebSocketService<T> implements Service {
    * The global indicator for telling, if the cards data is present
    */
   isDataPresent: boolean;
-
-  /**
-   * The global indicator for telling, if an error in the WebSocket occurred
-   */
-  hasErrorOccurred: boolean;
 
   /**
    * The subject for indicating, if an error has occurred or not
@@ -53,6 +49,10 @@ export abstract class WebSocketService<T> implements Service {
     // Register this service
     WebSocketUtil.registerService(this);
 
+    // Initialize the subjects
+    this.presentSubject = new BehaviorSubject<boolean>(false);
+    this.errorSubject = new BehaviorSubject<boolean>(false);
+
     // Initialize the service
     WebSocketUtil.resetService(this);
   }
@@ -70,8 +70,6 @@ export abstract class WebSocketService<T> implements Service {
 
     // Send to all subscribers, that there is new data
     this.presentSubject.next(NameValuePairUtils.hasData(this.data));
-
-    this.errorSubject.next(false);
   }
 
   /**
@@ -84,7 +82,6 @@ export abstract class WebSocketService<T> implements Service {
     WebSocketUtil.resetService(this);
 
     // Notify the user that an error has occurred
-    this.hasErrorOccurred = true;
     this.errorSubject.next(true);
   }
 

@@ -5,14 +5,15 @@
     <app-alert [errorMessage]="errorMessage"
                [successMessage]="successMessage"
                [informationMessage]="informationMessage"
-               [warningMessage]="warningMessage">
+               [warningMessage]="warningMessage"
+               [activeAlert]="activeAlert">
     </app-alert>
     <mat-card id="connection">
       <mat-card-header>
         <mat-card-title>Connection</mat-card-title>
       </mat-card-header>
       <mat-card-content class="flex-column">
-        <form [formGroup]="addressForm" (ngSubmit)="onSubmit()">
+        <form [formGroup]="addressForm" (ngSubmit)="submit()">
 
           <!-- Host -->
           <mat-form-field>
@@ -33,9 +34,8 @@
           </mat-form-field>
 
           <div class="grid-cols-2">
-            <!-- TODO: Implement me -->
             <!-- Disconnect -->
-            <!-- <button mat-button type="reset" (click)="disconnect()">Disconnect</button> -->
+            <button mat-button type="button" (click)="disconnect()">Disconnect</button>
 
             <!-- Connect -->
             <button mat-button type="submit" [disabled]="!addressForm.valid">Connect</button>

@@ -1,8 +1,5 @@
 <!-- Displays diverse error, success and other messages, which do not need to be displayed the whole time -->
-<div id="alert-error" class="alert alert-danger" role="alert"
-     [ngClass]="{
-      'd-none': !errorMessage
-      }">
+<div id="alert-error" class="alert alert-danger d-none" role="alert">
   <div class="d-flex justify-content-between">
     <mat-icon matListIcon aria-hidden="false" aria-label="Error icon">
       error_outline
@@ -17,10 +14,7 @@
     </button>
   </div>
 </div>
-<div id="alert-info" class="alert alert-info" role="alert"
-     [ngClass]="{
-      'd-none': !informationMessage
-      }">
+<div id="alert-info" class="alert alert-info d-none" role="alert">
   <div class="d-flex justify-content-between">
     <mat-icon matListIcon aria-hidden="false" aria-label="Information icon">
       info
@@ -35,10 +29,7 @@
     </button>
   </div>
 </div>
-<div id="alert-success" class="alert alert-success" role="alert"
-     [ngClass]="{
-      'd-none': !successMessage
-      }">
+<div id="alert-success" class="alert alert-success d-none" role="alert">
   <div class="d-flex justify-content-between">
     <mat-icon matListIcon aria-hidden="false" aria-label="Success icon">
       check_circle_outline
@@ -53,10 +44,7 @@
     </button>
   </div>
 </div>
-<div id="alert-warning" class="alert alert-warning" role="alert"
-     [ngClass]="{
-      'd-none': !warningMessage
-     }">
+<div id="alert-warning" class="alert alert-warning d-none" role="alert">
   <div class="d-flex justify-content-between">
     <mat-icon matListIcon aria-hidden="false" aria-label="Warning icon">
       warning

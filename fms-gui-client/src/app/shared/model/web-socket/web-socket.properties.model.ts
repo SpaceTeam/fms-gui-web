@@ -5,7 +5,7 @@ export interface WebSocketProperties {
   /**
    * The server's host name, e.g. localhost
    */
-  host: string;
+  host?: string;
 
   /**
    * The server's port, e.g. 8080

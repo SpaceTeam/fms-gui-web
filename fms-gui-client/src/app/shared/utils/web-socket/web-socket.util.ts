@@ -3,7 +3,7 @@ import {Logger} from '../../logger/logger';
 import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
 import {WebSocketProperties} from '../../model/web-socket/web-socket.properties.model';
 import {WebSocketService} from '../../model/service/web-socket.service.model';
-import {BehaviorSubject} from 'rxjs';
+import { Subject} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -19,11 +19,7 @@ export class WebSocketUtil {
   /**
    * Contains the current host and port of the connection
    */
-  private static currentWebSocketProperties: WebSocketProperties = {
-    host: '',
-    port: 0,
-    path: ''
-  };
+  private static currentWebSocketProperties: WebSocketProperties = {};
 
   /**
    * Creates a new connection to a server with the given properties and overrides the current one
@@ -45,7 +41,6 @@ export class WebSocketUtil {
 
       // Clear the current service object
       WebSocketUtil.resetService(service);
-      service.hasErrorOccurred = false;
 
       // Set the correct path for the service, e.g. /subscribe/fms for the FmsDataService
       webSocketProperties.path = service.path;
@@ -59,23 +54,13 @@ export class WebSocketUtil {
   }
 
   /**
-   * Resets all values of a service to a fresh start
+   * Resets all values (except the error subject) of a service to a fresh start
    * This is needed when we create a new connection or when an error occurred
    */
   public static resetService<T>(webSocketService: WebSocketService<T>): void {
     webSocketService.data = null;
     webSocketService.webSocketSubject = null;
-
-    // Initialize present subject
-    if (!webSocketService.presentSubject) {
-      webSocketService.presentSubject = new BehaviorSubject<boolean>(false);
-    }
     webSocketService.presentSubject.next(false);
-
-    // Initialize error subject
-    if (!webSocketService.errorSubject) {
-      webSocketService.errorSubject = new BehaviorSubject<boolean>(false);
-    }
   }
 
   /**
@@ -102,8 +87,19 @@ export class WebSocketUtil {
     webSocketService: WebSocketService<T>,
     socketProperties: WebSocketProperties
   ): WebSocketSubject<Array<T>> {
+
+    let openObserver = new Subject();
+
     // Create the WebSocket object
-    webSocketService.webSocketSubject = webSocket(WebSocketUtil.createUrl(socketProperties));
+    // The first parameter is the url to the web socket
+    // The second parameter is the subject,that watches when open events occur on the underlying web socket
+    webSocketService.webSocketSubject = webSocket({
+      url: WebSocketUtil.createUrl(socketProperties),
+      openObserver: openObserver
+    });
+
+    // Add an 'open' listener -> if the connection is open, then no error has occurred
+    openObserver.asObservable().subscribe(() => webSocketService.errorSubject.next(false));
 
     // Subscribe to the WebSocket object
     webSocketService.webSocketSubject.subscribe(
@@ -111,6 +107,10 @@ export class WebSocketUtil {
       err => webSocketService.onError(err),
       () => Logger.log('Close connection')
     );
+
+    // Make the error subject's value undefined, since we don't know, if an error has already occurred or not
+    webSocketService.errorSubject.next(undefined);
+
     return webSocketService.webSocketSubject;
   }
 
@@ -140,6 +140,19 @@ export class WebSocketUtil {
   }
 
   /**
+   * Completes and disconnects all web sockets
+   */
+  public static disconnectAll(): void {
+    this.webSocketServiceArray.forEach(service => {
+      if (service.webSocketSubject) {
+        service.webSocketSubject.complete();
+      }
+      this.resetService(service);
+    });
+  }
+
+
+  /**
    * Push the requesting service to the service array, for notifying the remaining services about a connection change
    * @param webSocketService the service to be included in the array
    */
@@ -152,7 +165,7 @@ export class WebSocketUtil {
   /**
    * Returns the current connection properties
    */
-  public static getCurrentWebSocketProperties(): WebSocketProperties {
+  public static get webSocketProperties(): WebSocketProperties {
     return this.currentWebSocketProperties;
   }
 }

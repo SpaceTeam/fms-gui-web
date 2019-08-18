@@ -14,7 +14,7 @@ export class MainComponent implements OnInit {
   /**
    * The component's title, which will be used in the toolbar
    */
-  title = 'Ground Station - Space Team';
+  title = 'Main Page';
 
   /**
    * The default error message, when the value of an input field is not correct

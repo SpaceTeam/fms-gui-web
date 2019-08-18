@@ -1,7 +1,7 @@
 <!-- Displays cards, which contain information about the most important status bytes -->
 <main>
   <mat-toolbar>{{ title }}</mat-toolbar>
-  <div *ngIf="cardsService.isDataPresent" class="margin-side-1em flex">
+  <div *ngIf="cardsService.isDataPresent" class="margin-side-1em d-flex">
     <mat-card *ngFor="let card of cardsService.getData()">
       <mat-card-header>
         <mat-card-title>{{card.name}}</mat-card-title>

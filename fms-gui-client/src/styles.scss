@@ -1,7 +1,4 @@
 /* You can add global styles to this file, and also import other style files */
-/* TODO: Instead of adding the imports here, add them in angular.json (the same as bootstrap.css) */
-@import "~@angular/material/prebuilt-themes/indigo-pink.css";
-@import "~material-design-icons/iconfont/material-icons.css";
 
 * {
   line-height: 1.5em;
@@ -11,11 +8,11 @@
 $small: 500px;
 $medium: 800px;
 
-.flex, .flex-column, .flex-row {
+.flex-column, .flex-row {
   display: flex;
 }
 
-.flex, .flex-column, .flex-row {
+.flex-column, .flex-row {
   flex-flow: row wrap;
   justify-content: space-around;
 
@@ -115,17 +112,17 @@ body {
 }
 
 main {
-  min-height: 25vw;
+  min-height: 50vh;
 }
 
 mat-card {
   min-width: 150px;
-  max-width: 300px;
+  max-width: 240px;
 
-  // Small screens
-  @media all and (max-width: $small) {
-    min-width: 100px;
-    max-width: 200px;
+  @media all and (max-width: $medium) {
+    margin: 0 !important;
+    margin-bottom: 1rem !important;
+    width: 100%;
   }
 }
 

@@ -1,50 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
+@import 'styles/grid';
 
 * {
   line-height: 1.5em;
 }
 
 // Classes
-$small: 500px;
-$medium: 800px;
 
-.flex-column, .flex-row {
-  display: flex;
-}
-
-.flex-column, .flex-row {
-  flex-flow: row wrap;
-  justify-content: space-around;
-
-  &.left {
-    justify-content: flex-start;
-  }
-
-  &.right {
-    justify-content: flex-end;
-  }
-
-  &.center {
-    justify-content: center;
-  }
-
-  &.space-between {
-    justify-content: space-between;
-  }
-
-  // Small screens
-  @media all and (max-width: $small) {
-    flex-direction: column;
-  }
-}
-
-.flex-column {
-  flex-flow: column wrap;
-}
-
-.flex-row {
-  flex-direction: row;
-}
 
 .margin-1em {
   margin: 1em;
@@ -58,39 +20,6 @@ $medium: 800px;
   margin-left: 0.5em;
 }
 
-.grid {
-  display: grid;
-}
-
-.grid-cols-2 {
-  grid-template-columns: repeat(2, 1fr);
-}
-
-.grid-cols-3 {
-  grid-template-columns: repeat(3, 1fr);
-}
-
-.grid-cols-4 {
-  grid-template-columns: repeat(4, 1fr);
-
-  // Medium screens
-  @media all and (max-width: $medium) {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  // Small screens
-  @media all and (max-width: $small) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-.grid-cols-5 {
-  grid-template-columns: repeat(5, 1fr);
-}
-
-.grid-gap-sm {
-  grid-gap: 2px;
-}
 
 // Tags
 a, button, button:focus {

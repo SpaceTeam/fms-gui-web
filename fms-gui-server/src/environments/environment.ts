@@ -19,15 +19,13 @@ export const environment = {
         port: 9000,
         paths: {
             subscribe: {
-                // basePath: "/subscribe/"
-                // basePath: "/ws/",
                 basePath: "/",
                 fms: "",
                 cards: "cards",
                 controls: "controls"
             },
             data: {
-                fms: '/assets/json/fms-name-value-pairs.json',
+                fms: '/assets/json/fms-name-value-pairs-with-gnss.json',
                 cards: '/assets/json/cards-name-value-pairs.json',
                 controls: '/assets/json/status-panel.controls.json'
             }

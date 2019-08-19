@@ -1,8 +1,20 @@
 <!-- Displays the current flight with the data from the FMS JSON -->
 <main>
   <mat-toolbar>{{ title }}</mat-toolbar>
-  <div *ngIf="fmsDataService.isDataPresent" class="margin-side-1em">
-    Ready to go!
+  <div *ngIf="fmsDataService.isDataPresent" id="flight-mode-main" class="margin-side-1em h-100">
+    <div class="grid-cols-2">
+      <div id="flight-mode-chart" class="d-flex align-items-center"></div>
+      <div id="flight-mode-information" class="grid-cols-1" *ngIf="fmsDataService.getValue('GNSS') !== null">
+        <div *ngFor="let item of gnss[0]" class="grid-cols-2">
+          <span>
+            {{item.name}}
+          </span>
+          <span>
+            {{item.value}}
+          </span>
+        </div>
+      </div>
+    </div>
   </div>
   <app-loading *ngIf="!fmsDataService.isDataPresent"></app-loading>
 </main>

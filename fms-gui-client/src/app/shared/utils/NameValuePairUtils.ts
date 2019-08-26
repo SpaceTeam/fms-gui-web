@@ -35,14 +35,14 @@ export namespace NameValuePairUtils {
 
     // 4) If the tree is empty, then there is no element with the given path
     if (tree.length === 0) {
-      Logger.error(`There is no ${next} in ${tree}`);
+      // Logger.error(`There is no ${next} in ${tree}`);
       // throw new NoSuchEntryException(`There is no ${next} in ${tree}`);
       return null;
     }
 
     // 5) If the tree still has more than one element, then we have duplicate entries
     if (tree.length > 1) {
-      Logger.error(`Duplicate entry ${path}`);
+      // Logger.error(`Duplicate entry ${path}`);
       // throw new DuplicateEntryException(`Duplicate entry ${path}`);
       return null;
     }

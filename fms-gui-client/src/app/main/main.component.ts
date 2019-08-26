@@ -59,7 +59,7 @@ export class MainComponent implements OnInit {
    * and sets the current active alert type
    */
   private addErrorListener(): void {
-    this.fmsDataService.errorSubject.asObservable().subscribe(hasErrorOccurred => this.setActiveAlert(hasErrorOccurred));
+    this.fmsDataService.errorPresent$.subscribe(hasErrorOccurred => this.setActiveAlert(hasErrorOccurred));
   }
 
   /**

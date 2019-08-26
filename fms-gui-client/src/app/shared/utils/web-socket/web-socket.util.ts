@@ -3,7 +3,7 @@ import {Logger} from '../../logger/logger';
 import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
 import {WebSocketProperties} from '../../model/web-socket/web-socket.properties.model';
 import {WebSocketService} from '../../model/service/web-socket.service.model';
-import { Subject} from 'rxjs';
+import {Subject} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -40,7 +40,7 @@ export class WebSocketUtil {
       }
 
       // Clear the current service object
-      WebSocketUtil.resetService(service);
+      service.clearService();
 
       // Set the correct path for the service, e.g. /subscribe/fms for the FmsDataService
       webSocketProperties.path = service.path;
@@ -49,18 +49,8 @@ export class WebSocketUtil {
       WebSocketUtil.connectWebSocket(service, webSocketProperties);
 
       // In order for the components to get notified whether the service has changed, we need to subscribe to changes
-      service.presentSubject.asObservable().subscribe(bool => service.isDataPresent = bool);
+      service.dataPresent$.subscribe(bool => service.isDataPresent = bool);
     });
-  }
-
-  /**
-   * Resets all values (except the error subject) of a service to a fresh start
-   * This is needed when we create a new connection or when an error occurred
-   */
-  public static resetService<T>(webSocketService: WebSocketService<T>): void {
-    webSocketService.data = null;
-    webSocketService.webSocketSubject = null;
-    webSocketService.presentSubject.next(false);
   }
 
   /**
@@ -99,7 +89,7 @@ export class WebSocketUtil {
     });
 
     // Add an 'open' listener -> if the connection is open, then no error has occurred
-    openObserver.asObservable().subscribe(() => webSocketService.errorSubject.next(false));
+    openObserver.asObservable().subscribe(() => webSocketService.errorPresentSource.next(false));
 
     // Subscribe to the WebSocket object
     webSocketService.webSocketSubject.subscribe(
@@ -109,7 +99,7 @@ export class WebSocketUtil {
     );
 
     // Make the error subject's value undefined, since we don't know, if an error has already occurred or not
-    webSocketService.errorSubject.next(undefined);
+    webSocketService.errorPresentSource.next(undefined);
 
     return webSocketService.webSocketSubject;
   }
@@ -147,7 +137,7 @@ export class WebSocketUtil {
       if (service.webSocketSubject) {
         service.webSocketSubject.complete();
       }
-      this.resetService(service);
+      service.clearService();
     });
   }
 

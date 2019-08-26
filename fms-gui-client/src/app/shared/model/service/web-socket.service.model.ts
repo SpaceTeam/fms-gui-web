@@ -1,21 +1,22 @@
 import {Service} from './service.model';
 import {WebSocketSubject} from 'rxjs/webSocket';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {WebSocketUtil} from '../../utils/web-socket/web-socket.util';
 import {NameValuePairUtils} from '../../utils/NameValuePairUtils';
-import {Logger} from '../../logger/logger';
 
 export abstract class WebSocketService<T> implements Service {
 
   /**
    * The websocket connection to the server
+   * TODO: Only allow to modify the webSocketSubject over this service
    */
   webSocketSubject: WebSocketSubject<Array<T>>;
 
   /**
    * The subject for indicating, if data is available or not
    */
-  presentSubject: BehaviorSubject<boolean>;
+  private dataPresentSource: BehaviorSubject<boolean>;
+  dataPresent$: Observable<boolean>;
 
   /**
    * The global indicator for telling, if the cards data is present
@@ -25,7 +26,8 @@ export abstract class WebSocketService<T> implements Service {
   /**
    * The subject for indicating, if an error has occurred or not
    */
-  errorSubject: BehaviorSubject<boolean>;
+  errorPresentSource: BehaviorSubject<boolean>;
+  errorPresent$: Observable<boolean>;
 
   /**
    * The data container for a service
@@ -50,11 +52,21 @@ export abstract class WebSocketService<T> implements Service {
     WebSocketUtil.registerService(this);
 
     // Initialize the subjects
-    this.presentSubject = new BehaviorSubject<boolean>(false);
-    this.errorSubject = new BehaviorSubject<boolean>(false);
+    this.resetSources();
 
     // Initialize the service
-    WebSocketUtil.resetService(this);
+    this.clearService();
+  }
+
+  /**
+   * Initializes the service's 'BehaviourSubject' objects
+   */
+  private resetSources(): void {
+    this.dataPresentSource = new BehaviorSubject<boolean>(false);
+    this.errorPresentSource = new BehaviorSubject<boolean>(false);
+
+    this.dataPresent$ = this.dataPresentSource.asObservable();
+    this.errorPresent$ = this.errorPresentSource.asObservable();
   }
 
   /**
@@ -69,7 +81,7 @@ export abstract class WebSocketService<T> implements Service {
     this.allData.push(msg);
 
     // Send to all subscribers, that there is new data
-    this.presentSubject.next(NameValuePairUtils.hasData(this.data));
+    this.dataPresentSource.next(NameValuePairUtils.hasData(this.data));
   }
 
   /**
@@ -79,10 +91,20 @@ export abstract class WebSocketService<T> implements Service {
    */
   onError(err: any): any {
     // Clear the service object
-    WebSocketUtil.resetService(this);
+    this.clearService();
 
     // Notify the user that an error has occurred
-    this.errorSubject.next(true);
+    this.errorPresentSource.next(true);
+  }
+
+  /**
+   * Resets all values (except the error subject) of a service to a fresh start
+   * This is needed when we create a new connection or when an error occurred
+   */
+  public clearService(): void {
+    this.data = null;
+    this.webSocketSubject = null;
+    this.dataPresentSource.next(false);
   }
 
   /**

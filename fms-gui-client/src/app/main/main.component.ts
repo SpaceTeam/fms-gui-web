@@ -1,15 +1,16 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, Validators} from '@angular/forms';
 import {WebSocketUtil} from '../shared/utils/web-socket/web-socket.util';
 import {FmsDataService} from '../shared/services/fms-data/fms-data.service';
 import {AlertTypeEnum} from '../shared/enums/alert-type.enum';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.scss']
 })
-export class MainComponent implements OnInit {
+export class MainComponent implements OnInit, OnDestroy {
 
   /**
    * The component's title, which will be used in the toolbar
@@ -30,6 +31,8 @@ export class MainComponent implements OnInit {
    * An indicator, telling what kind of alert should be displayed
    */
   activeAlert: AlertTypeEnum;
+
+  private errorSubscription: Subscription;
 
   // TODO: Store the messages in some properties file
   errorMessage: string;
@@ -59,7 +62,11 @@ export class MainComponent implements OnInit {
    * and sets the current active alert type
    */
   private addErrorListener(): void {
-    this.fmsDataService.errorPresent$.subscribe(hasErrorOccurred => this.setActiveAlert(hasErrorOccurred));
+    this.errorSubscription = this.fmsDataService.errorPresent$.subscribe(hasErrorOccurred => this.setActiveAlert(hasErrorOccurred));
+  }
+
+  ngOnDestroy() {
+    this.errorSubscription.unsubscribe();
   }
 
   /**
@@ -82,7 +89,6 @@ export class MainComponent implements OnInit {
       }
     }
   }
-
 
   /**
    * Submits the current form

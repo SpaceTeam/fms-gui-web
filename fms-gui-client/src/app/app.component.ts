@@ -14,7 +14,7 @@ export class AppComponent {
 
   /**
    * The constructor containing all necessary services throughout the application
-   * The service need to be created at least once
+   * The services need to be created at least once
    * @param fmsDataService the FMS data service for the whole application, needs to be injected once
    * @param cardsService the Cards service for the whole application
    * @param controlService the Controls service for the whole application

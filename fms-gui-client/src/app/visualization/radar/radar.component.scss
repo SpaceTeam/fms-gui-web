@@ -1,0 +1,12 @@
+.circles {
+  fill: none;
+  stroke: black;
+  stroke-width: 1;
+}
+.position {
+  fill: red;
+
+  &:hover {
+    fill: orange;
+  }
+}

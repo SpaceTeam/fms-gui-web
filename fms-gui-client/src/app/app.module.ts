@@ -17,7 +17,7 @@ import {CardsComponent} from './cards/cards.component';
 import {LoadingComponent} from './loading/loading.component';
 import {AlertComponent} from './alert/alert.component';
 import {StatusHighlightDirective} from './shared/directives/status-highlight/status-highlight.directive';
-import { RadarComponent } from './visualization/radar/radar.component';
+import {RadarComponent} from './visualization/radar/radar.component';
 
 @NgModule({
   imports: [

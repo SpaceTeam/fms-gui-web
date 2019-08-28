@@ -56,11 +56,10 @@ export class RadarComponent implements OnInit {
 
   private initChart(): void {
     const elem = d3.select('#' + this.chartContainerId);
+    const svg = elem.append('svg');
 
     this.size = Math.min(Number(elem.style('width').slice(0, -2)), Number(elem.style('height').slice(0, -2)));
-    console.log(this.size);
 
-    const svg = elem.append('svg');
 
     svg.attr('width', this.size);
     svg.attr('height', this.size);
@@ -78,15 +77,15 @@ export class RadarComponent implements OnInit {
     svg
       .data([this.center])
       .append('circle')
-      .attr('cx', position => this.calculateLongitudeFromGreenwich(position.longitude))
-      .attr('cy', position => this.calculateLatitudeFromGreenwich(position.latitude))
+      .attr('cx', position => this.calculateLongitude(position.longitude))
+      .attr('cy', position => this.calculateLatitude(position.latitude))
       .attr('r', '0.1em');
 
     svg
       .data([this.center])
       .append('circle')
-      .attr('cx', position => this.calculateLongitudeFromGreenwich(position.longitude))
-      .attr('cy', position => this.calculateLatitudeFromGreenwich(position.latitude))
+      .attr('cx', position => this.calculateLongitude(position.longitude))
+      .attr('cy', position => this.calculateLatitude(position.latitude))
       .attr('r', this.size / 2)
       .classed('circles', true);
   }
@@ -104,8 +103,8 @@ export class RadarComponent implements OnInit {
       .data([this.center, this.center, ...this.positions])
       .enter()
       .append('circle')
-      .attr('cx', position => this.calculateLongitudeFromGreenwich(position.longitude))
-      .attr('cy', position => this.calculateLatitudeFromGreenwich(position.latitude))
+      .attr('cx', position => this.calculateLongitude(position.longitude))
+      .attr('cy', position => this.calculateLatitude(position.latitude))
       .attr('r', '0.25em')
       .attr('class', 'position');
   }
@@ -116,12 +115,11 @@ export class RadarComponent implements OnInit {
    * @param longitude the position's longitude
    * @return the longitude position in the diagram
    */
-  private calculateLongitudeFromGreenwich(longitude: number): number {
+  private calculateLongitude(longitude: number): number {
     const longitudeStep: number = this.size / 360;
-    const center: number = this.size / 2;
 
     // Calculate the longitude from the center of the visualization (vertical and horizontal)
-    return center + longitude * longitudeStep;
+    return this.center.longitude + longitude * longitudeStep;
   }
 
   /**
@@ -129,12 +127,11 @@ export class RadarComponent implements OnInit {
    * @param latitude the position's latitude
    * @return the latitude position in the diagram
    */
-  private calculateLatitudeFromGreenwich(latitude: number): number {
+  private calculateLatitude(latitude: number): number {
     const latitudeStep: number = this.size / 180;
-    const center: number = this.size / 2;
 
     // Calculate the latitude from the center of the visualization (vertical and horizontal)
     // We define 'Minus', since the y-Axis is shifted per default
-    return center - latitude * latitudeStep;
+    return this.center.latitude - latitude * latitudeStep;
   }
 }

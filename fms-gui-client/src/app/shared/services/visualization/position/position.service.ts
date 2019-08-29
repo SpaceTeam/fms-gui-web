@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {Subject} from 'rxjs';
 import {Position} from '../../../model/flight/position';
 import {FmsDataService} from '../../fms-data/fms-data.service';

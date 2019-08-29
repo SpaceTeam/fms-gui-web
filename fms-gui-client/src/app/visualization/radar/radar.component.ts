@@ -14,27 +14,27 @@ export class RadarComponent implements OnInit {
   /**
    * The SVG element's id
    */
-  private chartId = 'radar-chart-svg';
+  chartId = 'radar-chart-svg';
 
   /**
    * The SVG container's id
    */
-  private chartContainerId = 'radar-chart-div';
+  chartContainerId = 'radar-chart-div';
 
   /**
    * The size of the container
    */
-  private size: number;
+  size: number;
 
   /**
    * The current and previous positions of the flight object
    */
-  private positions: Array<Position>;
+  positions: Array<Position>;
 
   /**
    * Custom position
    */
-  private center: Position;
+  center: Position;
 
   constructor(private positionService: PositionService) {
     // Initialize the local objects
@@ -59,7 +59,7 @@ export class RadarComponent implements OnInit {
     const svg = elem.append('svg');
 
     this.size = Math.min(Number(elem.style('width').slice(0, -2)), Number(elem.style('height').slice(0, -2)));
-
+    const halfSize = this.size / 2;
 
     svg.attr('width', this.size);
     svg.attr('height', this.size);
@@ -68,25 +68,26 @@ export class RadarComponent implements OnInit {
     // Set the center of the SVG
     // TODO: Let the user decide what the center should be
     this.center = {
-      longitude: 0,
-      latitude: 0,
+      longitude: 50,
+      latitude: 15,
       altitude: 0,
       timestamp: 0
     };
 
+    // TODO: You should be able to scale the SVG
     svg
       .data([this.center])
       .append('circle')
-      .attr('cx', position => this.calculateLongitude(position.longitude))
-      .attr('cy', position => this.calculateLatitude(position.latitude))
+      .attr('cx', () => halfSize)
+      .attr('cy', () => halfSize)
       .attr('r', '0.1em');
 
     svg
       .data([this.center])
       .append('circle')
-      .attr('cx', position => this.calculateLongitude(position.longitude))
-      .attr('cy', position => this.calculateLatitude(position.latitude))
-      .attr('r', this.size / 2)
+      .attr('cx', () => halfSize)
+      .attr('cy', () => halfSize)
+      .attr('r', halfSize)
       .classed('circles', true);
   }
 
@@ -103,35 +104,58 @@ export class RadarComponent implements OnInit {
       .data([this.center, this.center, ...this.positions])
       .enter()
       .append('circle')
-      .attr('cx', position => this.calculateLongitude(position.longitude))
-      .attr('cy', position => this.calculateLatitude(position.latitude))
+      .attr('cx', position => this.calculateDistanceFromCenter(position,'longitude'))
+      .attr('cy', position => this.calculateDistanceFromCenter(position,'latitude'))
       .attr('r', '0.25em')
       .attr('class', 'position');
   }
 
-
   /**
-   * Calculates the longitude position of the point in the diagram with the given longitude
-   * @param longitude the position's longitude
-   * @return the longitude position in the diagram
+   * Calculates the distance of the given position from the center, based on the given type
+   *
+   * @param position of the point of interest
+   * @param type used for calculating the distance from the center
    */
-  private calculateLongitude(longitude: number): number {
-    const longitudeStep: number = this.size / 360;
+  calculateDistanceFromCenter(position: Position, type: keyof Position): number {
+    // We add '+1', so that every element fits in the space, although they might be pretty close to each other
+    const step: number = this.size / (this.calculateDistanceToBorder(type) + 1);
+    const stepDistance: number = position[type] * step;
 
-    // Calculate the longitude from the center of the visualization (vertical and horizontal)
-    return this.center.longitude + longitude * longitudeStep;
+    // Calculate the distance from the center of the visualization (vertical and horizontal)
+    let val: number = this.center[type];
+
+    if (type === 'latitude') {
+      val -= stepDistance;
+    } else {
+      val += stepDistance;
+    }
+
+    return val;
   }
 
   /**
-   * Calculates the latitude position of the point in the diagram with the given latitude
-   * @param latitude the position's latitude
-   * @return the latitude position in the diagram
+   * Calculates the distance from the center of the diagram to the border
+   * This is then needed in the 'calculateDistanceFromCenter' method
+   * We use the following formula for the calculation:
+   *
+   * d ... Distance
+   *
+   * d(n) = n, if ∀p∊P: |lon(p) - lon(p_0)| < n < |lon(p) - lon(p_0)| + 1, n∊ℕ
+   *
+   * Or even easier:
+   * d = floor(|lon(p_max) - lon(p_0)|)
+   *
+   * @param type a property name of 'Position', e.g. 'longitude' or 'latitude'
+   * @return the maximum property distance from the center to the border of the SVG
    */
-  private calculateLatitude(latitude: number): number {
-    const latitudeStep: number = this.size / 180;
+  calculateDistanceToBorder(type: keyof Position): number {
 
-    // Calculate the latitude from the center of the visualization (vertical and horizontal)
-    // We define 'Minus', since the y-Axis is shifted per default
-    return this.center.latitude - latitude * latitudeStep;
+    const arr = [this.center, ...this.positions];
+
+    // 1) Find the maximum of the absolute 'type' values in the set
+    const typeArray = Array.from(arr, position => Math.abs(position[type]));
+
+    // 2) Return the floored value
+    return Math.floor(Math.max(...typeArray) - Math.abs(this.center[type])) + 1;
   }
 }

@@ -100,45 +100,103 @@ export class RadarComponent implements OnInit {
       .data([this.center, this.center, ...this.positions])
       .enter()
       .append('circle')
-      .attr('cx', position => this.center.longitude + this.calculateDistanceFromCenter(position,'longitude'))
-      .attr('cy', position => this.center.latitude - this.calculateDistanceFromCenter(position,'latitude'))
+      .attr('cx', position => this.positionInDiagram(position,'longitude'))
+      .attr('cy', position => this.positionInDiagram(position,'latitude'))
       .attr('r', '0.25em')
       .attr('class', 'position');
   }
 
   /**
    * Calculates the distance of the given position from the center, based on the given type
+   * It scales with the outer most point (the length between the center and edge varies with the outer most point)
+   *
+   * Also called the 'lerp' method (see https://en.wikipedia.org/wiki/Linear_interpolation)
    *
    * @param position of the point of interest
    * @param type used for calculating the distance from the center
    */
-  calculateDistanceFromCenter(position: Position, type: PositionType): number {
-    // Calculate the distance from the center of the visualization (vertical and horizontal)
-    if (position.equals(this.center)) {
+  positionInDiagram(position: Position, type: PositionType): number {
+    const x_0 = this.size / 2;
+    const x_1 = position[type] < x_0 ? 0 : this.size;
+
+    const t = this.interpolationValue(position, type);
+    return (1 - t) * x_0 + t * x_1;
+  }
+
+  /**
+   * This method returns the 't' value, for a linear interpolation
+   *
+   * The general method we would like to use is a simple linear interpolation between values of one dimension:
+   * x = (1 - t) * x_0 + t * x1
+   *
+   * To get the 't', we just have to reform the upper equation to
+   * t = (x / x_0 - 1) / (x_1 / x_0 - 1)
+   *
+   * It is possible, that either x_0, x_1 or both are zero, so we have to take care of this
+   *
+   * @param position contains the 'x' we need to use for the calculation
+   * @param type the specific value we want to use for the interpolation
+   * @param negative specifies, whether the border value should be negative
+   */
+  interpolationValue(position: Position, type: PositionType, negative?: boolean): number {
+    // First check, whether the start or end point have '0' as a value
+    const x_0 = this.center[type];
+    const x_1 = this.distanceToBorder(type) * (negative ? -1 : 1);
+
+    const x = position[type];
+
+    // Check whether the number is in the range between the numbers.
+    // We assume, that x_0 is greater than x_1
+    if (negative && !(x_1 <= x && x <= x_0)) {
+      throw new RangeError(`Error: ${x} is out of bound between [${x_1},${x_0}]`);
+    }
+    // Check whether the number is in the range between the numbers.
+    // We assume, that x_0 is less than x_1
+    if (!negative && !(x_0 <= x && x <= x_1)) {
+      throw new RangeError(`Error: ${x} is out of bound between [${x_0},${x_1}]`);
+    }
+    // Check whether there is any range
+    if (x_0 === 0 && x_1 === 0) {
       return 0;
     }
+    // Check if the lower border is 0 (a DivideByZeroException would then occur)
+    if(x_0 === 0) {
+      return x === 0 ? (negative ? 1 : 0) : x / x_1;
+    }
+    // Check, if the upper border is 0
+    if(x_1 === 0) {
+      return 1 - x / x_0;
+    }
+    // Calculate the simple interpolation value
+    return (x / x_0 - 1) / (x_1 / x_0 - 1);
 
-    const step: number = (this.size / 2) / this.calculateDistanceToBorder(type);
-    return position[type] * step;
+  }
+
+  /**
+   * Calculates the radius of a circle between the center and the most outer point
+   * returns an integer with the radius to the border
+   */
+  radius2D(): number {
+    return Math.hypot(this.distanceToBorder('longitude'), this.distanceToBorder('latitude'));
   }
 
   /**
    * Calculates the distance from the center of the diagram to the border
-   * This is then needed in the 'calculateDistanceFromCenter' method
+   * This is then needed in the 'positionInDiagram' method
    * We use the following formula for the calculation of distance d:
    *
-   * d = floor(|p_max[type]| - |p_0[type]|) + 1
+   * d = ceil(|p_max[type]| - |p_0[type]|)
    *
    * @param type a property name of 'Position', e.g. 'longitude' or 'latitude'
    * @return the maximum property distance from the center to the border of the SVG
    */
-  calculateDistanceToBorder(type: PositionType): number {
+  distanceToBorder(type: PositionType): number {
     const arr = [this.center, ...this.positions];
 
     // 1) Find the maximum of the absolute 'type' values in the set
     const typeArray = Array.from(arr, position => Math.abs(position[type]));
 
     // 2) Return the ceiled value
-    return Math.floor(Math.max(...typeArray) - Math.abs(this.center[type])) + 1;
+    return Math.ceil(Math.max(...typeArray) - Math.abs(this.center[type]));
   }
 }

@@ -21,4 +21,8 @@ export class Position {
       this.altitude === position.altitude &&
       this.timestamp === position.timestamp;
   }
+
+  toString(): string {
+    return `[lon:${this.longitude},lat:${this.latitude},alt:${this.altitude},tim:${this.timestamp}]`;
+  }
 }

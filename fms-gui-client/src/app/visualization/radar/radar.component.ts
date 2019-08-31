@@ -2,6 +2,7 @@ import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {Position} from '../../shared/model/flight/position';
 import * as d3 from 'd3';
 import {PositionService} from '../../shared/services/visualization/position/position.service';
+import {PositionType} from '../../shared/model/flight/position.type';
 
 @Component({
   selector: 'app-radar',
@@ -67,12 +68,7 @@ export class RadarComponent implements OnInit {
 
     // Set the center of the SVG
     // TODO: Let the user decide what the center should be
-    this.center = {
-      longitude: 50,
-      latitude: 15,
-      altitude: 0,
-      timestamp: 0
-    };
+    this.center = new Position(50, 15);
 
     // TODO: You should be able to scale the SVG
     svg
@@ -104,8 +100,8 @@ export class RadarComponent implements OnInit {
       .data([this.center, this.center, ...this.positions])
       .enter()
       .append('circle')
-      .attr('cx', position => this.calculateDistanceFromCenter(position,'longitude'))
-      .attr('cy', position => this.calculateDistanceFromCenter(position,'latitude'))
+      .attr('cx', position => this.center.longitude + this.calculateDistanceFromCenter(position,'longitude'))
+      .attr('cy', position => this.center.latitude - this.calculateDistanceFromCenter(position,'latitude'))
       .attr('r', '0.25em')
       .attr('class', 'position');
   }
@@ -116,46 +112,33 @@ export class RadarComponent implements OnInit {
    * @param position of the point of interest
    * @param type used for calculating the distance from the center
    */
-  calculateDistanceFromCenter(position: Position, type: keyof Position): number {
-    // We add '+1', so that every element fits in the space, although they might be pretty close to each other
-    const step: number = this.size / (this.calculateDistanceToBorder(type) + 1);
-    const stepDistance: number = position[type] * step;
-
+  calculateDistanceFromCenter(position: Position, type: PositionType): number {
     // Calculate the distance from the center of the visualization (vertical and horizontal)
-    let val: number = this.center[type];
-
-    if (type === 'latitude') {
-      val -= stepDistance;
-    } else {
-      val += stepDistance;
+    if (position.equals(this.center)) {
+      return 0;
     }
 
-    return val;
+    const step: number = (this.size / 2) / this.calculateDistanceToBorder(type);
+    return position[type] * step;
   }
 
   /**
    * Calculates the distance from the center of the diagram to the border
    * This is then needed in the 'calculateDistanceFromCenter' method
-   * We use the following formula for the calculation:
+   * We use the following formula for the calculation of distance d:
    *
-   * d ... Distance
-   *
-   * d(n) = n, if ∀p∊P: |lon(p) - lon(p_0)| < n < |lon(p) - lon(p_0)| + 1, n∊ℕ
-   *
-   * Or even easier:
-   * d = floor(|lon(p_max) - lon(p_0)|)
+   * d = floor(|p_max[type]| - |p_0[type]|) + 1
    *
    * @param type a property name of 'Position', e.g. 'longitude' or 'latitude'
    * @return the maximum property distance from the center to the border of the SVG
    */
-  calculateDistanceToBorder(type: keyof Position): number {
-
+  calculateDistanceToBorder(type: PositionType): number {
     const arr = [this.center, ...this.positions];
 
     // 1) Find the maximum of the absolute 'type' values in the set
     const typeArray = Array.from(arr, position => Math.abs(position[type]));
 
-    // 2) Return the floored value
+    // 2) Return the ceiled value
     return Math.floor(Math.max(...typeArray) - Math.abs(this.center[type])) + 1;
   }
 }

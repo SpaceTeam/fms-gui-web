@@ -100,8 +100,8 @@ export class RadarComponent implements OnInit {
       .data([this.center, this.center, ...this.positions])
       .enter()
       .append('circle')
-      .attr('cx', position => this.positionInDiagram(position,'longitude'))
-      .attr('cy', position => this.positionInDiagram(position,'latitude'))
+      .attr('cx', position => this.positionInDiagram(position, 'longitude'))
+      .attr('cy', position => this.positionInDiagram(position, 'latitude'))
       .attr('r', '0.25em')
       .attr('class', 'position');
   }
@@ -116,8 +116,9 @@ export class RadarComponent implements OnInit {
    * @param type used for calculating the distance from the center
    */
   positionInDiagram(position: Position, type: PositionType): number {
+    const positionType = position[type];
     const x_0 = this.size / 2;
-    const x_1 = position[type] < x_0 ? 0 : this.size;
+    const x_1 = positionType < x_0 ? 0 : this.size;
 
     const t = this.interpolationValue(position, type);
     return (1 - t) * x_0 + t * x_1;
@@ -136,39 +137,32 @@ export class RadarComponent implements OnInit {
    *
    * @param position contains the 'x' we need to use for the calculation
    * @param type the specific value we want to use for the interpolation
-   * @param negative specifies, whether the border value should be negative
    */
-  interpolationValue(position: Position, type: PositionType, negative?: boolean): number {
-    // First check, whether the start or end point have '0' as a value
+  interpolationValue(position: Position, type: PositionType): number {
     const x_0 = this.center[type];
-    const x_1 = this.distanceToBorder(type) * (negative ? -1 : 1);
+    const x_1 = this.distanceToBorder(type);
+    const positionType = position[type];
 
-    const x = position[type];
+    const x = Math.abs(positionType);
 
-    // Check whether the number is in the range between the numbers.
-    // We assume, that x_0 is greater than x_1
-    if (negative && !(x_1 <= x && x <= x_0)) {
-      throw new RangeError(`Error: ${x} is out of bound between [${x_1},${x_0}]`);
-    }
-    // Check whether the number is in the range between the numbers.
-    // We assume, that x_0 is less than x_1
-    if (!negative && !(x_0 <= x && x <= x_1)) {
-      throw new RangeError(`Error: ${x} is out of bound between [${x_0},${x_1}]`);
+    // Check whether the number is in the range between the numbers
+    if (!(x_0 <= x && x <= x_1)) {
+      throw new RangeError(`Error: ${positionType} is out of bounds between [${Math.min(x_0,x_1)},${Math.max(x_0,x_1)}]`);
     }
     // Check whether there is any range
     if (x_0 === 0 && x_1 === 0) {
       return 0;
     }
     // Check if the lower border is 0 (a DivideByZeroException would then occur)
-    if(x_0 === 0) {
-      return x === 0 ? (negative ? 1 : 0) : x / x_1;
+    if (x_0 === 0) {
+      return x / x_1;
     }
     // Check, if the upper border is 0
-    if(x_1 === 0) {
+    if (x_1 === 0) {
       return 1 - x / x_0;
     }
     // Calculate the simple interpolation value
-    return (x / x_0 - 1) / (x_1 / x_0 - 1);
+    return (x - x_0) / (x_1 - x_0);
 
   }
 
@@ -185,7 +179,7 @@ export class RadarComponent implements OnInit {
    * This is then needed in the 'positionInDiagram' method
    * We use the following formula for the calculation of distance d:
    *
-   * d = ceil(|p_max[type]| - |p_0[type]|)
+   * d = |p_max[type]| - |p_0[type]|
    *
    * @param type a property name of 'Position', e.g. 'longitude' or 'latitude'
    * @return the maximum property distance from the center to the border of the SVG
@@ -197,6 +191,6 @@ export class RadarComponent implements OnInit {
     const typeArray = Array.from(arr, position => Math.abs(position[type]));
 
     // 2) Return the ceiled value
-    return Math.ceil(Math.max(...typeArray) - Math.abs(this.center[type]));
+    return Math.max(...typeArray) - Math.abs(this.center[type]);
   }
 }

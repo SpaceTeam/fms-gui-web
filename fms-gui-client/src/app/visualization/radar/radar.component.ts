@@ -121,7 +121,7 @@ export class RadarComponent implements OnInit {
     const x_1 = positionType < x_0 ? 0 : this.size;
 
     const t = this.interpolationValue(position, type);
-    return (1 - t) * x_0 + t * x_1;
+    return (1 - t) * x_0 + t * x_1; // TODO: Maybe use d3's interpolator for this? Does the same thing
   }
 
   /**
@@ -139,31 +139,39 @@ export class RadarComponent implements OnInit {
    * @param type the specific value we want to use for the interpolation
    */
   interpolationValue(position: Position, type: PositionType): number {
-    const x_0 = this.center[type];
-    const x_1 = this.distanceToBorder(type);
-    const positionType = position[type];
+    const x_0 = this.roundNumber(Math.abs(this.center[type]));
+    const x_1 = Math.abs(x_0 - this.longestDistance(type));
+    const x = this.roundNumber(Math.abs(position[type]));
+    let value;
 
-    const x = Math.abs(positionType);
+    let inRange;
+    if (x_0 > x_1) {
+      inRange = (x_1 <= x && x <= x_0);
+    } else {
+      inRange = (x_0 <= x && x <= x_1);
+    }
 
     // Check whether the number is in the range between the numbers
-    if (!(x_0 <= x && x <= x_1)) {
-      throw new RangeError(`Error: ${positionType} is out of bounds between [${Math.min(x_0,x_1)},${Math.max(x_0,x_1)}]`);
+    if (!inRange) {
+      throw new RangeError(`Error: ${x} is out of bounds between [${Math.min(x_0,x_1)},${Math.max(x_0,x_1)}]`);
     }
     // Check whether there is any range
-    if (x_0 === 0 && x_1 === 0) {
-      return 0;
+    if (x_0 === x_1) {
+      value = 0;
     }
     // Check if the lower border is 0 (a DivideByZeroException would then occur)
-    if (x_0 === 0) {
-      return x / x_1;
+    else if (x_0 === 0) {
+      value = x / x_1;
     }
     // Check, if the upper border is 0
-    if (x_1 === 0) {
-      return 1 - x / x_0;
+    else if (x_1 === 0) {
+      value = 1 - x / x_0;
     }
     // Calculate the simple interpolation value
-    return (x - x_0) / (x_1 - x_0);
-
+    else {
+      value = (x - x_0) / (x_1 - x_0);
+    }
+    return this.roundNumber(value);
   }
 
   /**
@@ -171,11 +179,11 @@ export class RadarComponent implements OnInit {
    * returns an integer with the radius to the border
    */
   radius2D(): number {
-    return Math.hypot(this.distanceToBorder('longitude'), this.distanceToBorder('latitude'));
+    return Math.hypot(this.longestDistance('longitude'), this.longestDistance('latitude'));
   }
 
   /**
-   * Calculates the distance from the center of the diagram to the border
+   * Calculates the distance from the center of the diagram to the border (outer most element)
    * This is then needed in the 'positionInDiagram' method
    * We use the following formula for the calculation of distance d:
    *
@@ -184,13 +192,20 @@ export class RadarComponent implements OnInit {
    * @param type a property name of 'Position', e.g. 'longitude' or 'latitude'
    * @return the maximum property distance from the center to the border of the SVG
    */
-  distanceToBorder(type: PositionType): number {
+  longestDistance(type: PositionType): number {
     const arr = [this.center, ...this.positions];
 
-    // 1) Find the maximum of the absolute 'type' values in the set
-    const typeArray = Array.from(arr, position => Math.abs(position[type]));
+    // 1) Get only the needed values from the positions array, map them to be the difference between the center and the new point
+    const typeArray = Array
+      .from(arr, position => position[type])
+      .map(value => Math.abs(value - this.center[type]));
 
-    // 2) Return the ceiled value
-    return Math.max(...typeArray) - Math.abs(this.center[type]);
+    // 2) Return the maximum distance
+    const max = Math.max(...typeArray);
+    return this.roundNumber(max);
+  }
+
+  roundNumber(num: number): number {
+    return Math.round(num * Math.pow(10, 6)) / Math.pow(10, 6);
   }
 }

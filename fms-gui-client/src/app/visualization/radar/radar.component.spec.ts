@@ -11,17 +11,16 @@ describe('RadarComponent', () => {
   const positions: Array<Position> = [
     new Position(0,0),
     new Position(-6.283185307, 15.70796327),  // -2 PI, 5 PI
-    new Position(103.6725576, -50.26548246),   // 33 PI, -16 PI
-    new Position(-34.55751919, -87.9645943), // 11 PI, 28 PI,
+    new Position(103.6725576, -50.26548246),  // 33 PI, -16 PI
+    new Position(-34.55751919, -87.9645943),  // -11 PI, -28 PI,
     new Position(180, 90)
   ];
 
   function rangeErrorMsg(x: number, num1: number, num2: number): string {
-    return `Error: ${x} is out of bounds between [${Math.min(num1,num2)},${Math.max(num1,num2)}]`;
-  }
-
-  function roundNumber(num: number): number {
-    return Math.round(num * Math.pow(10, 9)) / Math.pow(10, 9);
+    num1 = Math.abs(num1);
+    num2 = Math.abs(num2);
+    return `Error: ${component.roundNumber(Math.abs(x))} is out of bounds between ` +
+      `[${component.roundNumber(Math.min(num1, num2))},${component.roundNumber(Math.max(num1, num2))}]`;
   }
 
   beforeEach(async(() => {
@@ -49,198 +48,409 @@ describe('RadarComponent', () => {
 
       describe('in the case of only one (or zero) values in the positions array', () => {
         it(`[0,0] for ${positions[0].toString()}`, () => {
-          const latDistance = component.distanceToBorder('latitude');
-          const lonDistance = component.distanceToBorder('longitude');
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
           expect([latDistance, lonDistance]).toEqual([0,0]);
         });
-        it(`[15.70796327,6.283185307] for ${positions[1].toString()}`, () => {
+        it(`[15.707963,6.283185] for ${positions[1].toString()}`, () => {
           component.positions.push(positions[1]);
-          const latDistance = component.distanceToBorder('latitude');
-          const lonDistance = component.distanceToBorder('longitude');
-          expect([latDistance, lonDistance]).toEqual([15.70796327,6.283185307]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([15.707963,6.283185]);
         });
-        it(`[50.26548246,103.6725576] for ${positions[2].toString()}`, () => {
+        it(`[50.265482,103.672558] for ${positions[2].toString()}`, () => {
           component.positions.push(positions[2]);
-          const latDistance = component.distanceToBorder('latitude');
-          const lonDistance = component.distanceToBorder('longitude');
-          expect([latDistance, lonDistance]).toEqual([50.26548246,103.6725576]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([50.265482,103.672558]);
         });
-        it(`[87.9645943,34.55751919] for ${positions[3].toString()}`, () => {
+        it(`[87.964594,34.557519] for ${positions[3].toString()}`, () => {
           component.positions.push(positions[3]);
-          const latDistance = component.distanceToBorder('latitude');
-          const lonDistance = component.distanceToBorder('longitude');
-          expect([latDistance, lonDistance]).toEqual([87.9645943,34.55751919]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([87.964594,34.557519]);
         });
         it(`[90,180] for ${positions[4].toString()}`, () => {
           component.positions.push(positions[4]);
-          const latDistance = component.distanceToBorder('latitude');
-          const lonDistance = component.distanceToBorder('longitude');
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
           expect([latDistance, lonDistance]).toEqual([90,180]);
         });
       });
       describe('in the case of exactly two values in the positions array', () => {
-        it(`[15.70796327,6.283185307] for ${positions[0].toString()} and ${positions[1]}`, () => {
+        it(`[15.707963,6.283185] for ${positions[0].toString()} and ${positions[1]}`, () => {
           component.positions.push(positions[0], positions[1]);
-          const latDistance = component.distanceToBorder('latitude');
-          const lonDistance = component.distanceToBorder('longitude');
-          expect([latDistance, lonDistance]).toEqual([15.70796327,6.283185307]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([15.707963,6.283185]);
         });
-        it(`[50.26548246,103.6725576] for ${positions[0].toString()} and ${positions[2]}`, () => {
+        it(`[50.265482,103.672558] for ${positions[0].toString()} and ${positions[2]}`, () => {
           component.positions.push(positions[0], positions[2]);
-          const latDistance = component.distanceToBorder('latitude');
-          const lonDistance = component.distanceToBorder('longitude');
-          expect([latDistance, lonDistance]).toEqual([50.26548246,103.6725576]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([50.265482,103.672558]);
         });
-        it(`[87.9645943,34.55751919] for ${positions[0].toString()} and ${positions[3]}`, () => {
+        it(`[87.964594,34.557519] for ${positions[0].toString()} and ${positions[3]}`, () => {
           component.positions.push(positions[0], positions[3]);
-          const latDistance = component.distanceToBorder('latitude');
-          const lonDistance = component.distanceToBorder('longitude');
-          expect([latDistance, lonDistance]).toEqual([87.9645943,34.55751919]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([87.964594,34.557519]);
         });
         it(`[90,180] for ${positions[0].toString()} and ${positions[4]}`, () => {
           component.positions.push(positions[0], positions[4]);
-          const latDistance = component.distanceToBorder('latitude');
-          const lonDistance = component.distanceToBorder('longitude');
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
           expect([latDistance, lonDistance]).toEqual([90,180]);
         });
-        it(`[50.26548246,103.6725576] for ${positions[1].toString()} and ${positions[2]}`, () => {
+        it(`[50.265482,103.672558] for ${positions[1].toString()} and ${positions[2]}`, () => {
           component.positions.push(positions[1], positions[2]);
-          const latDistance = component.distanceToBorder('latitude');
-          const lonDistance = component.distanceToBorder('longitude');
-          expect([latDistance, lonDistance]).toEqual([50.26548246,103.6725576]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([50.265482,103.672558]);
         });
-        it(`[87.9645943,34.55751919] for ${positions[1].toString()} and ${positions[3]}`, () => {
+        it(`[87.964594,34.557519] for ${positions[1].toString()} and ${positions[3]}`, () => {
           component.positions.push(positions[1], positions[3]);
-          const latDistance = component.distanceToBorder('latitude');
-          const lonDistance = component.distanceToBorder('longitude');
-          expect([latDistance, lonDistance]).toEqual([87.9645943,34.55751919]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([87.964594,34.557519]);
         });
         it(`[90,180] for ${positions[1].toString()} and ${positions[4]}`, () => {
           component.positions.push(positions[1], positions[4]);
-          const latDistance = component.distanceToBorder('latitude');
-          const lonDistance = component.distanceToBorder('longitude');
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
           expect([latDistance, lonDistance]).toEqual([90,180]);
         });
-        it(`[87.9645943,103.6725576] for ${positions[2].toString()} and ${positions[3]}`, () => {
+        it(`[87.964594,103.672558] for ${positions[2].toString()} and ${positions[3]}`, () => {
           component.positions.push(positions[2], positions[3]);
-          const latDistance = component.distanceToBorder('latitude');
-          const lonDistance = component.distanceToBorder('longitude');
-          expect([latDistance, lonDistance]).toEqual([87.9645943,103.6725576]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([87.964594,103.672558]);
         });
         it(`[90,180] for ${positions[2].toString()} and ${positions[4]}`, () => {
           component.positions.push(positions[2], positions[4]);
-          const latDistance = component.distanceToBorder('latitude');
-          const lonDistance = component.distanceToBorder('longitude');
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
           expect([latDistance, lonDistance]).toEqual([90,180]);
         });
         it(`[90,180] for ${positions[3].toString()} and ${positions[4]}`, () => {
           component.positions.push(positions[3], positions[4]);
-          const latDistance = component.distanceToBorder('latitude');
-          const lonDistance = component.distanceToBorder('longitude');
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
           expect([latDistance, lonDistance]).toEqual([90,180]);
         });
       });
       describe('in the case of exactly three values in the positions array', () => {
-        it(`[50.26548246,103.6725576] for ${positions[0].toString()}, ${positions[1].toString()} and ${positions[2].toString()}`, () => {
+        it(`[50.265482,103.672558] for ${positions[0].toString()}, ${positions[1].toString()} and ${positions[2].toString()}`, () => {
           component.positions.push(positions[0], positions[1], positions[2]);
-          const latDistance = component.distanceToBorder('latitude');
-          const lonDistance = component.distanceToBorder('longitude');
-          expect([latDistance, lonDistance]).toEqual([50.26548246,103.6725576]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([50.265482,103.672558]);
         });
-        it(`[87.9645943,34.55751919] for ${positions[0].toString()}, ${positions[1].toString()} and ${positions[3].toString()}`, () => {
+        it(`[87.964594,34.557519] for ${positions[0].toString()}, ${positions[1].toString()} and ${positions[3].toString()}`, () => {
           component.positions.push(positions[0], positions[1], positions[3]);
-          const latDistance = component.distanceToBorder('latitude');
-          const lonDistance = component.distanceToBorder('longitude');
-          expect([latDistance, lonDistance]).toEqual([87.9645943,34.55751919]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([87.964594,34.557519]);
         });
         it(`[90,180] for ${positions[0].toString()}, ${positions[1].toString()} and ${positions[4].toString()}`, () => {
           component.positions.push(positions[0], positions[1], positions[4]);
-          const latDistance = component.distanceToBorder('latitude');
-          const lonDistance = component.distanceToBorder('longitude');
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
           expect([latDistance, lonDistance]).toEqual([90,180]);
         });
-        it(`[87.9645943,103.6725576] for ${positions[0].toString()}, ${positions[2].toString()} and ${positions[3].toString()}`, () => {
+        it(`[87.964594,103.672558] for ${positions[0].toString()}, ${positions[2].toString()} and ${positions[3].toString()}`, () => {
           component.positions.push(positions[0], positions[2], positions[3]);
-          const latDistance = component.distanceToBorder('latitude');
-          const lonDistance = component.distanceToBorder('longitude');
-          expect([latDistance, lonDistance]).toEqual([87.9645943,103.6725576]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([87.964594,103.672558]);
         });
         it(`[90,180] for ${positions[0].toString()}, ${positions[2].toString()} and ${positions[4].toString()}`, () => {
           component.positions.push(positions[0], positions[2], positions[4]);
-          const latDistance = component.distanceToBorder('latitude');
-          const lonDistance = component.distanceToBorder('longitude');
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
           expect([latDistance, lonDistance]).toEqual([90,180]);
         });
         it(`[90,180] for ${positions[0].toString()}, ${positions[3].toString()} and ${positions[4].toString()}`, () => {
           component.positions.push(positions[0], positions[3], positions[4]);
-          const latDistance = component.distanceToBorder('latitude');
-          const lonDistance = component.distanceToBorder('longitude');
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
           expect([latDistance, lonDistance]).toEqual([90,180]);
         });
-        it(`[87.9645943,103.6725576] for ${positions[1].toString()}, ${positions[2].toString()} and ${positions[3].toString()}`, () => {
+        it(`[87.964594,103.672558] for ${positions[1].toString()}, ${positions[2].toString()} and ${positions[3].toString()}`, () => {
           component.positions.push(positions[1], positions[2], positions[3]);
-          const latDistance = component.distanceToBorder('latitude');
-          const lonDistance = component.distanceToBorder('longitude');
-          expect([latDistance, lonDistance]).toEqual([87.9645943,103.6725576]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([87.964594,103.672558]);
         });
         it(`[90,180] for ${positions[1].toString()}, ${positions[2].toString()} and ${positions[4].toString()}`, () => {
           component.positions.push(positions[1], positions[2], positions[4]);
-          const latDistance = component.distanceToBorder('latitude');
-          const lonDistance = component.distanceToBorder('longitude');
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
           expect([latDistance, lonDistance]).toEqual([90,180]);
         });
         it(`[90,180] for ${positions[1].toString()}, ${positions[3].toString()} and ${positions[4].toString()}`, () => {
           component.positions.push(positions[1], positions[3], positions[4]);
-          const latDistance = component.distanceToBorder('latitude');
-          const lonDistance = component.distanceToBorder('longitude');
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
           expect([latDistance, lonDistance]).toEqual([90,180]);
         });
         it(`[90,180] for ${positions[2].toString()}, ${positions[3].toString()} and ${positions[4].toString()}`, () => {
           component.positions.push(positions[2], positions[3], positions[4]);
-          const latDistance = component.distanceToBorder('latitude');
-          const lonDistance = component.distanceToBorder('longitude');
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
           expect([latDistance, lonDistance]).toEqual([90,180]);
         });
       });
       describe('in the case of exactly four values in the positions array', () => {
-        it(`[87.9645943,103.6725576] for ${positions[0].toString()}, ${positions[1].toString()}, ${positions[2].toString()} and ${positions[3].toString()}`, () => {
+        it(`[87.964594,103.672558] for ${positions[0].toString()}, ${positions[1].toString()}, ${positions[2].toString()} and ${positions[3].toString()}`, () => {
           component.positions.push(positions[0], positions[1], positions[2], positions[3]);
-          const latDistance = component.distanceToBorder('latitude');
-          const lonDistance = component.distanceToBorder('longitude');
-          expect([latDistance, lonDistance]).toEqual([87.9645943,103.6725576]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([87.964594,103.672558]);
         });
         it(`[90,180] for ${positions[0].toString()}, ${positions[1].toString()}, ${positions[2].toString()} and ${positions[4].toString()}`, () => {
           component.positions.push(positions[0], positions[1], positions[2], positions[4]);
-          const latDistance = component.distanceToBorder('latitude');
-          const lonDistance = component.distanceToBorder('longitude');
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
           expect([latDistance, lonDistance]).toEqual([90,180]);
         });
         it(`[90,180] for ${positions[0].toString()}, ${positions[1].toString()}, ${positions[3].toString()} and ${positions[4].toString()}`, () => {
           component.positions.push(positions[0], positions[1], positions[3], positions[4]);
-          const latDistance = component.distanceToBorder('latitude');
-          const lonDistance = component.distanceToBorder('longitude');
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
           expect([latDistance, lonDistance]).toEqual([90,180]);
         });
         it(`[90,180] for ${positions[0].toString()}, ${positions[2].toString()}, ${positions[3].toString()} and ${positions[4].toString()}`, () => {
           component.positions.push(positions[0], positions[2], positions[3], positions[4]);
-          const latDistance = component.distanceToBorder('latitude');
-          const lonDistance = component.distanceToBorder('longitude');
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
           expect([latDistance, lonDistance]).toEqual([90,180]);
         });
         it(`[90,180] for ${positions[1].toString()}, ${positions[2].toString()}, ${positions[3].toString()} and ${positions[4].toString()}`, () => {
           component.positions.push(positions[1], positions[2], positions[3], positions[4]);
-          const latDistance = component.distanceToBorder('latitude');
-          const lonDistance = component.distanceToBorder('longitude');
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
           expect([latDistance, lonDistance]).toEqual([90,180]);
         });
       });
-
       it('[90,180] in the case of all five values in the positions array', () => {
         component.positions.push(...positions);
-        const latDistance = component.distanceToBorder('latitude');
-        const lonDistance = component.distanceToBorder('longitude');
+        const latDistance = component.longestDistance('latitude');
+        const lonDistance = component.longestDistance('longitude');
         expect([latDistance, lonDistance]).toEqual([90,180]);
       })
+    });
+    describe(`${positions[1].toString()} should be (in [lat,lon] format)`, () => {
+      beforeEach(() => {
+        component.center = positions[1];
+      });
+
+      describe('in the case of only one (or zero) values in the positions array', () => {
+        // 00000, 00001, 00010, 00100, 01000, 10000
+        // none, 0, 1, 2, 3, 4
+        it(`[15.707963,6.283185] for ${positions[0].toString()}`, () => {
+          component.positions.push(positions[0]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([15.707963,6.283185]);
+        });
+        it(`[0,0] for ${positions[1].toString()}`, () => {
+          // component.positions.push(positions[1]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([0,0]);
+        });
+        it(`[65.973446,109.955743] for ${positions[2].toString()}`, () => {
+          component.positions.push(positions[2]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([65.973446,109.955743]);
+        });
+        it(`[103.672558,28.274334] for ${positions[3].toString()}`, () => {
+          component.positions.push(positions[3]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([103.672558,28.274334]);
+        });
+        it(`[74.292037,186.283185] for ${positions[4].toString()}`, () => {
+          component.positions.push(positions[4]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([74.292037,186.283185]);
+        });
+      });
+      describe('in the case of exactly two values in the positions array', () => {
+        // 00011, 00101, 00110, 01001, 01010, 01100, 10001, 10010, 10100, 11000
+        // 01, 02, 12, 03, 13, 23, 04, 14, 24, 34
+        // 01, 02, 03, 04, 12, 13, 14, 23, 24, 34
+        it(`[15.707963, 6.283185] for ${positions[0]} and ${positions[1]}`, () => {
+          component.positions.push(positions[0], positions[1]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([15.707963, 6.283185]);
+        });
+        it(`[65.973446,109.955743] for ${positions[0]} and ${positions[2]}`, () => {
+          component.positions.push(positions[0], positions[2]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([65.973446,109.955743]);
+        });
+        it(`[103.672558,28.274334] for ${positions[0]} and ${positions[3]}`, () => {
+          component.positions.push(positions[0], positions[3]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([103.672558,28.274334]);
+        });
+        it(`[74.292037,186.283185] for ${positions[0]} and ${positions[4]}`, () => {
+          component.positions.push(positions[0], positions[4]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([74.292037,186.283185]);
+        });
+        it(`[65.973446,109.955743] for ${positions[1]} and ${positions[2]}`, () => {
+          component.positions.push(positions[1], positions[2]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([65.973446,109.955743]);
+        });
+        it(`[103.672558,28.274334] for ${positions[1]} and ${positions[3]}`, () => {
+          component.positions.push(positions[1], positions[3]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([103.672558,28.274334]);
+        });
+        it(`[74.292037,186.283185] for ${positions[1]} and ${positions[4]}`, () => {
+          component.positions.push(positions[1], positions[4]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([74.292037,186.283185]);
+        });
+        it(`[103.672558,109.955743] for ${positions[2]} and ${positions[3]}`, () => {
+          component.positions.push(positions[2], positions[3]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([103.672558,109.955743]);
+        });
+        it(`[74.292037,186.283185] for ${positions[2]} and ${positions[4]}`, () => {
+          component.positions.push(positions[2], positions[4]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([74.292037,186.283185]);
+        });
+        it(`[103.672558,186.283185] for ${positions[3]} and ${positions[4]}`, () => {
+          component.positions.push(positions[3], positions[4]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([103.672558,186.283185]);
+        });
+      });
+      describe('in the case of exactly three values in the positions array', () => {
+        // 00111, 01011, 01101, 01110, 10011, 10101, 10110, 11001, 11010, 11100
+        // 012, 013, 023, 123, 014, 024, 124, 034, 134, 234
+        // 012, 013, 014, 023, 024, 034, 123, 124, 134, 234
+        it(`[65.973446,109.955743] for ${positions[0]}, ${positions[1]} and ${positions[2]}`, () => {
+          component.positions.push(positions[0], positions[1], positions[2]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([65.973446,109.955743]);
+        });
+        it(`[103.672558,28.274334] for ${positions[0]}, ${positions[1]} and ${positions[3]}`, () => {
+          component.positions.push(positions[0], positions[1], positions[3]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([103.672558,28.274334]);
+        });
+        it(`[74.292037,186.283185] for ${positions[0]}, ${positions[1]} and ${positions[4]}`, () => {
+          component.positions.push(positions[0], positions[1], positions[4]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([74.292037,186.283185]);
+        });
+        it(`[103.672558,109.955743] for ${positions[0]}, ${positions[2]} and ${positions[3]}`, () => {
+          component.positions.push(positions[0], positions[2], positions[3]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([103.672558,109.955743]);
+        });
+        it(`[74.292037,186.283185] for ${positions[0]}, ${positions[2]} and ${positions[4]}`, () => {
+          component.positions.push(positions[0], positions[2], positions[4]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([74.292037,186.283185]);
+        });
+        it(`[103.672558,186.283185] for ${positions[0]}, ${positions[3]} and ${positions[4]}`, () => {
+          component.positions.push(positions[0], positions[3], positions[4]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([103.672558,186.283185]);
+        });
+        it(`[103.672558,109.955743] for ${positions[1]}, ${positions[2]} and ${positions[3]}`, () => {
+          component.positions.push(positions[1], positions[2], positions[3]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([103.672558,109.955743]);
+        });
+        it(`[74.292037,186.283185] for ${positions[1]}, ${positions[2]} and ${positions[4]}`, () => {
+          component.positions.push(positions[1], positions[2], positions[4]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([74.292037,186.283185]);
+        });
+        it(`[103.672558,186.283185] for ${positions[1]}, ${positions[3]} and ${positions[4]}`, () => {
+          component.positions.push(positions[1], positions[3], positions[4]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([103.672558,186.283185]);
+        });
+        it(`[103.672558,186.283185] for ${positions[2]}, ${positions[3]} and ${positions[4]}`, () => {
+          component.positions.push(positions[2], positions[3], positions[4]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([103.672558,186.283185]);
+        });
+      });
+      describe('in the case of exactly four values in the positions array', () => {
+        // 01111, 10111, 11011, 11101, 11110
+        // 0123, 0124, 0134, 0234, 1234
+        it(`[103.672558,109.955743] for ${positions[0]}, ${positions[1]}, ${positions[2]}, ${positions[3]}`, () => {
+          component.positions.push(positions[0], positions[1], positions[2], positions[3]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([103.672558,109.955743]);
+        });
+        it(`[74.292037,186.283185] for ${positions[0]}, ${positions[1]}, ${positions[2]}, ${positions[4]}`, () => {
+          component.positions.push(positions[0], positions[1], positions[2], positions[4]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([74.292037,186.283185]);
+        });
+        it(`[103.672558,186.283185] for ${positions[0]}, ${positions[1]}, ${positions[3]}, ${positions[4]}`, () => {
+          component.positions.push(positions[0], positions[1], positions[3], positions[4]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([103.672558,186.283185]);
+        });
+        it(`[103.672558,186.283185] for ${positions[0]}, ${positions[2]}, ${positions[3]}, ${positions[4]}`, () => {
+          component.positions.push(positions[0], positions[2], positions[3], positions[4]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([103.672558,186.283185]);
+        });
+        it(`[103.672558,186.283185] for ${positions[1]}, ${positions[2]}, ${positions[3]}, ${positions[4]}`, () => {
+          component.positions.push(positions[1], positions[2], positions[3], positions[4]);
+          const latDistance = component.longestDistance('latitude');
+          const lonDistance = component.longestDistance('longitude');
+          expect([latDistance, lonDistance]).toEqual([103.672558,186.283185]);
+        });
+      });
+      it('[103.672558,186.283185] in the case of all five values in the positions array', () => {
+        // 11111
+        // 01234
+        component.positions.push(...positions);
+        const latDistance = component.longestDistance('latitude');
+        const lonDistance = component.longestDistance('longitude');
+        expect([latDistance, lonDistance]).toEqual([103.672558,186.283185]);
+      });
     });
   });
 
@@ -274,30 +484,30 @@ describe('RadarComponent', () => {
         it(`throwing a RangeError for ${positions[1].toString()}`, () => {
           const x = positions[1];
           expect(() => component.interpolationValue(x, 'latitude'))
-            .toThrow(new RangeError(rangeErrorMsg(x.latitude, component.center.latitude, component.distanceToBorder('latitude'))));
+            .toThrow(new RangeError(rangeErrorMsg(x.latitude, component.center.latitude, component.longestDistance('latitude'))));
           expect(() => component.interpolationValue(x, 'longitude'))
-            .toThrow(new RangeError(rangeErrorMsg(x.longitude, component.center.longitude, component.distanceToBorder('longitude'))));
+            .toThrow(new RangeError(rangeErrorMsg(x.longitude, component.center.longitude, component.longestDistance('longitude'))));
         });
         it(`throwing a RangeError for ${positions[2].toString()}`, () => {
           const x = positions[2];
           expect(() => component.interpolationValue(x, 'latitude'))
-            .toThrow(new RangeError(rangeErrorMsg(x.latitude, component.center.latitude, component.distanceToBorder('latitude'))));
+            .toThrow(new RangeError(rangeErrorMsg(x.latitude, component.center.latitude, component.longestDistance('latitude'))));
           expect(() => component.interpolationValue(x, 'longitude'))
-            .toThrow(new RangeError(rangeErrorMsg(x.longitude, component.center.longitude, component.distanceToBorder('longitude'))));
+            .toThrow(new RangeError(rangeErrorMsg(x.longitude, component.center.longitude, component.longestDistance('longitude'))));
         });
         it(`throwing a RangeError for ${positions[3].toString()}`, () => {
           const x = positions[3];
           expect(() => component.interpolationValue(x, 'latitude'))
-            .toThrow(new RangeError(rangeErrorMsg(x.latitude, component.center.latitude, component.distanceToBorder('latitude'))));
+            .toThrow(new RangeError(rangeErrorMsg(x.latitude, component.center.latitude, component.longestDistance('latitude'))));
           expect(() => component.interpolationValue(x, 'longitude'))
-            .toThrow(new RangeError(rangeErrorMsg(x.longitude, component.center.longitude, component.distanceToBorder('longitude'))));
+            .toThrow(new RangeError(rangeErrorMsg(x.longitude, component.center.longitude, component.longestDistance('longitude'))));
         });
         it(`throwing a RangeError for ${positions[4].toString()}`, () => {
           const x = positions[4];
           expect(() => component.interpolationValue(x, 'latitude'))
-            .toThrow(new RangeError(rangeErrorMsg(x.latitude, component.center.latitude, component.distanceToBorder('latitude'))));
+            .toThrow(new RangeError(rangeErrorMsg(x.latitude, component.center.latitude, component.longestDistance('latitude'))));
           expect(() => component.interpolationValue(x, 'longitude'))
-            .toThrow(new RangeError(rangeErrorMsg(x.longitude, component.center.longitude, component.distanceToBorder('longitude'))));
+            .toThrow(new RangeError(rangeErrorMsg(x.longitude, component.center.longitude, component.longestDistance('longitude'))));
         });
       });
       describe(`${positions[1].toString()} should be`, () => {
@@ -320,23 +530,23 @@ describe('RadarComponent', () => {
         it(`throwing a RangeError for ${positions[2].toString()}`, () => {
           const x = positions[2];
           expect(() => component.interpolationValue(x, 'latitude'))
-            .toThrow(new RangeError(rangeErrorMsg(x.latitude, component.center.latitude, component.distanceToBorder('latitude'))));
+            .toThrow(new RangeError(rangeErrorMsg(x.latitude, component.center.latitude, component.longestDistance('latitude'))));
           expect(() => component.interpolationValue(x, 'longitude'))
-            .toThrow(new RangeError(rangeErrorMsg(x.longitude, component.center.longitude, component.distanceToBorder('longitude'))));
+            .toThrow(new RangeError(rangeErrorMsg(x.longitude, component.center.longitude, component.longestDistance('longitude'))));
         });
         it(`throwing a RangeError for ${positions[3].toString()}`, () => {
           const x = positions[3];
           expect(() => component.interpolationValue(x, 'latitude'))
-            .toThrow(new RangeError(rangeErrorMsg(x.latitude, component.center.latitude, component.distanceToBorder('latitude'))));
+            .toThrow(new RangeError(rangeErrorMsg(x.latitude, component.center.latitude, component.longestDistance('latitude'))));
           expect(() => component.interpolationValue(x, 'longitude'))
-            .toThrow(new RangeError(rangeErrorMsg(x.longitude, component.center.longitude, component.distanceToBorder('longitude'))));
+            .toThrow(new RangeError(rangeErrorMsg(x.longitude, component.center.longitude, component.longestDistance('longitude'))));
         });
         it(`throwing a RangeError for ${positions[4].toString()}`, () => {
           const x = positions[4];
           expect(() => component.interpolationValue(x, 'latitude'))
-            .toThrow(new RangeError(rangeErrorMsg(x.latitude, component.center.latitude, component.distanceToBorder('latitude'))));
+            .toThrow(new RangeError(rangeErrorMsg(x.latitude, component.center.latitude, component.longestDistance('latitude'))));
           expect(() => component.interpolationValue(x, 'longitude'))
-            .toThrow(new RangeError(rangeErrorMsg(x.longitude, component.center.longitude, component.distanceToBorder('longitude'))));
+            .toThrow(new RangeError(rangeErrorMsg(x.longitude, component.center.longitude, component.longestDistance('longitude'))));
         });
       });
       describe(`${positions[2].toString()} should be`, () => {
@@ -350,11 +560,11 @@ describe('RadarComponent', () => {
           const longitude = component.interpolationValue(x, 'longitude');
           expect([latitude, longitude]).toEqual([0,0]);
         });
-        it(`[0.3125,0.060606061] for ${positions[1].toString()}`, () => {
+        it(`[0.3125,0.060606] for ${positions[1].toString()}`, () => {
           const x = positions[1];
           const latitude = component.interpolationValue(x, 'latitude');
           const longitude = component.interpolationValue(x, 'longitude');
-          expect([roundNumber(latitude), roundNumber(longitude)]).toEqual([0.3125,0.060606061]);
+          expect([latitude, longitude]).toEqual([0.3125,0.060606]);
         });
         it(`[1,1] for ${positions[2].toString()}`, () => {
           const x = positions[2];
@@ -365,16 +575,16 @@ describe('RadarComponent', () => {
         it(`throwing a RangeError for latitude and interpolation for longitude should be '' for ${positions[3].toString()}}`, () => {
           const x = positions[3];
           expect(() => component.interpolationValue(x, 'latitude'))
-            .toThrow(new RangeError(rangeErrorMsg(x.latitude, component.center.latitude, component.distanceToBorder('latitude'))));
+            .toThrow(new RangeError(rangeErrorMsg(x.latitude, component.center.latitude, component.longestDistance('latitude'))));
           const longitude = component.interpolationValue(x, 'longitude');
-          expect(roundNumber(longitude)).toEqual(roundNumber(1/3));
+          expect(longitude).toEqual(component.roundNumber(1/3));
         });
         it(`throwing a RangeError for ${positions[4].toString()}`, () => {
           const x = positions[4];
           expect(() => component.interpolationValue(x, 'latitude'))
-            .toThrow(new RangeError(rangeErrorMsg(x.latitude, component.center.latitude, component.distanceToBorder('latitude'))));
+            .toThrow(new RangeError(rangeErrorMsg(x.latitude, component.center.latitude, component.longestDistance('latitude'))));
           expect(() => component.interpolationValue(x, 'longitude'))
-            .toThrow(new RangeError(rangeErrorMsg(x.longitude, component.center.longitude, component.distanceToBorder('longitude'))));
+            .toThrow(new RangeError(rangeErrorMsg(x.longitude, component.center.longitude, component.longestDistance('longitude'))));
         });
       });
       describe(`${positions[3].toString()} should be`, () => {
@@ -388,18 +598,18 @@ describe('RadarComponent', () => {
           const longitude = component.interpolationValue(x, 'longitude');
           expect([latitude, longitude]).toEqual([0,0]);
         });
-        it(`[0.178571429,0.181818182] for ${positions[1].toString()}`, () => {
+        it(`[0.178571,0.181818] for ${positions[1].toString()}`, () => {
           const x = positions[1];
           const latitude = component.interpolationValue(x, 'latitude');
           const longitude = component.interpolationValue(x, 'longitude');
-          expect([roundNumber(latitude), roundNumber(longitude)]).toEqual([0.178571429,0.181818182]);
+          expect([latitude, longitude]).toEqual([0.178571,0.181818]);
         });
-        it(`throwing a RangeError for longitude and should be 0.571428571 for ${positions[2].toString()}`, () => {
+        it(`throwing a RangeError for longitude and should be 0.571429 for ${positions[2].toString()}`, () => {
           const x = positions[2];
           const latitude = component.interpolationValue(x, 'latitude');
-          expect(roundNumber(latitude)).toEqual(0.571428571);
+          expect(latitude).toEqual(0.571429);
           expect(() => component.interpolationValue(x, 'longitude'))
-            .toThrow(new RangeError(rangeErrorMsg(x.longitude, component.center.longitude, component.distanceToBorder('longitude'))));
+            .toThrow(new RangeError(rangeErrorMsg(x.longitude, component.center.longitude, component.longestDistance('longitude'))));
         });
         it(`[1,1] for ${positions[3].toString()}`, () => {
           const x = positions[3];
@@ -410,9 +620,9 @@ describe('RadarComponent', () => {
         it(`throwing a RangeError for ${positions[4].toString()}`, () => {
           const x = positions[4];
           expect(() => component.interpolationValue(x, 'latitude'))
-            .toThrow(new RangeError(rangeErrorMsg(x.latitude, component.center.latitude, component.distanceToBorder('latitude'))));
+            .toThrow(new RangeError(rangeErrorMsg(x.latitude, component.center.latitude, component.longestDistance('latitude'))));
           expect(() => component.interpolationValue(x, 'longitude'))
-            .toThrow(new RangeError(rangeErrorMsg(x.longitude, component.center.longitude, component.distanceToBorder('longitude'))));
+            .toThrow(new RangeError(rangeErrorMsg(x.longitude, component.center.longitude, component.longestDistance('longitude'))));
         });
       });
       describe(`${positions[4].toString()} should be`, () => {
@@ -426,23 +636,23 @@ describe('RadarComponent', () => {
           const longitude = component.interpolationValue(x, 'longitude');
           expect([latitude, longitude]).toEqual([0,0]);
         });
-        it(`[0.174532925,0.034906585] for ${positions[1].toString()}`, () => {
+        it(`[0.174533,0.034907] for ${positions[1].toString()}`, () => {
           const x = positions[1];
           const latitude = component.interpolationValue(x, 'latitude');
           const longitude = component.interpolationValue(x, 'longitude');
-          expect([roundNumber(latitude), roundNumber(longitude)]).toEqual([0.174532925,0.034906585]);
+          expect([latitude, longitude]).toEqual([0.174533,0.034907]);
         });
-        it(`[0.558505361,0.575958653] for ${positions[2].toString()}`, () => {
+        it(`[0.558505,0.575959] for ${positions[2].toString()}`, () => {
           const x = positions[2];
           const latitude = component.interpolationValue(x, 'latitude');
           const longitude = component.interpolationValue(x, 'longitude');
-          expect([roundNumber(latitude), roundNumber(longitude)]).toEqual([0.558505361,0.575958653]);
+          expect([latitude, longitude]).toEqual([0.558505,0.575959]);
         });
-        it(`[0.977384381,0.191986218] for ${positions[3].toString()}`, () => {
+        it(`[0.977384,0.191986] for ${positions[3].toString()}`, () => {
           const x = positions[3];
           const latitude = component.interpolationValue(x, 'latitude');
           const longitude = component.interpolationValue(x, 'longitude');
-          expect([roundNumber(latitude), roundNumber(longitude)]).toEqual([0.977384381,0.191986218]);
+          expect([latitude, longitude]).toEqual([0.977384,0.191986]);
         });
         it(`[1,1] for ${positions[4].toString()}`, () => {
           const x = positions[4];
@@ -462,35 +672,76 @@ describe('RadarComponent', () => {
           component.positions.push(positions[0]);
         });
 
-        xit(`[0,1] for ${positions[0].toString()}`, () => {
+        it(`[1,1] for ${positions[0].toString()}`, () => {
           const x = positions[0];
           const latitude = component.interpolationValue(x, 'latitude');
           const longitude = component.interpolationValue(x, 'longitude');
-          expect([roundNumber(latitude), roundNumber(longitude)]).toEqual([0,1]);
+          expect([latitude, longitude]).toEqual([1,1]);
         });
-        xit(`[] for ${positions[1].toString()}`, () => {
+        it(`[0,0] for ${positions[1].toString()}`, () => {
           const x = positions[1];
           const latitude = component.interpolationValue(x, 'latitude');
           const longitude = component.interpolationValue(x, 'longitude');
-          expect([roundNumber(latitude), roundNumber(longitude)]).toEqual([]);
+          expect([latitude, longitude]).toEqual([0,0]);
         });
-        xit(`[] for ${positions[2].toString()}`, () => {
+        it(`throwing a RangeError for  ${positions[2].toString()}`, () => {
           const x = positions[2];
-          const latitude = component.interpolationValue(x, 'latitude');
-          const longitude = component.interpolationValue(x, 'longitude');
-          expect([roundNumber(latitude), roundNumber(longitude)]).toEqual([]);
+          expect(() => component.interpolationValue(x, 'latitude')).toThrow(jasmine.any(RangeError));
+          expect(() => component.interpolationValue(x, 'longitude')).toThrow(jasmine.any(RangeError));
         });
-        xit(`[] for ${positions[3].toString()}`, () => {
+        it(`throwing a RangeError for  ${positions[3].toString()}`, () => {
           const x = positions[3];
-          const latitude = component.interpolationValue(x, 'latitude');
-          const longitude = component.interpolationValue(x, 'longitude');
-          expect([roundNumber(latitude), roundNumber(longitude)]).toEqual([]);
+          expect(() => component.interpolationValue(x, 'latitude')).toThrow(jasmine.any(RangeError));
+          expect(() => component.interpolationValue(x, 'longitude')).toThrow(jasmine.any(RangeError));
         });
-        xit(`[] for ${positions[4].toString()}`, () => {
+        it(`throwing a RangeError for  ${positions[4].toString()}`, () => {
           const x = positions[4];
+          expect(() => component.interpolationValue(x, 'latitude')).toThrow(jasmine.any(RangeError));
+          expect(() => component.interpolationValue(x, 'longitude')).toThrow(jasmine.any(RangeError));
+        });
+      });
+      describe(`${positions[1].toString()} should be`, () => {
+        beforeEach(() => {
+          component.positions.push(positions[1]);
+        });
+
+        it(`throwing a RangeError for ${positions[0].toString()}`, () => {
+          const x = positions[0];
+          expect(() => component.interpolationValue(x, 'latitude')).toThrow(jasmine.any(RangeError));
+          expect(() => component.interpolationValue(x, 'longitude')).toThrow(jasmine.any(RangeError));
+        });
+        it(`[0,0] for ${positions[1].toString()}`, () => {
+          const x = positions[1];
           const latitude = component.interpolationValue(x, 'latitude');
           const longitude = component.interpolationValue(x, 'longitude');
-          expect([roundNumber(latitude), roundNumber(longitude)]).toEqual([]);
+          expect([latitude, longitude]).toEqual([0,0]);
+        });
+        it(`throwing a RangeError for ${positions[2].toString()}`, () => {
+          const x = positions[2];
+          expect(() => component.interpolationValue(x, 'latitude')).toThrow(jasmine.any(RangeError));
+          expect(() => component.interpolationValue(x, 'longitude')).toThrow(jasmine.any(RangeError));
+        });
+        it(`throwing a RangeError for ${positions[3].toString()}`, () => {
+          const x = positions[3];
+          expect(() => component.interpolationValue(x, 'latitude')).toThrow(jasmine.any(RangeError));
+          expect(() => component.interpolationValue(x, 'longitude')).toThrow(jasmine.any(RangeError));
+        });
+        it(`throwing a RangeError for ${positions[4].toString()}`, () => {
+          const x = positions[4];
+          expect(() => component.interpolationValue(x, 'latitude')).toThrow(jasmine.any(RangeError));
+          expect(() => component.interpolationValue(x, 'longitude')).toThrow(jasmine.any(RangeError));
+        });
+      });
+      describe(`${positions[2].toString()} should be`, () => {
+        beforeEach(() => {
+          component.positions.push(positions[2]);
+        });
+
+        xit(`[0.238095,0.057142] for ${positions[0].toString()}`, () => {
+          const x = positions[0];
+          const latitude = component.interpolationValue(x, 'latitude');
+          const longitude = component.interpolationValue(x, 'longitude');
+          expect([latitude, longitude]).toEqual([0.238095,0.057142]);
         });
       });
     });

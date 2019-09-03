@@ -16,11 +16,10 @@ describe('RadarComponent', () => {
     new Position(180, 90)
   ];
 
-  function rangeErrorMsg(x: number, num1: number, num2: number): string {
-    num1 = Math.abs(num1);
-    num2 = Math.abs(num2);
-    return `Error: ${component.roundNumber(Math.abs(x))} is out of bounds between ` +
-      `[${component.roundNumber(Math.min(num1, num2))},${component.roundNumber(Math.max(num1, num2))}]`;
+  function rangeErrorMsg(x: number, center: number, distance: number): string {
+    const l = center - distance;
+    const u = center + distance;
+    return `Error: ${component.roundNumber(x)} is out of bounds between [${component.roundNumber(l)},${component.roundNumber(u)}]`;
   }
 
   beforeEach(async(() => {
@@ -34,6 +33,8 @@ describe('RadarComponent', () => {
     fixture = TestBed.createComponent(RadarComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+
+    component.size = 600;
   });
 
   it('should create', () => {
@@ -454,16 +455,47 @@ describe('RadarComponent', () => {
     });
   });
 
-  xdescribe('distance from center', () => {
+  describe('position in the diagram', () => {
     describe(`${positions[0].toString()} should be`, () => {
       beforeEach(() => {
         component.center = positions[0];
       });
 
-      it('0 for center', () => {
-        const latitude = component.positionInDiagram(component.center, 'latitude');
-        const longitude = component.positionInDiagram(component.center, 'longitude');
-        expect([latitude, longitude]).toEqual([0, 0]);
+      describe('in case of only one (or zero) values in the positions array', () => {
+        it(`[300,300] for center (${positions[0]})`, () => {
+          // component.positions.push(positions[0])
+          const latitude = component.positionInDiagram(component.center, 'latitude');
+          const longitude = component.positionInDiagram(component.center, 'longitude');
+          expect([latitude, longitude]).toEqual([300,300]);
+        });
+        it(`[600,0] for ${positions[1]}`, () => {
+          const position = positions[1];
+          component.positions.push(position);
+          const latitude = component.positionInDiagram(position, 'latitude');
+          const longitude = component.positionInDiagram(position, 'longitude');
+          expect([latitude, longitude]).toEqual([600,0]);
+        });
+        it(`[0,600] for ${positions[2]}`, () => {
+          const position = positions[2];
+          component.positions.push(position);
+          const latitude = component.positionInDiagram(position, 'latitude');
+          const longitude = component.positionInDiagram(position, 'longitude');
+          expect([latitude, longitude]).toEqual([0,600]);
+        });
+        it(`[0,0] for ${positions[3]}`, () => {
+          const position = positions[3];
+          component.positions.push(position);
+          const latitude = component.positionInDiagram(position, 'latitude');
+          const longitude = component.positionInDiagram(position, 'longitude');
+          expect([latitude, longitude]).toEqual([0,0]);
+        });
+        it(`[600,600] for ${positions[4]}`, () => {
+          const position = positions[4];
+          component.positions.push(position);
+          const latitude = component.positionInDiagram(position, 'latitude');
+          const longitude = component.positionInDiagram(position, 'longitude');
+          expect([latitude, longitude]).toEqual([600,600]);
+        });
       });
     });
   });
@@ -521,11 +553,11 @@ describe('RadarComponent', () => {
           const longitude = component.interpolationValue(x, 'longitude');
           expect([latitude, longitude]).toEqual([0,0]);
         });
-        it(`[1,1] for ${positions[1].toString()}`, () => {
+        it(`[1,-1] for ${positions[1].toString()}`, () => {
           const x = positions[1];
           const latitude = component.interpolationValue(x, 'latitude');
           const longitude = component.interpolationValue(x, 'longitude');
-          expect([latitude, longitude]).toEqual([1,1]);
+          expect([latitude, longitude]).toEqual([1,-1]);
         });
         it(`throwing a RangeError for ${positions[2].toString()}`, () => {
           const x = positions[2];
@@ -560,24 +592,24 @@ describe('RadarComponent', () => {
           const longitude = component.interpolationValue(x, 'longitude');
           expect([latitude, longitude]).toEqual([0,0]);
         });
-        it(`[0.3125,0.060606] for ${positions[1].toString()}`, () => {
+        it(`[0.3125,-0.060606] for ${positions[1].toString()}`, () => {
           const x = positions[1];
           const latitude = component.interpolationValue(x, 'latitude');
           const longitude = component.interpolationValue(x, 'longitude');
-          expect([latitude, longitude]).toEqual([0.3125,0.060606]);
+          expect([latitude, longitude]).toEqual([0.3125,-0.060606]);
         });
-        it(`[1,1] for ${positions[2].toString()}`, () => {
+        it(`[-1,1] for ${positions[2].toString()}`, () => {
           const x = positions[2];
           const latitude = component.interpolationValue(x, 'latitude');
           const longitude = component.interpolationValue(x, 'longitude');
-          expect([latitude, longitude]).toEqual([1,1]);
+          expect([latitude, longitude]).toEqual([-1,1]);
         });
         it(`throwing a RangeError for latitude and interpolation for longitude should be '' for ${positions[3].toString()}}`, () => {
           const x = positions[3];
           expect(() => component.interpolationValue(x, 'latitude'))
             .toThrow(new RangeError(rangeErrorMsg(x.latitude, component.center.latitude, component.longestDistance('latitude'))));
           const longitude = component.interpolationValue(x, 'longitude');
-          expect(longitude).toEqual(component.roundNumber(1/3));
+          expect(longitude).toEqual(component.roundNumber(-1/3));
         });
         it(`throwing a RangeError for ${positions[4].toString()}`, () => {
           const x = positions[4];
@@ -598,24 +630,24 @@ describe('RadarComponent', () => {
           const longitude = component.interpolationValue(x, 'longitude');
           expect([latitude, longitude]).toEqual([0,0]);
         });
-        it(`[0.178571,0.181818] for ${positions[1].toString()}`, () => {
+        it(`[0.178571,-0.181818] for ${positions[1].toString()}`, () => {
           const x = positions[1];
           const latitude = component.interpolationValue(x, 'latitude');
           const longitude = component.interpolationValue(x, 'longitude');
-          expect([latitude, longitude]).toEqual([0.178571,0.181818]);
+          expect([latitude, longitude]).toEqual([0.178571,-0.181818]);
         });
-        it(`throwing a RangeError for longitude and should be 0.571429 for ${positions[2].toString()}`, () => {
+        it(`throwing a RangeError for longitude and should be -0.571429 for ${positions[2].toString()}`, () => {
           const x = positions[2];
           const latitude = component.interpolationValue(x, 'latitude');
-          expect(latitude).toEqual(0.571429);
+          expect(latitude).toEqual(-0.571429);
           expect(() => component.interpolationValue(x, 'longitude'))
             .toThrow(new RangeError(rangeErrorMsg(x.longitude, component.center.longitude, component.longestDistance('longitude'))));
         });
-        it(`[1,1] for ${positions[3].toString()}`, () => {
+        it(`[-1,-1] for ${positions[3].toString()}`, () => {
           const x = positions[3];
           const latitude = component.interpolationValue(x, 'latitude');
           const longitude = component.interpolationValue(x, 'longitude');
-          expect([latitude, longitude]).toEqual([1,1]);
+          expect([latitude, longitude]).toEqual([-1,-1]);
         });
         it(`throwing a RangeError for ${positions[4].toString()}`, () => {
           const x = positions[4];
@@ -636,23 +668,23 @@ describe('RadarComponent', () => {
           const longitude = component.interpolationValue(x, 'longitude');
           expect([latitude, longitude]).toEqual([0,0]);
         });
-        it(`[0.174533,0.034907] for ${positions[1].toString()}`, () => {
+        it(`[0.174533,-0.034907] for ${positions[1].toString()}`, () => {
           const x = positions[1];
           const latitude = component.interpolationValue(x, 'latitude');
           const longitude = component.interpolationValue(x, 'longitude');
-          expect([latitude, longitude]).toEqual([0.174533,0.034907]);
+          expect([latitude, longitude]).toEqual([0.174533,-0.034907]);
         });
-        it(`[0.558505,0.575959] for ${positions[2].toString()}`, () => {
+        it(`[-0.558505,0.575959] for ${positions[2].toString()}`, () => {
           const x = positions[2];
           const latitude = component.interpolationValue(x, 'latitude');
           const longitude = component.interpolationValue(x, 'longitude');
-          expect([latitude, longitude]).toEqual([0.558505,0.575959]);
+          expect([latitude, longitude]).toEqual([-0.558505,0.575959]);
         });
-        it(`[0.977384,0.191986] for ${positions[3].toString()}`, () => {
+        it(`[-0.977384,-0.191986] for ${positions[3].toString()}`, () => {
           const x = positions[3];
           const latitude = component.interpolationValue(x, 'latitude');
           const longitude = component.interpolationValue(x, 'longitude');
-          expect([latitude, longitude]).toEqual([0.977384,0.191986]);
+          expect([latitude, longitude]).toEqual([-0.977384,-0.191986]);
         });
         it(`[1,1] for ${positions[4].toString()}`, () => {
           const x = positions[4];
@@ -672,11 +704,11 @@ describe('RadarComponent', () => {
           component.positions.push(positions[0]);
         });
 
-        it(`[1,1] for ${positions[0].toString()}`, () => {
+        it(`[-1,1] for ${positions[0].toString()}`, () => {
           const x = positions[0];
           const latitude = component.interpolationValue(x, 'latitude');
           const longitude = component.interpolationValue(x, 'longitude');
-          expect([latitude, longitude]).toEqual([1,1]);
+          expect([latitude, longitude]).toEqual([-1,1]);
         });
         it(`[0,0] for ${positions[1].toString()}`, () => {
           const x = positions[1];
@@ -737,11 +769,11 @@ describe('RadarComponent', () => {
           component.positions.push(positions[2]);
         });
 
-        xit(`[0.238095,0.057142] for ${positions[0].toString()}`, () => {
+        it(`[-0.238095,0.057143] for ${positions[0].toString()}`, () => {
           const x = positions[0];
           const latitude = component.interpolationValue(x, 'latitude');
           const longitude = component.interpolationValue(x, 'longitude');
-          expect([latitude, longitude]).toEqual([0.238095,0.057142]);
+          expect([latitude, longitude]).toEqual([-0.238095,0.057143]);
         });
       });
     });

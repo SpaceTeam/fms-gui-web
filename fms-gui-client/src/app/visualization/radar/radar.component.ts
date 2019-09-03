@@ -101,7 +101,7 @@ export class RadarComponent implements OnInit {
       .enter()
       .append('circle')
       .attr('cx', position => this.positionInDiagram(position, 'longitude'))
-      .attr('cy', position => this.positionInDiagram(position, 'latitude'))
+      .attr('cy', position => this.size - this.positionInDiagram(position, 'latitude'))
       .attr('r', '0.25em')
       .attr('class', 'position');
   }
@@ -116,12 +116,11 @@ export class RadarComponent implements OnInit {
    * @param type used for calculating the distance from the center
    */
   positionInDiagram(position: Position, type: PositionType): number {
-    const positionType = position[type];
     const x_0 = this.size / 2;
-    const x_1 = positionType < x_0 ? 0 : this.size;
+    const x_1 = this.size;
 
     const t = this.interpolationValue(position, type);
-    return (1 - t) * x_0 + t * x_1; // TODO: Maybe use d3's interpolator for this? Does the same thing
+    return (1 - t) * x_0 + t * x_1;
   }
 
   /**
@@ -139,21 +138,16 @@ export class RadarComponent implements OnInit {
    * @param type the specific value we want to use for the interpolation
    */
   interpolationValue(position: Position, type: PositionType): number {
-    const x_0 = this.roundNumber(Math.abs(this.center[type]));
-    const x_1 = Math.abs(x_0 - this.longestDistance(type));
-    const x = this.roundNumber(Math.abs(position[type]));
+    const distance = this.longestDistance(type);
+    const x_0 = this.roundNumber(this.center[type]);
+    const x_1 = x_0 + distance; // upper bound
+    const l = x_0 - distance;  // lower bound
+    const x = this.roundNumber(position[type]);
     let value;
 
-    let inRange;
-    if (x_0 > x_1) {
-      inRange = (x_1 <= x && x <= x_0);
-    } else {
-      inRange = (x_0 <= x && x <= x_1);
-    }
-
     // Check whether the number is in the range between the numbers
-    if (!inRange) {
-      throw new RangeError(`Error: ${x} is out of bounds between [${Math.min(x_0,x_1)},${Math.max(x_0,x_1)}]`);
+    if (!(l <= x && x <= x_1)) {
+      throw new RangeError(`Error: ${x} is out of bounds between [${l},${x_1}]`);
     }
     // Check whether there is any range
     if (x_0 === x_1) {
@@ -172,14 +166,6 @@ export class RadarComponent implements OnInit {
       value = (x - x_0) / (x_1 - x_0);
     }
     return this.roundNumber(value);
-  }
-
-  /**
-   * Calculates the radius of a circle between the center and the most outer point
-   * returns an integer with the radius to the border
-   */
-  radius2D(): number {
-    return Math.hypot(this.longestDistance('longitude'), this.longestDistance('latitude'));
   }
 
   /**

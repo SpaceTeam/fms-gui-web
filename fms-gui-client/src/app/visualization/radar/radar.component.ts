@@ -93,17 +93,24 @@ export class RadarComponent implements OnInit {
     // Add lines to SVG
     // TODO: They should go from one position to the other (except the first one)
 
-    // TODO: Let the user switch between (0,0) as the center and the first (lon,lat) as the center
-
     // Add circles to SVG
     svg.selectAll('circle')
       .data([this.center, this.center, ...this.positions])
       .enter()
       .append('circle')
-      .attr('cx', position => this.positionInDiagram(position, 'longitude'))
-      .attr('cy', position => this.size - this.positionInDiagram(position, 'latitude'))
+      .attr('cx', position => this.x(position))
+      .attr('cy', position => this.y(position))
       .attr('r', '0.25em')
       .attr('class', 'position');
+  }
+
+  // TODO: Move all of the following methods into a static Visualization helper
+  x(position: Position): number {
+    return this.positionInDiagram(position, 'longitude');
+  }
+
+  y(position: Position): number {
+    return this.size - this.positionInDiagram(position, 'latitude');
   }
 
   /**
@@ -120,7 +127,7 @@ export class RadarComponent implements OnInit {
     const x_1 = this.size;
 
     const t = this.interpolationValue(position, type);
-    return (1 - t) * x_0 + t * x_1;
+    return this.roundNumber((1 - t) * x_0 + t * x_1);
   }
 
   /**

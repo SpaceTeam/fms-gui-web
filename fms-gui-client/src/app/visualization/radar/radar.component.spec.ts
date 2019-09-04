@@ -461,7 +461,7 @@ describe('RadarComponent', () => {
         component.center = positions[0];
       });
 
-      describe('in case of only one (or zero) values in the positions array', () => {
+      describe('in the case of only one (or zero) values in the positions array', () => {
         it(`[300,300] for center (${positions[0]})`, () => {
           // component.positions.push(positions[0])
           const latitude = component.positionInDiagram(component.center, 'latitude');
@@ -495,6 +495,145 @@ describe('RadarComponent', () => {
           const latitude = component.positionInDiagram(position, 'latitude');
           const longitude = component.positionInDiagram(position, 'longitude');
           expect([latitude, longitude]).toEqual([600,600]);
+        });
+      });
+      describe('in the case of exactly two values in the positions array', () => {
+        let x, y;
+        let pos1, pos2;
+
+        // 01, 02, 03, 04, 12, 13, 14, 23, 24, 34
+        it(`${positions[0]} and ${positions[1]}`, () => {
+          pos1 = positions[0];
+          pos2 = positions[1];
+          component.positions.push(pos1, pos2);
+
+          y = component.positionInDiagram(pos1, 'latitude');
+          x = component.positionInDiagram(pos1, 'longitude');
+          expect([x, y]).toEqual([300,300]);
+
+          y = component.positionInDiagram(pos2, 'latitude');
+          x = component.positionInDiagram(pos2, 'longitude');
+          expect([x, y]).toEqual([0,600]);
+        });
+        it(`${positions[0]} and ${positions[2]}`, () => {
+          pos1 = positions[0];
+          pos2 = positions[2];
+
+          component.positions.push(pos1, pos2);
+
+          y = component.positionInDiagram(pos1, 'latitude');
+          x = component.positionInDiagram(pos1, 'longitude');
+          expect([x, y]).toEqual([300,300]);
+
+          y = component.positionInDiagram(pos2, 'latitude');
+          x = component.positionInDiagram(pos2, 'longitude');
+          expect([x, y]).toEqual([600,0]);
+        });
+        it(`${positions[0]} and ${positions[3]}`, () => {
+          pos1 = positions[0];
+          pos2 = positions[3];
+
+          component.positions.push(pos1, pos2);
+
+          y = component.positionInDiagram(pos1, 'latitude');
+          x = component.positionInDiagram(pos1, 'longitude');
+          expect([x, y]).toEqual([300,300]);
+
+          y = component.positionInDiagram(pos2, 'latitude');
+          x = component.positionInDiagram(pos2, 'longitude');
+          expect([x, y]).toEqual([0,0]);
+        });
+        it(`${positions[0]} and ${positions[4]}`, () => {
+          pos1 = positions[0];
+          pos2 = positions[4];
+
+          component.positions.push(pos1, pos2);
+
+          y = component.positionInDiagram(pos1, 'latitude');
+          x = component.positionInDiagram(pos1, 'longitude');
+          expect([x, y]).toEqual([300,300]);
+
+          y = component.positionInDiagram(pos2, 'latitude');
+          x = component.positionInDiagram(pos2, 'longitude');
+          expect([x, y]).toEqual([600,600]);
+        });
+        it(`${positions[1]} and ${positions[2]}`, () => {
+          pos1 = positions[1];
+          pos2 = positions[2];
+          component.positions.push(pos1, pos2);
+
+          y = component.positionInDiagram(pos1, 'latitude');
+          x = component.positionInDiagram(pos1, 'longitude');
+          expect([x, y]).toEqual([281.8182,393.75]);
+
+          y = component.positionInDiagram(pos2, 'latitude');
+          x = component.positionInDiagram(pos2, 'longitude');
+          expect([x, y]).toEqual([600, 0]);
+        });
+        xit(`${positions[1]} and ${positions[3]}`, () => {
+          pos1 = positions[1];
+          pos2 = positions[3];
+          component.positions.push(pos1, pos2);
+
+          y = component.positionInDiagram(pos1, 'latitude');
+          x = component.positionInDiagram(pos1, 'longitude');
+          expect([x, y]).toEqual([]);
+
+          y = component.positionInDiagram(pos2, 'latitude');
+          x = component.positionInDiagram(pos2, 'longitude');
+          expect([x, y]).toEqual([]);
+        });
+        xit(`${positions[1]} and ${positions[4]}`, () => {
+          pos1 = positions[1];
+          pos2 = positions[4];
+          component.positions.push(pos1, pos2);
+
+          y = component.positionInDiagram(pos1, 'latitude');
+          x = component.positionInDiagram(pos1, 'longitude');
+          expect([x, y]).toEqual([]);
+
+          y = component.positionInDiagram(pos2, 'latitude');
+          x = component.positionInDiagram(pos2, 'longitude');
+          expect([x, y]).toEqual([]);
+        });
+        xit(`${positions[2]} and ${positions[3]}`, () => {
+          pos1 = positions[2];
+          pos2 = positions[3];
+          component.positions.push(pos1, pos2);
+
+          y = component.positionInDiagram(pos1, 'latitude');
+          x = component.positionInDiagram(pos1, 'longitude');
+          expect([x, y]).toEqual([]);
+
+          y = component.positionInDiagram(pos2, 'latitude');
+          x = component.positionInDiagram(pos2, 'longitude');
+          expect([x, y]).toEqual([]);
+        });
+        xit(`${positions[2]} and ${positions[4]}`, () => {
+          pos1 = positions[2];
+          pos2 = positions[4];
+          component.positions.push(pos1, pos2);
+
+          y = component.positionInDiagram(pos1, 'latitude');
+          x = component.positionInDiagram(pos1, 'longitude');
+          expect([x, y]).toEqual([]);
+
+          y = component.positionInDiagram(pos2, 'latitude');
+          x = component.positionInDiagram(pos2, 'longitude');
+          expect([x, y]).toEqual([]);
+        });
+        xit(`${positions[3]} and ${positions[4]}`, () => {
+          pos1 = positions[3];
+          pos2 = positions[4];
+          component.positions.push(pos1, pos2);
+
+          y = component.positionInDiagram(pos1, 'latitude');
+          x = component.positionInDiagram(pos1, 'longitude');
+          expect([x, y]).toEqual([]);
+
+          y = component.positionInDiagram(pos2, 'latitude');
+          x = component.positionInDiagram(pos2, 'longitude');
+          expect([x, y]).toEqual([]);
         });
       });
     });
@@ -774,6 +913,63 @@ describe('RadarComponent', () => {
           const latitude = component.interpolationValue(x, 'latitude');
           const longitude = component.interpolationValue(x, 'longitude');
           expect([latitude, longitude]).toEqual([-0.238095,0.057143]);
+        });
+        it(`[0,0] for ${positions[1].toString()}`, () => {
+          const x = positions[1];
+          const latitude = component.interpolationValue(x, 'latitude');
+          const longitude = component.interpolationValue(x, 'longitude');
+          expect([latitude, longitude]).toEqual([0,0]);
+        });
+        it(`[-1,1] for ${positions[2].toString()}`, () => {
+          const x = positions[2];
+          const latitude = component.interpolationValue(x, 'latitude');
+          const longitude = component.interpolationValue(x, 'longitude');
+          expect([latitude, longitude]).toEqual([-1,1]);
+        });
+        it(`throwing a range error for the latitude and have longitude -0.257143 for ${positions[3].toString()}`, () => {
+          const x = positions[3];
+          expect(() => component.interpolationValue(x, 'latitude')).toThrow(jasmine.any(RangeError));
+          const longitude = component.interpolationValue(x, 'longitude');
+          expect(longitude).toEqual(-0.257143);
+        });
+        it(`throwing a range error for ${positions[4].toString()}`, () => {
+          const x = positions[4];
+          expect(() => component.interpolationValue(x, 'latitude')).toThrow(jasmine.any(RangeError));
+          expect(() => component.interpolationValue(x, 'longitude')).toThrow(jasmine.any(RangeError));
+        });
+      });
+      describe(`${positions[3].toString()} should be`, () => {
+        beforeEach(() => {
+          component.positions.push(positions[3]);
+        });
+
+        it(`[-0.151515,0.222222] for ${positions[0].toString()}`, () => {
+          const x = positions[0];
+          const latitude = component.interpolationValue(x, 'latitude');
+          const longitude = component.interpolationValue(x, 'longitude');
+          expect([latitude, longitude]).toEqual([-0.151515,0.222222]);
+        });
+        it(`[0,0] for ${positions[1].toString()}`, () => {
+          const x = positions[1];
+          const latitude = component.interpolationValue(x, 'latitude');
+          const longitude = component.interpolationValue(x, 'longitude');
+          expect([latitude, longitude]).toEqual([0,0]);
+        });
+        it(`throwing a range error for longitude and latitude -0.636364 for ${positions[2].toString()}`, () => {
+          const x = positions[2];
+          expect(component.interpolationValue(x, 'latitude')).toEqual(-0.636364);
+          expect(() => component.interpolationValue(x, 'longitude')).toThrow(jasmine.any(RangeError));
+        });
+        it(`[-1,-1] for ${positions[3].toString()}`, () => {
+          const x = positions[3];
+          const latitude = component.interpolationValue(x, 'latitude');
+          const longitude = component.interpolationValue(x, 'longitude');
+          expect([latitude, longitude]).toEqual([-1,-1]);
+        });
+        it(`throwing a range error for longitude and latitude 0.716603 for ${positions[4].toString()}`, () => {
+          const x = positions[4];
+          expect(component.interpolationValue(x, 'latitude')).toEqual(0.716603);
+          expect(() => component.interpolationValue(x, 'longitude')).toThrow(jasmine.any(RangeError));
         });
       });
     });

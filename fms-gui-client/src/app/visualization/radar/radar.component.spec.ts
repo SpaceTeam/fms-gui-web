@@ -2,7 +2,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {RadarComponent} from './radar.component';
 import {Position} from '../../shared/model/flight/position';
-import {before} from 'selenium-webdriver/testing';
+import {PositionUtil} from '../../shared/utils/position/position.util';
 
 describe('RadarComponent', () => {
   let component: RadarComponent;
@@ -19,7 +19,7 @@ describe('RadarComponent', () => {
   function rangeErrorMsg(x: number, center: number, distance: number): string {
     const l = center - distance;
     const u = center + distance;
-    return `Error: ${component.roundNumber(x)} is out of bounds between [${component.roundNumber(l)},${component.roundNumber(u)}]`;
+    return `Error: ${PositionUtil.roundNumber(x)} is out of bounds between [${PositionUtil.roundNumber(l)},${PositionUtil.roundNumber(u)}]`;
   }
 
   beforeEach(async(() => {
@@ -464,36 +464,36 @@ describe('RadarComponent', () => {
       describe('in the case of only one (or zero) values in the positions array', () => {
         it(`[300,300] for center (${positions[0]})`, () => {
           // component.positions.push(positions[0])
-          const latitude = component.positionInDiagram(component.center, 'latitude');
-          const longitude = component.positionInDiagram(component.center, 'longitude');
+          const latitude = component.interpolatedPositionInSquare(component.center, 'latitude');
+          const longitude = component.interpolatedPositionInSquare(component.center, 'longitude');
           expect([latitude, longitude]).toEqual([300,300]);
         });
         it(`[600,0] for ${positions[1]}`, () => {
           const position = positions[1];
           component.positions.push(position);
-          const latitude = component.positionInDiagram(position, 'latitude');
-          const longitude = component.positionInDiagram(position, 'longitude');
+          const latitude = component.interpolatedPositionInSquare(position, 'latitude');
+          const longitude = component.interpolatedPositionInSquare(position, 'longitude');
           expect([latitude, longitude]).toEqual([600,0]);
         });
         it(`[0,600] for ${positions[2]}`, () => {
           const position = positions[2];
           component.positions.push(position);
-          const latitude = component.positionInDiagram(position, 'latitude');
-          const longitude = component.positionInDiagram(position, 'longitude');
+          const latitude = component.interpolatedPositionInSquare(position, 'latitude');
+          const longitude = component.interpolatedPositionInSquare(position, 'longitude');
           expect([latitude, longitude]).toEqual([0,600]);
         });
         it(`[0,0] for ${positions[3]}`, () => {
           const position = positions[3];
           component.positions.push(position);
-          const latitude = component.positionInDiagram(position, 'latitude');
-          const longitude = component.positionInDiagram(position, 'longitude');
+          const latitude = component.interpolatedPositionInSquare(position, 'latitude');
+          const longitude = component.interpolatedPositionInSquare(position, 'longitude');
           expect([latitude, longitude]).toEqual([0,0]);
         });
         it(`[600,600] for ${positions[4]}`, () => {
           const position = positions[4];
           component.positions.push(position);
-          const latitude = component.positionInDiagram(position, 'latitude');
-          const longitude = component.positionInDiagram(position, 'longitude');
+          const latitude = component.interpolatedPositionInSquare(position, 'latitude');
+          const longitude = component.interpolatedPositionInSquare(position, 'longitude');
           expect([latitude, longitude]).toEqual([600,600]);
         });
       });
@@ -507,12 +507,12 @@ describe('RadarComponent', () => {
           pos2 = positions[1];
           component.positions.push(pos1, pos2);
 
-          y = component.positionInDiagram(pos1, 'latitude');
-          x = component.positionInDiagram(pos1, 'longitude');
+          y = component.interpolatedPositionInSquare(pos1, 'latitude');
+          x = component.interpolatedPositionInSquare(pos1, 'longitude');
           expect([x, y]).toEqual([300,300]);
 
-          y = component.positionInDiagram(pos2, 'latitude');
-          x = component.positionInDiagram(pos2, 'longitude');
+          y = component.interpolatedPositionInSquare(pos2, 'latitude');
+          x = component.interpolatedPositionInSquare(pos2, 'longitude');
           expect([x, y]).toEqual([0,600]);
         });
         it(`${positions[0]} and ${positions[2]}`, () => {
@@ -521,12 +521,12 @@ describe('RadarComponent', () => {
 
           component.positions.push(pos1, pos2);
 
-          y = component.positionInDiagram(pos1, 'latitude');
-          x = component.positionInDiagram(pos1, 'longitude');
+          y = component.interpolatedPositionInSquare(pos1, 'latitude');
+          x = component.interpolatedPositionInSquare(pos1, 'longitude');
           expect([x, y]).toEqual([300,300]);
 
-          y = component.positionInDiagram(pos2, 'latitude');
-          x = component.positionInDiagram(pos2, 'longitude');
+          y = component.interpolatedPositionInSquare(pos2, 'latitude');
+          x = component.interpolatedPositionInSquare(pos2, 'longitude');
           expect([x, y]).toEqual([600,0]);
         });
         it(`${positions[0]} and ${positions[3]}`, () => {
@@ -535,12 +535,12 @@ describe('RadarComponent', () => {
 
           component.positions.push(pos1, pos2);
 
-          y = component.positionInDiagram(pos1, 'latitude');
-          x = component.positionInDiagram(pos1, 'longitude');
+          y = component.interpolatedPositionInSquare(pos1, 'latitude');
+          x = component.interpolatedPositionInSquare(pos1, 'longitude');
           expect([x, y]).toEqual([300,300]);
 
-          y = component.positionInDiagram(pos2, 'latitude');
-          x = component.positionInDiagram(pos2, 'longitude');
+          y = component.interpolatedPositionInSquare(pos2, 'latitude');
+          x = component.interpolatedPositionInSquare(pos2, 'longitude');
           expect([x, y]).toEqual([0,0]);
         });
         it(`${positions[0]} and ${positions[4]}`, () => {
@@ -549,12 +549,12 @@ describe('RadarComponent', () => {
 
           component.positions.push(pos1, pos2);
 
-          y = component.positionInDiagram(pos1, 'latitude');
-          x = component.positionInDiagram(pos1, 'longitude');
+          y = component.interpolatedPositionInSquare(pos1, 'latitude');
+          x = component.interpolatedPositionInSquare(pos1, 'longitude');
           expect([x, y]).toEqual([300,300]);
 
-          y = component.positionInDiagram(pos2, 'latitude');
-          x = component.positionInDiagram(pos2, 'longitude');
+          y = component.interpolatedPositionInSquare(pos2, 'latitude');
+          x = component.interpolatedPositionInSquare(pos2, 'longitude');
           expect([x, y]).toEqual([600,600]);
         });
         it(`${positions[1]} and ${positions[2]}`, () => {
@@ -562,12 +562,12 @@ describe('RadarComponent', () => {
           pos2 = positions[2];
           component.positions.push(pos1, pos2);
 
-          y = component.positionInDiagram(pos1, 'latitude');
-          x = component.positionInDiagram(pos1, 'longitude');
+          y = component.interpolatedPositionInSquare(pos1, 'latitude');
+          x = component.interpolatedPositionInSquare(pos1, 'longitude');
           expect([x, y]).toEqual([281.8182,393.75]);
 
-          y = component.positionInDiagram(pos2, 'latitude');
-          x = component.positionInDiagram(pos2, 'longitude');
+          y = component.interpolatedPositionInSquare(pos2, 'latitude');
+          x = component.interpolatedPositionInSquare(pos2, 'longitude');
           expect([x, y]).toEqual([600, 0]);
         });
         xit(`${positions[1]} and ${positions[3]}`, () => {
@@ -575,12 +575,12 @@ describe('RadarComponent', () => {
           pos2 = positions[3];
           component.positions.push(pos1, pos2);
 
-          y = component.positionInDiagram(pos1, 'latitude');
-          x = component.positionInDiagram(pos1, 'longitude');
+          y = component.interpolatedPositionInSquare(pos1, 'latitude');
+          x = component.interpolatedPositionInSquare(pos1, 'longitude');
           expect([x, y]).toEqual([]);
 
-          y = component.positionInDiagram(pos2, 'latitude');
-          x = component.positionInDiagram(pos2, 'longitude');
+          y = component.interpolatedPositionInSquare(pos2, 'latitude');
+          x = component.interpolatedPositionInSquare(pos2, 'longitude');
           expect([x, y]).toEqual([]);
         });
         xit(`${positions[1]} and ${positions[4]}`, () => {
@@ -588,12 +588,12 @@ describe('RadarComponent', () => {
           pos2 = positions[4];
           component.positions.push(pos1, pos2);
 
-          y = component.positionInDiagram(pos1, 'latitude');
-          x = component.positionInDiagram(pos1, 'longitude');
+          y = component.interpolatedPositionInSquare(pos1, 'latitude');
+          x = component.interpolatedPositionInSquare(pos1, 'longitude');
           expect([x, y]).toEqual([]);
 
-          y = component.positionInDiagram(pos2, 'latitude');
-          x = component.positionInDiagram(pos2, 'longitude');
+          y = component.interpolatedPositionInSquare(pos2, 'latitude');
+          x = component.interpolatedPositionInSquare(pos2, 'longitude');
           expect([x, y]).toEqual([]);
         });
         xit(`${positions[2]} and ${positions[3]}`, () => {
@@ -601,12 +601,12 @@ describe('RadarComponent', () => {
           pos2 = positions[3];
           component.positions.push(pos1, pos2);
 
-          y = component.positionInDiagram(pos1, 'latitude');
-          x = component.positionInDiagram(pos1, 'longitude');
+          y = component.interpolatedPositionInSquare(pos1, 'latitude');
+          x = component.interpolatedPositionInSquare(pos1, 'longitude');
           expect([x, y]).toEqual([]);
 
-          y = component.positionInDiagram(pos2, 'latitude');
-          x = component.positionInDiagram(pos2, 'longitude');
+          y = component.interpolatedPositionInSquare(pos2, 'latitude');
+          x = component.interpolatedPositionInSquare(pos2, 'longitude');
           expect([x, y]).toEqual([]);
         });
         xit(`${positions[2]} and ${positions[4]}`, () => {
@@ -614,12 +614,12 @@ describe('RadarComponent', () => {
           pos2 = positions[4];
           component.positions.push(pos1, pos2);
 
-          y = component.positionInDiagram(pos1, 'latitude');
-          x = component.positionInDiagram(pos1, 'longitude');
+          y = component.interpolatedPositionInSquare(pos1, 'latitude');
+          x = component.interpolatedPositionInSquare(pos1, 'longitude');
           expect([x, y]).toEqual([]);
 
-          y = component.positionInDiagram(pos2, 'latitude');
-          x = component.positionInDiagram(pos2, 'longitude');
+          y = component.interpolatedPositionInSquare(pos2, 'latitude');
+          x = component.interpolatedPositionInSquare(pos2, 'longitude');
           expect([x, y]).toEqual([]);
         });
         xit(`${positions[3]} and ${positions[4]}`, () => {
@@ -627,12 +627,12 @@ describe('RadarComponent', () => {
           pos2 = positions[4];
           component.positions.push(pos1, pos2);
 
-          y = component.positionInDiagram(pos1, 'latitude');
-          x = component.positionInDiagram(pos1, 'longitude');
+          y = component.interpolatedPositionInSquare(pos1, 'latitude');
+          x = component.interpolatedPositionInSquare(pos1, 'longitude');
           expect([x, y]).toEqual([]);
 
-          y = component.positionInDiagram(pos2, 'latitude');
-          x = component.positionInDiagram(pos2, 'longitude');
+          y = component.interpolatedPositionInSquare(pos2, 'latitude');
+          x = component.interpolatedPositionInSquare(pos2, 'longitude');
           expect([x, y]).toEqual([]);
         });
       });
@@ -748,7 +748,7 @@ describe('RadarComponent', () => {
           expect(() => component.interpolationValue(x, 'latitude'))
             .toThrow(new RangeError(rangeErrorMsg(x.latitude, component.center.latitude, component.longestDistance('latitude'))));
           const longitude = component.interpolationValue(x, 'longitude');
-          expect(longitude).toEqual(component.roundNumber(-1/3));
+          expect(longitude).toEqual(PositionUtil.roundNumber(-1/3));
         });
         it(`throwing a RangeError for ${positions[4].toString()}`, () => {
           const x = positions[4];

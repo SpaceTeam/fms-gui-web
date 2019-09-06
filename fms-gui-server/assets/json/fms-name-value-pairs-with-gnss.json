@@ -627,15 +627,15 @@
     "value": [
       {
         "name": "Latitude",
-        "value": 53.41840583333333
+        "value": 90
       },
       {
         "name": "Longitude",
-        "value": 15.761636833333334
+        "value": 50
       },
       {
         "name": "Altitude",
-        "value": 963.8
+        "value": 200
       },
       {
         "name": "Satellites",

@@ -27,6 +27,8 @@ export class PositionService {
         this.announcePosition(this.createNewPosition())
       }
     });
+
+    // TODO: Subscribe to FMS' error subject, so that you notify the radar component to clear the positions
   }
 
   // Message command

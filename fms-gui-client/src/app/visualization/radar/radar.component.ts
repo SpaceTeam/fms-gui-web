@@ -3,6 +3,7 @@ import {Position} from '../../shared/model/flight/position';
 import * as d3 from 'd3';
 import {PositionService} from '../../shared/services/visualization/position/position.service';
 import {PositionType} from '../../shared/model/flight/position.type';
+import {PositionUtil} from '../../shared/utils/position/position.util';
 
 @Component({
   selector: 'app-radar',
@@ -37,6 +38,12 @@ export class RadarComponent implements OnInit {
    */
   center: Position;
 
+  radius: number;
+
+  // TODO: The height factor will also change!
+  maxAltitude: number;
+
+
   constructor(private positionService: PositionService) {
     // Initialize the local objects
     this.positions = [];
@@ -46,10 +53,14 @@ export class RadarComponent implements OnInit {
     this.initChart();
 
     // Save the current position
-    this.positionService.positionAnnounced$.subscribe(position => {
+    this.positionService.positionAnnounced$.subscribe((position: Position) => {
       // Only add the position, if really necessary
-      if (!this.positions.includes(position)) {
+      if (this.positions.filter(pos =>
+        (new Position(pos.longitude, pos.latitude, pos.altitude, pos.timestamp)).equals(position)).length === 0) {
         this.positions.push(position);
+        if (position.altitude > this.maxAltitude) {
+          this.maxAltitude = position.altitude;
+        }
       }
       this.addPositionsToChart();
     });
@@ -60,7 +71,9 @@ export class RadarComponent implements OnInit {
     const svg = elem.append('svg');
 
     this.size = Math.min(Number(elem.style('width').slice(0, -2)), Number(elem.style('height').slice(0, -2)));
-    const halfSize = this.size / 2;
+    this.radius = this.size / 2;
+    // TODO: Redraw the whole SVG (or at least the positions), whenever this value changes
+    this.maxAltitude = 1000;
 
     svg.attr('width', this.size);
     svg.attr('height', this.size);
@@ -70,20 +83,30 @@ export class RadarComponent implements OnInit {
     // TODO: Let the user decide what the center should be
     this.center = new Position(50, 15);
 
+    // TODO: Let the user decide how many equidistant circles should be drawn
+    const factor = 5;
+    const distance = this.radius / factor;
+    const radii = [];
+    for (let i = 1; i <= factor; i++) {
+      radii.push(distance * i);
+    }
+
     // TODO: You should be able to scale the SVG
     svg
-      .data([this.center])
       .append('circle')
-      .attr('cx', () => halfSize)
-      .attr('cy', () => halfSize)
-      .attr('r', '0.1em');
+      .attr('cx', () => this.radius)
+      .attr('cy', () => this.radius)
+      .attr('r', '0.1em')
+      .classed('center', true);
 
     svg
-      .data([this.center])
+      .selectAll('circle.circles')
+      .data(radii)
+      .enter()
       .append('circle')
-      .attr('cx', () => halfSize)
-      .attr('cy', () => halfSize)
-      .attr('r', halfSize)
+      .attr('cx', () => this.radius)
+      .attr('cy', () => this.radius)
+      .attr('r', r => r)
       .classed('circles', true);
   }
 
@@ -94,23 +117,26 @@ export class RadarComponent implements OnInit {
     // TODO: They should go from one position to the other (except the first one)
 
     // Add circles to SVG
-    svg.selectAll('circle')
-      .data([this.center, this.center, ...this.positions])
+    svg.selectAll('circle.position')
+      .data([...this.positions])
       .enter()
       .append('circle')
       .attr('cx', position => this.x(position))
       .attr('cy', position => this.y(position))
       .attr('r', '0.25em')
-      .attr('class', 'position');
+      .attr('fill', position => d3.interpolatePlasma((1 / this.maxAltitude) * position.altitude))
+      .attr('class', 'position')
   }
 
   // TODO: Move all of the following methods into a static Visualization helper
   x(position: Position): number {
-    return this.positionInDiagram(position, 'longitude');
+    return this.radius + PositionUtil.getNormalizedDirection(position, this.center).longitude *
+      (position.altitude / this.maxAltitude * this.radius);
   }
 
   y(position: Position): number {
-    return this.size - this.positionInDiagram(position, 'latitude');
+    return this.radius - PositionUtil.getNormalizedDirection(position, this.center).latitude *
+      (position.altitude / this.maxAltitude * this.radius);
   }
 
   /**
@@ -122,12 +148,12 @@ export class RadarComponent implements OnInit {
    * @param position of the point of interest
    * @param type used for calculating the distance from the center
    */
-  positionInDiagram(position: Position, type: PositionType): number {
+  interpolatedPositionInSquare(position: Position, type: PositionType): number {
     const x_0 = this.size / 2;
     const x_1 = this.size;
 
     const t = this.interpolationValue(position, type);
-    return this.roundNumber((1 - t) * x_0 + t * x_1);
+    return PositionUtil.roundNumber((1 - t) * x_0 + t * x_1);
   }
 
   /**
@@ -146,10 +172,10 @@ export class RadarComponent implements OnInit {
    */
   interpolationValue(position: Position, type: PositionType): number {
     const distance = this.longestDistance(type);
-    const x_0 = this.roundNumber(this.center[type]);
-    const x_1 = x_0 + distance; // upper bound
-    const l = x_0 - distance;  // lower bound
-    const x = this.roundNumber(position[type]);
+    const x_0 = PositionUtil.roundNumber(this.center[type]);
+    const x_1 = PositionUtil.roundNumber(x_0 + distance); // upper bound
+    const l = PositionUtil.roundNumber(x_0 - distance);  // lower bound
+    const x = PositionUtil.roundNumber(position[type]);
     let value;
 
     // Check whether the number is in the range between the numbers
@@ -172,12 +198,12 @@ export class RadarComponent implements OnInit {
     else {
       value = (x - x_0) / (x_1 - x_0);
     }
-    return this.roundNumber(value);
+    return PositionUtil.roundNumber(value);
   }
 
   /**
    * Calculates the distance from the center of the diagram to the border (outer most element)
-   * This is then needed in the 'positionInDiagram' method
+   * This is then needed in the 'interpolatedPositionInSquare' method
    * We use the following formula for the calculation of distance d:
    *
    * d = |p_max[type]| - |p_0[type]|
@@ -195,10 +221,6 @@ export class RadarComponent implements OnInit {
 
     // 2) Return the maximum distance
     const max = Math.max(...typeArray);
-    return this.roundNumber(max);
-  }
-
-  roundNumber(num: number): number {
-    return Math.round(num * Math.pow(10, 6)) / Math.pow(10, 6);
+    return PositionUtil.roundNumber(max);
   }
 }

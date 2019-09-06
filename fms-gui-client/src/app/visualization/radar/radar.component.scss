@@ -1,8 +1,12 @@
 .circles {
-  fill: none;
+  opacity: 0.5;
 }
 
-.position, .circles {
+.circles, .position {
   stroke: black;
   stroke-width: 1
+}
+
+.center {
+  fill: black;
 }

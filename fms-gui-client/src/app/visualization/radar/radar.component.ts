@@ -3,6 +3,7 @@ import {Position} from '../../shared/model/flight/position';
 import * as d3 from 'd3';
 import {PositionService} from '../../shared/services/visualization/position/position.service';
 import {PositionUtil} from '../../shared/utils/position/position.util';
+import {environment} from '../../../environments/environment';
 
 @Component({
   selector: 'app-radar',
@@ -44,15 +45,10 @@ export class RadarComponent implements OnInit {
   // TODO: Set this per default in environment.ts
   maxAltitude: number;
 
-  // TODO: Set this per default in environment.ts
-  circleRadius = 4;
-
-  // TODO: Set this per default in environment.ts
-  equidistantCirclesNumber = 5;
-
   constructor(private positionService: PositionService) {
     // Initialize the local objects
     this.positions = [];
+    this.maxAltitude = environment.visualization.position.max.altitude;
   }
 
   ngOnInit() {
@@ -78,8 +74,8 @@ export class RadarComponent implements OnInit {
 
     this.size = Math.min(Number(elem.style('width').slice(0, -2)), Number(elem.style('height').slice(0, -2)));
     this.radius = this.size / 2;
-    // TODO: Redraw the whole SVG (or at least the positions), whenever this value changes
-    this.maxAltitude = 1000;
+
+    // TODO: Redraw the whole SVG (or at least the positions), whenever the maximum altitude changes
 
     svg.attr('width', this.size);
     svg.attr('height', this.size);
@@ -90,9 +86,9 @@ export class RadarComponent implements OnInit {
     this.center = new Position(50, 15);
 
     // TODO: Let the user decide how many equidistant circles should be drawn
-    const distance = this.radius / this.equidistantCirclesNumber;
+    const distance = this.radius / environment.visualization.radar.equidistant.circles;
     const radii = [];
-    for (let i = 1; i <= this.equidistantCirclesNumber; i++) {
+    for (let i = 1; i <= environment.visualization.radar.equidistant.circles; i++) {
       radii.push(distance * i);
     }
     const interpolation = d3.interpolateNumber(0.1, 0.7);
@@ -106,14 +102,14 @@ export class RadarComponent implements OnInit {
       .attr('cx', () => this.radius)
       .attr('cy', () => this.radius)
       .attr('r', r => r)
-      .style('fill', (d, i) => d3.interpolateGreys(interpolation(i / this.equidistantCirclesNumber)))
+      .style('fill', (d, i) => d3.interpolateGreys(interpolation(i / environment.visualization.radar.equidistant.circles)))
       .classed('circles', true);
 
     svg
       .append('circle')
       .attr('cx', () => this.radius)
       .attr('cy', () => this.radius)
-      .attr('r', (this.circleRadius / 2))
+      .attr('r', (environment.visualization.radar.circle.radius / 2))
       .classed('center', true);
   }
 
@@ -121,7 +117,7 @@ export class RadarComponent implements OnInit {
     const svg = d3.select('#' + this.chartId);
 
     // Add lines to SVG
-    // TODO: They should go from one position to the other (except the first one)
+    // TODO: Lines should go from one position to the other (except the first one)
 
     // Add circles to SVG
     svg.selectAll('circle.position')
@@ -130,7 +126,7 @@ export class RadarComponent implements OnInit {
       .append('circle')
       .attr('cx', position => this.x(position))
       .attr('cy', position => this.y(position))
-      .attr('r', this.circleRadius)
+      .attr('r', environment.visualization.radar.circle.radius)
       .attr('fill', position => d3.interpolatePlasma((1 / this.maxAltitude) * position.altitude))
       .attr('class', 'position')
   }

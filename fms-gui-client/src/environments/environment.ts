@@ -14,6 +14,21 @@ export const environment = {
       cards: 'cards',
       controls: 'controls'
     }
+  },
+  visualization: {
+    radar: {
+      circle: {
+        radius: 4
+      },
+      equidistant: {
+        circles: 5
+      }
+    },
+    position: {
+      max: {
+        altitude: 1000
+      }
+    }
   }
 };
 

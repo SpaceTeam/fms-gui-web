@@ -2,7 +2,6 @@ import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {Position} from '../../shared/model/flight/position';
 import * as d3 from 'd3';
 import {PositionService} from '../../shared/services/visualization/position/position.service';
-import {PositionType} from '../../shared/model/flight/position.type';
 import {PositionUtil} from '../../shared/utils/position/position.util';
 
 @Component({
@@ -35,20 +34,20 @@ export class RadarComponent implements OnInit {
 
   /**
    * Custom position
-   * TODO: Set this per default in a property file
+   * TODO: Set this per default in environment.ts
    */
   center: Position;
 
   radius: number;
 
   // TODO: The height equidistantCirclesNumber will also change!
-  // TODO: Set this per default in a property file
+  // TODO: Set this per default in environment.ts
   maxAltitude: number;
 
-  // TODO: Set this per default in a property file
+  // TODO: Set this per default in environment.ts
   circleRadius = 4;
 
-  // TODO: Set this per default in a property file
+  // TODO: Set this per default in environment.ts
   equidistantCirclesNumber = 5;
 
   constructor(private positionService: PositionService) {
@@ -152,91 +151,5 @@ export class RadarComponent implements OnInit {
   y(position: Position): number {
     return this.radius - PositionUtil.getNormalizedDirection(position, this.center).latitude *
       (position.altitude / this.maxAltitude * this.radius);
-  }
-
-  // TODO: Move all of the following methods into a static Visualization helper
-  /**
-   * Calculates the distance of the given position from the center, based on the given type
-   * It scales with the outer most point (the length between the center and edge varies with the outer most point)
-   *
-   * Also called the 'lerp' method (see https://en.wikipedia.org/wiki/Linear_interpolation)
-   *
-   * @param position of the point of interest
-   * @param type used for calculating the distance from the center
-   */
-  interpolatedPositionInSquare(position: Position, type: PositionType): number {
-    const x_0 = this.size / 2;
-    const x_1 = this.size;
-
-    const t = this.interpolationValue(position, type);
-    return PositionUtil.roundNumber((1 - t) * x_0 + t * x_1);
-  }
-
-  /**
-   * This method returns the 't' value, for a linear interpolation
-   *
-   * The general method we would like to use is a simple linear interpolation between values of one dimension:
-   * x = (1 - t) * x_0 + t * x1
-   *
-   * To get the 't', we just have to reform the upper equation to
-   * t = (x / x_0 - 1) / (x_1 / x_0 - 1)
-   *
-   * It is possible, that either x_0, x_1 or both are zero, so we have to take care of this
-   *
-   * @param position contains the 'x' we need to use for the calculation
-   * @param type the specific value we want to use for the interpolation
-   */
-  interpolationValue(position: Position, type: PositionType): number {
-    const distance = this.longestDistance(type);
-    const x_0 = PositionUtil.roundNumber(this.center[type]);
-    const x_1 = PositionUtil.roundNumber(x_0 + distance); // upper bound
-    const l = PositionUtil.roundNumber(x_0 - distance);  // lower bound
-    const x = PositionUtil.roundNumber(position[type]);
-    let value;
-
-    // Check whether the number is in the range between the numbers
-    if (!(l <= x && x <= x_1)) {
-      throw new RangeError(`Error: ${x} is out of bounds between [${l},${x_1}]`);
-    }
-    // Check whether there is any range
-    if (x_0 === x_1) {
-      value = 0;
-    }
-    // Check if the lower border is 0 (a DivideByZeroException would then occur)
-    else if (x_0 === 0) {
-      value = x / x_1;
-    }
-    // Check, if the upper border is 0
-    else if (x_1 === 0) {
-      value = 1 - x / x_0;
-    }
-    // Calculate the simple interpolation value
-    else {
-      value = (x - x_0) / (x_1 - x_0);
-    }
-    return PositionUtil.roundNumber(value);
-  }
-
-  /**
-   * Calculates the distance from the center of the diagram to the border (outer most element)
-   * This is then needed in the 'interpolatedPositionInSquare' method
-   * We use the following formula for the calculation of distance d:
-   *
-   * d = |p_max[type]| - |p_0[type]|
-   *
-   * @param type a property name of 'Position', e.g. 'longitude' or 'latitude'
-   * @return the maximum property distance from the center to the border of the SVG
-   */
-  longestDistance(type: PositionType): number {
-    const arr = [this.center, ...this.positions];
-
-    // 1) Get only the needed values from the positions array, map them to be the difference between the center and the new point
-    const typeArray = Array
-      .from(arr, position => position[type])
-      .map(value => Math.abs(value - this.center[type]));
-
-    // 2) Return the maximum distance
-    const max = Math.max(...typeArray);
-    return PositionUtil.roundNumber(max);
   }
 }

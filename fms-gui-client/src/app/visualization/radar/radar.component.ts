@@ -39,16 +39,22 @@ export class RadarComponent implements OnInit {
    */
   center: Position;
 
+  /**
+   * The radius of the radar
+   */
   radius: number;
 
-  // TODO: The height equidistantCirclesNumber will also change!
-  // TODO: Set this per default in environment.ts
+  // TODO: The maximum altitude will also change!
   maxAltitude: number;
 
   constructor(private positionService: PositionService) {
     // Initialize the local objects
     this.positions = [];
-    this.maxAltitude = environment.visualization.position.max.altitude;
+    this.maxAltitude = environment.visualization.radar.position.max.altitude;
+    this.center = new Position(
+      environment.visualization.radar.position.center.longitude,
+      environment.visualization.radar.position.center.latitude
+    );
   }
 
   ngOnInit() {
@@ -57,8 +63,7 @@ export class RadarComponent implements OnInit {
     // Save the current position
     this.positionService.positionAnnounced$.subscribe((position: Position) => {
       // Only add the position, if really necessary
-      if (this.positions.filter(pos =>
-        (new Position(pos.longitude, pos.latitude, pos.altitude, pos.timestamp)).equals(position)).length === 0) {
+      if (this.positions.filter(pos => PositionUtil.newPosition(pos).equals(position)).length === 0) {
         this.positions.push(position);
         if (position.altitude > this.maxAltitude) {
           this.maxAltitude = position.altitude;
@@ -68,6 +73,9 @@ export class RadarComponent implements OnInit {
     });
   }
 
+  /**
+   * Initializes the chart, like giving it a size and basic configuration (equidistant circles, set the center)
+   */
   private initChart(): void {
     const elem = d3.select('#' + this.chartContainerId);
     const svg = elem.append('svg');
@@ -83,7 +91,6 @@ export class RadarComponent implements OnInit {
 
     // Set the center of the SVG
     // TODO: Let the user decide what the center should be
-    this.center = new Position(50, 15);
 
     // TODO: Let the user decide how many equidistant circles should be drawn
     const distance = this.radius / environment.visualization.radar.equidistant.circles;
@@ -94,6 +101,7 @@ export class RadarComponent implements OnInit {
     const interpolation = d3.interpolateNumber(0.1, 0.7);
 
     // TODO: You should be able to scale the SVG
+    // TODO: You should be able to rotate the SVG
     svg
       .selectAll('circle.circles')
       .data(radii.reverse())
@@ -113,11 +121,23 @@ export class RadarComponent implements OnInit {
       .classed('center', true);
   }
 
+  /**
+   * Adds everything related to the radar chart to the SVG
+   */
   private addPositionsToChart(): void {
     const svg = d3.select('#' + this.chartId);
 
     // Add lines to SVG
-    // TODO: Lines should go from one position to the other (except the first one)
+    svg.selectAll('path.connection')
+      .data([this.center, ...this.positions])
+      .enter()
+      .datum([this.center, ...this.positions])
+      .append('path')
+      .attr('class', 'connection')
+      .attr('d', d3.line<Position>()
+        .x(pos => this.x(pos))
+        .y(pos => this.y(pos))
+      );
 
     // Add circles to SVG
     svg.selectAll('circle.position')
@@ -129,23 +149,59 @@ export class RadarComponent implements OnInit {
       .attr('r', environment.visualization.radar.circle.radius)
       .attr('fill', position => d3.interpolatePlasma((1 / this.maxAltitude) * position.altitude))
       .attr('class', 'position')
+      .on('mouseover', this.handleMouseOverPositionCircle)
+      .on('mouseout', this.handleMouseOutPositionCircle);
+
+    // Re-insert (raise) the circle elements, so that they are always on top
+    svg.selectAll('circle.position').raise();
   }
 
   /**
    * Calculates the x-position for a given point in the diagram
    * @param position contains the values for calculating the x-position
    */
-  x(position: Position): number {
-    return this.radius + PositionUtil.getNormalizedDirection(position, this.center).longitude *
-      (position.altitude / this.maxAltitude * this.radius);
+  private x(position: Position): number {
+    return this.radius + PositionUtil.getNormalizedDirection(position, this.center).longitude * this.altitudeStep(position.altitude);
   }
 
   /**
    * Calculates the y-position for a given point in the diagram
    * @param position contains the values for calculating the y-position
    */
-  y(position: Position): number {
-    return this.radius - PositionUtil.getNormalizedDirection(position, this.center).latitude *
-      (position.altitude / this.maxAltitude * this.radius);
+  private y(position: Position): number {
+    return this.radius - PositionUtil.getNormalizedDirection(position, this.center).latitude * this.altitudeStep(position.altitude);
+  }
+
+  /**
+   * Calculates the step a point should take from the center
+   * @param altitude the altitude of the current position
+   */
+  private altitudeStep(altitude: number): number {
+    return (altitude / this.maxAltitude) * this.radius;
+  }
+
+  /**
+   * A method for handling the mouse over a circle (like mouse enter)
+   * @param d the position of the circle
+   * @param i the index of the circle inside the positions array
+   * @param circles the array of circle, in which we can find the current circle
+   */
+  private handleMouseOverPositionCircle(d: Position, i: number, circles: SVGCircleElement[]): void {
+    // const position = new Position(d.longitude, d.latitude, d.altitude, d.timestamp);
+    const circle = circles[i];
+    d3.select(circle)
+      .attr('r', circle.r.baseVal.value * 1.5);
+  }
+
+  /**
+   * A method for handling the mouse exit of a circle
+   * @param d the position of the circle
+   * @param i the index of the circle inside the positions array
+   * @param circles the array of circle, in which we can find the current circle
+   */
+  private handleMouseOutPositionCircle(d: Position, i: number, circles: SVGCircleElement[]): void {
+    const circle = circles[i];
+    d3.select(circle)
+      .attr('r', circle.r.baseVal.value / 1.5);
   }
 }

@@ -4,15 +4,6 @@ import {Position} from '../../model/flight/position';
 export namespace PositionUtil {
 
   /**
-   * Rounds a given number 'num' with a precision of 6 decimal places (default value)
-   * @param num the number to be rounded
-   * @return a rounded number num with 6 decimal places
-   */
-  export function roundNumber(num: number): number {
-    return Math.round(num * Math.pow(10, 6)) / Math.pow(10, 6);
-  }
-
-  /**
    * Calculates the distance of the given position from the center, based on the given type
    * It scales with the outer most point (the length between the center and edge varies with the outer most point)
    *
@@ -115,7 +106,10 @@ export namespace PositionUtil {
   export function getNormalizedDirection(target: Position, origin: Position): Position {
     const direction = getDirection(target, origin);
     const length = Math.sqrt(Math.pow(direction.longitude, 2) + Math.pow(direction.latitude, 2));
-    return new Position(direction.latitude / length, direction.longitude / length);
+    if (length === 0) {
+      return new Position(0,0);
+    }
+    return new Position(roundNumber(direction.longitude / length), roundNumber(direction.latitude / length));
   }
 
   /**
@@ -125,6 +119,26 @@ export namespace PositionUtil {
    * @return the direction from the origin to the target
    */
   export function getDirection(target: Position, origin: Position): Position {
-    return new Position(target.longitude - origin.longitude, target.latitude - origin.latitude);
+    return new Position(roundNumber(target.longitude - origin.longitude), roundNumber(target.latitude - origin.latitude));
+  }
+
+  /**
+   * Rounds a given number 'num' with a precision of 6 decimal places (default value)
+   * @param num the number to be rounded
+   * @return a rounded number num with 6 decimal places
+   */
+  export function roundNumber(num: number): number {
+    return Math.round(num * Math.pow(10, 6)) / Math.pow(10, 6);
+  }
+
+  /**
+   * Returns a new Position object from the given object
+   * We need this, since when running the code, the parameters of an inline function are mapped to normal 'objects' and do not possess
+   * the class methods
+   * @param position the position to be mapped
+   * @return the position with the classes properties
+   */
+  export function newPosition(position: Position) {
+    return new Position(position.longitude, position.latitude, position.altitude, position.timestamp);
   }
 }

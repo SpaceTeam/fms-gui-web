@@ -22,11 +22,15 @@ export const environment = {
       },
       equidistant: {
         circles: 5
-      }
-    },
-    position: {
-      max: {
-        altitude: 1000
+      },
+      position: {
+        center: {
+          longitude: 50,
+          latitude: 15
+        },
+        max: {
+          altitude: 1000
+        }
       }
     }
   }

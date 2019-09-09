@@ -23,6 +23,10 @@ describe('PositionUtil', () => {
     return `Error: ${PositionUtil.roundNumber(x)} is out of bounds between [${PositionUtil.roundNumber(l)},${PositionUtil.roundNumber(u)}]`;
   }
 
+  function pi(x: number): number {
+    return PositionUtil.roundNumber(x * Math.PI);
+  }
+
   beforeEach(() => {
     TestBed.configureTestingModule({});
     positionArray = [];
@@ -958,6 +962,119 @@ describe('PositionUtil', () => {
           expect(PositionUtil.interpolationValue(x, 'latitude', center, positionArray)).toEqual(0.716603);
           expect(() => PositionUtil.interpolationValue(x, 'longitude', center, positionArray)).toThrow(jasmine.any(RangeError));
         });
+      });
+    });
+  });
+
+  describe('direction from', () => {
+    describe(`${positions[0].toString()} to`, () => {
+      it(`${positions[0].toString()} should be (0,0)`, () => {
+        const position = PositionUtil.getDirection(positions[0], positions[0]);
+        expect([position.longitude, position.latitude]).toEqual([0,0]);
+      });
+      it(`${positions[1].toString()} should be (-2pi,5pi)`, () => {
+        const position = PositionUtil.getDirection(positions[1], positions[0]);
+        expect([position.longitude, position.latitude]).toEqual([pi(-2), pi(5)]);
+      });
+      it(`${positions[2].toString()} should be (33pi,-16pi)`, () => {
+        const position = PositionUtil.getDirection(positions[2], positions[0]);
+        expect([position.longitude, position.latitude]).toEqual([pi(33), pi(-16)]);
+      });
+      it(`${positions[3].toString()} should be (-11,-28)`, () => {
+        const position = PositionUtil.getDirection(positions[3], positions[0]);
+        expect([position.longitude, position.latitude]).toEqual([pi(-11), pi(-28)]);
+      });
+      it(`${positions[4].toString()} should be (180,90)`, () => {
+        const position = PositionUtil.getDirection(positions[4], positions[0]);
+        expect([position.longitude, position.latitude]).toEqual([180,90]);
+      });
+    });
+    describe(`${positions[1].toString()} to`, () => {
+      it(`${positions[0].toString()} should be (2pi, -5pi)`, () => {
+        const position = PositionUtil.getDirection(positions[0], positions[1]);
+        expect([position.longitude, position.latitude]).toEqual([pi(2), pi(-5)]);
+      });
+      it(`${positions[1].toString()} should be (0,0)`, () => {
+        const position = PositionUtil.getDirection(positions[1], positions[1]);
+        expect([position.longitude, position.latitude]).toEqual([0,0]);
+      });
+      it(`${positions[2].toString()} should be (35pi, -21pi)`, () => {
+        const position = PositionUtil.getDirection(positions[2], positions[1]);
+        expect([position.longitude, position.latitude]).toEqual([pi(35), pi(-21)]);
+      });
+      it(`${positions[3].toString()} should be (-9pi, -33pi)`, () => {
+        const position = PositionUtil.getDirection(positions[3], positions[1]);
+        expect([position.longitude, position.latitude]).toEqual([pi(-9), pi(-33)]);
+      });
+      it(`${positions[4].toString()} should be (180+2pi, 90-5pi)`, () => {
+        const position = PositionUtil.getDirection(positions[4], positions[1]);
+        expect([position.longitude, position.latitude]).toEqual([180 + pi(2), 90 - pi(5)]);
+      });
+    });
+    describe(`${positions[2].toString()} to`, () => {
+      it(`${positions[0].toString()} should be (-33pi,16pi)`, () => {
+        const position = PositionUtil.getDirection(positions[0], positions[2]);
+        expect([position.longitude, position.latitude]).toEqual([pi(-33), pi(16)]);
+      });
+      it(`${positions[1].toString()} should be (-35pi,21pi)`, () => {
+        const position = PositionUtil.getDirection(positions[1], positions[2]);
+        expect([position.longitude, position.latitude]).toEqual([pi(-35), pi(21)]);
+      });
+      it(`${positions[2].toString()} should be (0,0)`, () => {
+        const position = PositionUtil.getDirection(positions[2], positions[2]);
+        expect([position.longitude, position.latitude]).toEqual([0,0]);
+      });
+      it(`${positions[3].toString()} should be (-44pi,-12pi)`, () => {
+        const position = PositionUtil.getDirection(positions[3], positions[2]);
+        expect([position.longitude, position.latitude]).toEqual([pi(-44), pi(-12)]);
+      });
+      it(`${positions[4].toString()} should be (180 - 33pi,90 + 16pi)`, () => {
+        const position = PositionUtil.getDirection(positions[4], positions[2]);
+        expect([position.longitude, position.latitude]).toEqual([180 - pi(33), 90 + pi(16)]);
+      });
+    });
+    describe(`${positions[3].toString()} to`, () => {
+      it(`${positions[0].toString()} should be (11pi,28pi)`, () => {
+        const position = PositionUtil.getDirection(positions[0], positions[3]);
+        expect([position.longitude, position.latitude]).toEqual([pi(11), pi(28)]);
+      });
+      it(`${positions[1].toString()} should be (9pi,33pi)`, () => {
+        const position = PositionUtil.getDirection(positions[1], positions[3]);
+        expect([position.longitude, position.latitude]).toEqual([pi(9), pi(33)]);
+      });
+      it(`${positions[2].toString()} should be (44pi,12pi)`, () => {
+        const position = PositionUtil.getDirection(positions[2], positions[3]);
+        expect([position.longitude, position.latitude]).toEqual([pi(44),pi(12)]);
+      });
+      it(`${positions[3].toString()} should be (0,0)`, () => {
+        const position = PositionUtil.getDirection(positions[3], positions[3]);
+        expect([position.longitude, position.latitude]).toEqual([0,0]);
+      });
+      it(`${positions[4].toString()} should be (180 + 11pi,90 + 28pi)`, () => {
+        const position = PositionUtil.getDirection(positions[4], positions[3]);
+        expect([position.longitude, position.latitude]).toEqual([180 + pi(11), 90 + pi(28)]);
+      });
+    });
+    describe(`${positions[4].toString()} to`, () => {
+      it(`${positions[0].toString()} should be (-180,-90)`, () => {
+        const position = PositionUtil.getDirection(positions[0], positions[4]);
+        expect([position.longitude, position.latitude]).toEqual([-180 , -90]);
+      });
+      it(`${positions[1].toString()} should be (-180-2pi,-90+5pi)`, () => {
+        const position = PositionUtil.getDirection(positions[1], positions[4]);
+        expect([position.longitude, position.latitude]).toEqual([-180 - pi(2), -90 + pi(5)]);
+      });
+      it(`${positions[2].toString()} should be (-180+33pi,-90-16pi)`, () => {
+        const position = PositionUtil.getDirection(positions[2], positions[4]);
+        expect([position.longitude, position.latitude]).toEqual([-180 + pi(33),-90 - pi(16)]);
+      });
+      it(`${positions[3].toString()} should be (-180-11pi,-90-28pi)`, () => {
+        const position = PositionUtil.getDirection(positions[3], positions[4]);
+        expect([position.longitude, position.latitude]).toEqual([-180 - pi(11),-90 - pi(28)]);
+      });
+      it(`${positions[4].toString()} should be (0,0)`, () => {
+        const position = PositionUtil.getDirection(positions[4], positions[4]);
+        expect([position.longitude, position.latitude]).toEqual([0,0]);
       });
     });
   });

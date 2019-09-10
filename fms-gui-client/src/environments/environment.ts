@@ -21,7 +21,8 @@ export const environment = {
         radius: 4
       },
       equidistant: {
-        circles: 5
+        circles: 5,
+        padding: 50
       },
       position: {
         center: {

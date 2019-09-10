@@ -84,7 +84,6 @@ export class RadarComponent implements OnInit {
     this.radius = this.size / 2;
 
     // TODO: Redraw the whole SVG (or at least the positions), whenever the maximum altitude changes
-
     svg.attr('width', this.size);
     svg.attr('height', this.size);
     svg.attr('id', this.chartId);
@@ -100,10 +99,12 @@ export class RadarComponent implements OnInit {
     }
     const interpolation = d3.interpolateNumber(0.1, 0.7);
 
+    const g = svg.append('g')
+      .attr('id', 'radar');
+
     // TODO: You should be able to scale the SVG
     // TODO: You should be able to rotate the SVG
-    svg
-      .selectAll('circle.circles')
+    g.selectAll('circle.circles')
       .data(radii.reverse())
       .enter()
       .append('circle')
@@ -113,8 +114,7 @@ export class RadarComponent implements OnInit {
       .style('fill', (d, i) => d3.interpolateGreys(interpolation(i / environment.visualization.radar.equidistant.circles)))
       .classed('circles', true);
 
-    svg
-      .append('circle')
+    g.append('circle')
       .attr('cx', () => this.radius)
       .attr('cy', () => this.radius)
       .attr('r', (environment.visualization.radar.circle.radius / 2))
@@ -125,10 +125,10 @@ export class RadarComponent implements OnInit {
    * Adds everything related to the radar chart to the SVG
    */
   private addPositionsToChart(): void {
-    const svg = d3.select('#' + this.chartId);
+    const g = d3.select('#radar');
 
     // Add lines to SVG
-    svg.selectAll('path.connection')
+    g.selectAll('path.connection')
       .data([this.center, ...this.positions])
       .enter()
       .datum([this.center, ...this.positions])
@@ -140,7 +140,7 @@ export class RadarComponent implements OnInit {
       );
 
     // Add circles to SVG
-    svg.selectAll('circle.position')
+    g.selectAll('circle.position')
       .data([...this.positions])
       .enter()
       .append('circle')
@@ -153,7 +153,7 @@ export class RadarComponent implements OnInit {
       .on('mouseout', this.handleMouseOutPositionCircle);
 
     // Re-insert (raise) the circle elements, so that they are always on top
-    svg.selectAll('circle.position').raise();
+    g.selectAll('circle.position').raise();
   }
 
   /**

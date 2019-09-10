@@ -30,7 +30,7 @@ export const environment = {
           latitude: 15
         },
         max: {
-          altitude: 1000
+          altitude: 100
         }
       }
     }

@@ -23,6 +23,8 @@ export class RadarComponent implements OnInit {
    */
   chartContainerId = 'radar-chart-div';
 
+  radarGroupId = 'radar-group';
+
   /**
    * The size of the container
    */
@@ -67,6 +69,7 @@ export class RadarComponent implements OnInit {
         this.positions.push(position);
         if (position.altitude > this.maxAltitude) {
           this.maxAltitude = position.altitude;
+          this.clearChart();
         }
       }
       this.addPositionsToChart();
@@ -100,10 +103,10 @@ export class RadarComponent implements OnInit {
     const interpolation = d3.interpolateNumber(0.1, 0.7);
 
     const g = svg.append('g')
-      .attr('id', 'radar');
+      .attr('id', this.radarGroupId);
 
     // TODO: You should be able to scale the SVG
-    // TODO: You should be able to rotate the SVG
+    // TODO: You should be able to rotate the SVG (do this with {transform-origin: 50% 50%;, transform: rotateZ(deg)}
     g.selectAll('circle.circles')
       .data(radii.reverse())
       .enter()
@@ -122,10 +125,20 @@ export class RadarComponent implements OnInit {
   }
 
   /**
+   * Removes all circles and paths from the radar chart
+   */
+  private clearChart(): void {
+    const g = d3.select('#' + this.radarGroupId);
+
+    g.selectAll('path.connection').remove();
+    g.selectAll('circle.position').remove();
+  }
+
+  /**
    * Adds everything related to the radar chart to the SVG
    */
   private addPositionsToChart(): void {
-    const g = d3.select('#radar');
+    const g = d3.select('#' + this.radarGroupId);
 
     // Add lines to SVG
     g.selectAll('path.connection')
@@ -149,8 +162,8 @@ export class RadarComponent implements OnInit {
       .attr('r', environment.visualization.radar.circle.radius)
       .attr('fill', position => d3.interpolatePlasma((1 / this.maxAltitude) * position.altitude))
       .attr('class', 'position')
-      .on('mouseover', this.handleMouseOverPositionCircle)
-      .on('mouseout', this.handleMouseOutPositionCircle);
+      .on('mouseenter', this.handleMouseEnterPositionCircle)
+      .on('mouseleave', this.handleMouseLeavePositionCircle);
 
     // Re-insert (raise) the circle elements, so that they are always on top
     g.selectAll('circle.position').raise();
@@ -181,12 +194,12 @@ export class RadarComponent implements OnInit {
   }
 
   /**
-   * A method for handling the mouse over a circle (like mouse enter)
+   * A method for handling the mouse enter a circle
    * @param d the position of the circle
    * @param i the index of the circle inside the positions array
    * @param circles the array of circle, in which we can find the current circle
    */
-  private handleMouseOverPositionCircle(d: Position, i: number, circles: SVGCircleElement[]): void {
+  private handleMouseEnterPositionCircle(d: Position, i: number, circles: SVGCircleElement[]): void {
     // const position = new Position(d.longitude, d.latitude, d.altitude, d.timestamp);
     const circle = circles[i];
     d3.select(circle)
@@ -199,7 +212,7 @@ export class RadarComponent implements OnInit {
    * @param i the index of the circle inside the positions array
    * @param circles the array of circle, in which we can find the current circle
    */
-  private handleMouseOutPositionCircle(d: Position, i: number, circles: SVGCircleElement[]): void {
+  private handleMouseLeavePositionCircle(d: Position, i: number, circles: SVGCircleElement[]): void {
     const circle = circles[i];
     d3.select(circle)
       .attr('r', circle.r.baseVal.value / 1.5);

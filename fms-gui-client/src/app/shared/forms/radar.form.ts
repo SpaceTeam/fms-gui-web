@@ -87,4 +87,17 @@ export class RadarForm {
     const rotation = this.configurationForm.get('rotation');
     rotation.valueChanges.subscribe(() => this.rotationChangedSource.next(rotation.value));
   }
+
+  /**
+   * Defines the rotation functionality whenever the radar was dragged
+   * @param x the clamped x position in [-1, 1]
+   * @param y the clamped y position in [-1, 1]
+   */
+  public dragRotation(x: number, y: number): void {
+    const angle = Math.atan2(y, x);
+    const angleInDeg = angle * (180 / Math.PI);
+
+    this.rotationChangedSource.next(angleInDeg);
+    this.configurationForm.get('rotation').setValue(angleInDeg);
+  }
 }

@@ -86,10 +86,15 @@ export class RadarComponent implements OnInit {
     this.size = Math.min(Number(svg.style('width').slice(0, -2)), Number(svg.style('height').slice(0, -2)));
     this.radius = this.size / 2;
 
+    // We need to set the width and height, so that the rotation works properly
+    // Somehow transform-origin uses the outer most width and height for setting the transform origin
     svg
       .attr('id', this.chartId)
       .attr('width', this.size)
-      .attr('height', this.size);
+      .attr('height', this.size)
+      .attr('viewport', `[0 0 ${this.size} ${this.size}]`);
+
+    // SVG elements
 
     // TODO: Let the user decide how many equidistant circles should be drawn
     const distance = this.radius / environment.visualization.radar.equidistant.circles;
@@ -118,6 +123,11 @@ export class RadarComponent implements OnInit {
       .attr('cy', () => this.radius)
       .attr('r', (environment.visualization.radar.circle.radius / 2))
       .classed('center', true);
+
+    // Rotation
+    const i = d3.interpolateNumber(-1, 1);
+    d3.select('#' + this.radarGroupId)
+      .call(d3.drag().on('drag', () => this.radarForm.dragRotation(i(d3.event.x / this.size), i(d3.event.y / this.size))));
   }
 
   /**

@@ -23,24 +23,32 @@ export class RadarForm {
   // Observable Position stream
   centerChanged$;
 
-  constructor(private fb: FormBuilder) {
-    this.centerChangedSource = new Subject<Position>();
-    this.centerChanged$ = this.centerChangedSource.asObservable();
+  // Observable number resource
+  private rotationChangedSource;
 
+  // Observable number stream
+  rotationChanged$;
+
+  constructor(private fb: FormBuilder) {
     this.configurationForm = this.fb.group({
       center: this.fb.group({
         longitude: [''],
         latitude: ['']
-      })
+      }),
+      rotation: ['']
     });
 
     this.initChangeListener();
+    this.initRotationListener();
   }
 
   /**
    * Initializes the center of the radar
    */
   private initChangeListener(): void {
+    this.centerChangedSource = new Subject<Position>();
+    this.centerChanged$ = this.centerChangedSource.asObservable();
+
     const center = this.configurationForm.get('center');
     const longitudeElem = center.get('longitude');
     const latitudeElem = center.get('latitude');
@@ -67,5 +75,16 @@ export class RadarForm {
 
     longitudeElem.setValue(environment.visualization.radar.position.center.longitude);
     latitudeElem.setValue(environment.visualization.radar.position.center.latitude);
+  }
+
+  /**
+   * Publishes the current rotation value to all subscribers of 'rotationChanged$'
+   */
+  private initRotationListener(): void {
+    this.rotationChangedSource = new Subject<number>();
+    this.rotationChanged$ = this.rotationChangedSource.asObservable();
+
+    const rotation = this.configurationForm.get('rotation');
+    rotation.valueChanges.subscribe(() => this.rotationChangedSource.next(rotation.value));
   }
 }

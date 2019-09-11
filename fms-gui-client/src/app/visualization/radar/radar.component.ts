@@ -67,8 +67,11 @@ export class RadarComponent implements OnInit {
     // Save the current position
     this.subscribeToPositions();
 
-    // Update the center, whenever the configuration was changed
+    // Update the center, whenever the center was changed
     this.subscribeToCenterChange();
+
+    // Update the svg, whenever the rotation was changed
+    this.subscribeToRotationChange();
   }
 
   /**
@@ -79,11 +82,14 @@ export class RadarComponent implements OnInit {
     const svg = elem.insert('svg', ':first-child');
 
     svg.attr('width', '100%');
-    svg.attr('height', '100%');
-    svg.attr('id', this.chartId);
 
     this.size = Math.min(Number(svg.style('width').slice(0, -2)), Number(svg.style('height').slice(0, -2)));
     this.radius = this.size / 2;
+
+    svg
+      .attr('id', this.chartId)
+      .attr('width', this.size)
+      .attr('height', this.size);
 
     // TODO: Let the user decide how many equidistant circles should be drawn
     const distance = this.radius / environment.visualization.radar.equidistant.circles;
@@ -97,7 +103,6 @@ export class RadarComponent implements OnInit {
       .attr('id', this.radarGroupId);
 
     // TODO: You should be able to scale the SVG
-    // TODO: You should be able to rotate the SVG (do this with {transform-origin: 50% 50%;, transform: rotateZ(deg)}
     g.selectAll('circle.circles')
       .data(radii.reverse())
       .enter()
@@ -142,6 +147,15 @@ export class RadarComponent implements OnInit {
       this.addPositionsToChart();
     });
     this.radarForm.initCenter();
+  }
+
+  /**
+   * Lets the radar listen to incoming rotation changes
+   */
+  private subscribeToRotationChange(): void {
+    this.radarForm.rotationChanged$.subscribe((degree: number) =>
+        d3.select('#' + this.radarGroupId).style('transform', `rotateZ(${degree}deg)`)
+    );
   }
 
   /**

@@ -29,6 +29,14 @@ $cols: 5;
   grid-gap: 2px;
 }
 
-.grid-cols-2.gtc-80-20 {
-  grid-template-columns: 80% 20%;
+.grid-cols-2 {
+  &.gtc-80-20 {
+    grid-template-columns: 80% 20%;
+  }
+  &.gtc-75-25 {
+    grid-template-columns: 75% 25%;
+  }
+  &.gtc-70-30 {
+    grid-template-columns: 70% 30%;
+  }
 }

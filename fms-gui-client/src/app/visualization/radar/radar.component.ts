@@ -4,6 +4,7 @@ import * as d3 from 'd3';
 import {PositionService} from '../../shared/services/visualization/position/position.service';
 import {PositionUtil} from '../../shared/utils/position/position.util';
 import {environment} from '../../../environments/environment';
+import {RadarForm} from '../../shared/forms/radar.form';
 
 @Component({
   selector: 'app-radar',
@@ -19,10 +20,13 @@ export class RadarComponent implements OnInit {
   chartId = 'radar-chart-svg';
 
   /**
-   * The SVG container's id
+   * The SVG parent's id
    */
   chartContainerId = 'radar-chart-div';
 
+  /**
+   * The radar group id
+   */
   radarGroupId = 'radar-group';
 
   /**
@@ -37,7 +41,6 @@ export class RadarComponent implements OnInit {
 
   /**
    * Custom position
-   * TODO: Set this per default in environment.ts
    */
   center: Position;
 
@@ -46,34 +49,26 @@ export class RadarComponent implements OnInit {
    */
   radius: number;
 
-  // TODO: The maximum altitude will also change!
+  /**
+   * Stores the current maximum altitude of the rocket
+   * This value is needed for the calculation of distances between the center and the outer most border
+   */
   maxAltitude: number;
 
-  constructor(private positionService: PositionService) {
+  constructor(private positionService: PositionService, private radarForm: RadarForm) {
     // Initialize the local objects
     this.positions = [];
     this.maxAltitude = environment.visualization.radar.position.max.altitude;
-    this.center = new Position(
-      environment.visualization.radar.position.center.longitude,
-      environment.visualization.radar.position.center.latitude
-    );
   }
 
   ngOnInit() {
     this.initChart();
 
     // Save the current position
-    this.positionService.positionAnnounced$.subscribe((position: Position) => {
-      // Only add the position, if really necessary
-      if (this.positions.filter(pos => PositionUtil.newPosition(pos).equals(position)).length === 0) {
-        this.positions.push(position);
-        if (position.altitude > this.maxAltitude) {
-          this.maxAltitude = position.altitude;
-          this.clearChart();
-        }
-      }
-      this.addPositionsToChart();
-    });
+    this.subscribeToPositions();
+
+    // Update the center, whenever the configuration was changed
+    this.subscribeToCenterChange();
   }
 
   /**
@@ -81,18 +76,14 @@ export class RadarComponent implements OnInit {
    */
   private initChart(): void {
     const elem = d3.select('#' + this.chartContainerId);
-    const svg = elem.append('svg');
+    const svg = elem.insert('svg', ':first-child');
 
-    this.size = Math.min(Number(elem.style('width').slice(0, -2)), Number(elem.style('height').slice(0, -2)));
-    this.radius = this.size / 2;
-
-    // TODO: Redraw the whole SVG (or at least the positions), whenever the maximum altitude changes
-    svg.attr('width', this.size);
-    svg.attr('height', this.size);
+    svg.attr('width', '100%');
+    svg.attr('height', '100%');
     svg.attr('id', this.chartId);
 
-    // Set the center of the SVG
-    // TODO: Let the user decide what the center should be
+    this.size = Math.min(Number(svg.style('width').slice(0, -2)), Number(svg.style('height').slice(0, -2)));
+    this.radius = this.size / 2;
 
     // TODO: Let the user decide how many equidistant circles should be drawn
     const distance = this.radius / environment.visualization.radar.equidistant.circles;
@@ -122,6 +113,35 @@ export class RadarComponent implements OnInit {
       .attr('cy', () => this.radius)
       .attr('r', (environment.visualization.radar.circle.radius / 2))
       .classed('center', true);
+  }
+
+  /**
+   * Lets the radar listen to incoming positions
+   */
+  private subscribeToPositions(): void {
+    this.positionService.positionAnnounced$.subscribe((position: Position) => {
+      // Only add the position, if really necessary
+      if (this.positions.filter(pos => PositionUtil.newPosition(pos).equals(position)).length === 0) {
+        this.positions.push(position);
+        if (position.altitude > this.maxAltitude) {
+          this.maxAltitude = position.altitude;
+          this.clearChart();
+        }
+      }
+      this.addPositionsToChart();
+    });
+  }
+
+  /**
+   * Lets the radar listen to incoming center changes
+   */
+  private subscribeToCenterChange(): void {
+    this.radarForm.centerChanged$.subscribe((center: Position) => {
+      this.center = center;
+      this.clearChart();
+      this.addPositionsToChart();
+    });
+    this.radarForm.initCenter();
   }
 
   /**

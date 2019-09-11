@@ -4,22 +4,24 @@
   <div id="flight-mode-main" class="margin-side-1em flex-grow-1">
     <div class="grid-cols-2 h-100" *ngIf="fmsDataService.isDataPresent">
       <app-radar class="h-100"></app-radar>
-      <div *ngIf="this.gnss !== null">
-        <ul id="flight-mode-information">
-          <li *ngFor="let item of gnssArray[0]">
-            <div class="grid-cols-2">
-             <span>
-               {{item.name}}
-             </span>
-              <span>
-              {{item.value}}
-            </span>
-            </div>
-          </li>
-        </ul>
-      </div>
-      <div *ngIf="this.gnss === null">
-        No GNSS available
+      <div>
+        <div *ngIf="this.gnss !== null">
+          <ul id="flight-mode-information">
+            <li *ngFor="let item of gnssArray[0]">
+              <div class="grid-cols-2">
+                <span>
+                  {{item.name}}
+                </span>
+                <span>
+                  {{item.value}}
+                </span>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div *ngIf="this.gnss === null">
+          No GNSS available
+        </div>
       </div>
     </div>
     <app-loading *ngIf="!fmsDataService.isDataPresent"></app-loading>

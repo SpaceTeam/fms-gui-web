@@ -32,6 +32,9 @@ export const environment = {
         max: {
           altitude: 100
         }
+      },
+      style: {
+        padding: 40
       }
     }
   }

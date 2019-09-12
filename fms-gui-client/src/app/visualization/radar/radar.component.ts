@@ -49,6 +49,13 @@ export class RadarComponent implements OnInit {
    */
   radius: number;
 
+  private padding: number;
+
+  private directions: Array<{name: string, x: number, y: number}>;
+
+  private rotationI;
+  private rotationRI;
+
   /**
    * Stores the current maximum altitude of the rocket
    * This value is needed for the calculation of distances between the center and the outer most border
@@ -83,8 +90,12 @@ export class RadarComponent implements OnInit {
 
     svg.attr('width', '100%');
 
+    this.padding = environment.visualization.radar.style.padding;
     this.size = Math.min(Number(svg.style('width').slice(0, -2)), Number(svg.style('height').slice(0, -2)));
-    this.radius = this.size / 2;
+    this.radius = (this.size - 2 * this.padding) / 2;
+
+    this.rotationI = d3.interpolate(-1, 1);
+    this.rotationRI = d3.interpolate(0, this.size);
 
     // We need to set the width and height, so that the rotation works properly
     // Somehow transform-origin uses the outer most width and height for setting the transform origin
@@ -95,39 +106,38 @@ export class RadarComponent implements OnInit {
       .attr('viewport', `[0 0 ${this.size} ${this.size}]`);
 
     // SVG elements
+    // Circles
+    this.addCircles(svg);
 
-    // TODO: Let the user decide how many equidistant circles should be drawn
-    const distance = this.radius / environment.visualization.radar.equidistant.circles;
-    const radii = [];
-    for (let i = 1; i <= environment.visualization.radar.equidistant.circles; i++) {
-      radii.push(distance * i);
-    }
-    const interpolation = d3.interpolateNumber(0.1, 0.7);
+    this.directions = [
+      {
+        name: 'N',
+        x: this.size / 2,
+        y: this.padding / 2
+      },
+      {
+        name: 'W',
+        x: this.padding / 2,
+        y: this.size / 2
+      },
+      {
+        name: 'S',
+        x: this.size - this.padding / 2,
+        y: this.size / 2
+      },
+      {
+        name: 'E',
+        x: this.size / 2,
+        y: this.size - this.padding / 2
+      }
+    ];
 
-    const g = svg.append('g')
-      .attr('id', this.radarGroupId);
-
-    // TODO: You should be able to scale the SVG
-    g.selectAll('circle.circles')
-      .data(radii.reverse())
-      .enter()
-      .append('circle')
-      .attr('cx', () => this.radius)
-      .attr('cy', () => this.radius)
-      .attr('r', r => r)
-      .style('fill', (d, i) => d3.interpolateGreys(interpolation(i / environment.visualization.radar.equidistant.circles)))
-      .classed('circles', true);
-
-    g.append('circle')
-      .attr('cx', () => this.radius)
-      .attr('cy', () => this.radius)
-      .attr('r', (environment.visualization.radar.circle.radius / 2))
-      .classed('center', true);
+    // Add direction text to the group
+    this.addText(svg);
 
     // Rotation
     const i = d3.interpolateNumber(-1, 1);
-    d3.select('#' + this.radarGroupId)
-      .call(d3.drag().on('drag', () => this.radarForm.dragRotation(i(d3.event.x / this.size), i(d3.event.y / this.size))));
+    svg.call(d3.drag().on('drag', () => this.radarForm.dragRotation(i(d3.event.x / this.size), i(d3.event.y / this.size))));
   }
 
   /**
@@ -163,9 +173,72 @@ export class RadarComponent implements OnInit {
    * Lets the radar listen to incoming rotation changes
    */
   private subscribeToRotationChange(): void {
-    this.radarForm.rotationChanged$.subscribe((degree: number) =>
-        d3.select('#' + this.radarGroupId).style('transform', `rotateZ(${degree}deg)`)
-    );
+    this.radarForm.rotationChanged$.subscribe((degree: number) => {
+      // Rotate circles
+      d3.select('#circles').style('transform', `rotateZ(${degree}deg)`);
+
+      // Rotate text position
+      d3.select('#g-text')
+        .selectAll('text.direction')
+        .data(this.directions)
+        .attr('x', d => this.rotateX(d, degree))
+        .attr('y', d => this.rotateY(d, degree))
+        .text(d => d.name);
+    });
+  }
+
+  private addCircles(svg): void {
+    const equidistantCircles = environment.visualization.radar.equidistant.circles;
+    const distance = this.radius / equidistantCircles;
+    const radii = [];
+
+    for (let i = 1; i <= equidistantCircles; i++) {
+      radii.push(distance * i);
+    }
+    const interpolation = d3.interpolateNumber(0.1, 0.7);
+    const radarSize = 2 * this.radius;
+
+    // TODO: You should be able to scale the SVG
+    const circles = svg.append('svg')
+      .attr('x', this.padding)
+      .attr('y', this.padding)
+      .attr('width', radarSize)
+      .attr('height', radarSize)
+      .attr('viewport', `[0 0 ${radarSize} ${radarSize}]`)
+      .attr('id', 'circles-container');
+
+    const g = circles.append('g')
+      .attr('id', 'circles');
+
+    g.selectAll('circle.circles')
+      .data(radii.reverse())
+      .enter()
+      .append('circle')
+      .attr('cx', () => this.radius)
+      .attr('cy', () => this.radius)
+      .attr('r', r => r)
+      .style('fill', (d, i) => d3.interpolateGreys(interpolation(i / equidistantCircles)))
+      .classed('circles', true);
+
+    g.append('circle')
+      .attr('cx', this.radius)
+      .attr('cy', this.radius)
+      .attr('r', (environment.visualization.radar.circle.radius / 2))
+      .classed('center', true);
+  }
+
+  private addText(svg): void {
+
+    svg.append('g')
+      .attr('id', 'g-text')
+      .selectAll('text.direction')
+      .data(this.directions)
+      .enter()
+      .append('text')
+      .attr('x', d => d.x)
+      .attr('y', d => d.y)
+      .text(d => d.name)
+      .classed('direction', true);
   }
 
   /**
@@ -182,7 +255,7 @@ export class RadarComponent implements OnInit {
    * Adds everything related to the radar chart to the SVG
    */
   private addPositionsToChart(): void {
-    const g = d3.select('#' + this.radarGroupId);
+    const g = d3.select('#circles');
 
     // Add lines to SVG
     g.selectAll('path.connection')
@@ -260,5 +333,20 @@ export class RadarComponent implements OnInit {
     const circle = circles[i];
     d3.select(circle)
       .attr('r', circle.r.baseVal.value / 1.5);
+  }
+
+  private rotateX(d: {x: number, y: number, name: string}, degree: number): number {
+    let x = this.rotationI(d.x / this.size);
+    let y = this.rotationI(d.y / this.size);
+    x = x * Math.cos(degree * Math.PI / 180) - y * Math.sin(degree * Math.PI / 180);
+    return this.rotationRI((x + 1) / 2);
+  }
+
+  // We add '1' and divide by 2, so that all numbers in the range [-1;1] are between [0;1]
+  private rotateY(d: {x: number, y: number, name: string}, degree: number): number {
+    let x = this.rotationI(d.x / this.size);
+    let y = this.rotationI(d.y / this.size);
+    y = x * Math.sin(degree * Math.PI / 180) + y * Math.cos(degree * Math.PI / 180);
+    return this.rotationRI((y + 1) / 2);
   }
 }

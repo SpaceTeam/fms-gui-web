@@ -50,31 +50,60 @@ export class RadarComponent implements OnInit {
    */
   radius: number;
 
+  /**
+   * The radar's padding
+   */
   private padding: number;
 
+  /**
+   * Contains ['N', 'W', 'S', 'E'] and their positions
+   */
   private directions: Array<{name: string, x: number, y: number}>;
 
+  /**
+   * The interpolator for the transformation in the range [0,1]
+   */
   private rotationI;
+
+  /**
+   * The reversed interpolator for getting the right values for the SVG
+   */
   private rotationRI;
 
+  /**
+   * A flag for telling, if the radar configuration window is open
+   */
   private isConfigOpen;
 
-  private degree: number;
+  /**
+   * The 'translation' values used for the translation transformation
+   */
+  private translation: {x: number, y: number};
+
+  /**
+   * The 'rotation' value used for the rotation transformation
+   */
+  private rotation: number;
+
+  /**
+   * The 'scale' value used for the scale transformation
+   */
   private scale: number;
 
   /**
    * Stores the current maximum altitude of the rocket
    * This value is needed for the calculation of distances between the center and the outer most border
    */
-  maxAltitude: number;
+  private maxAltitude: number;
 
   constructor(private positionService: PositionService, private radarForm: RadarForm) {
     // Initialize the local objects
     this.positions = [];
     this.maxAltitude = environment.visualization.radar.position.max.altitude;
     this.isConfigOpen = true;
+    this.translation = {x: 0, y: 0};
     this.scale = 1;
-    this.degree = 0;
+    this.rotation = 0;
   }
 
   ngOnInit() {
@@ -85,6 +114,9 @@ export class RadarComponent implements OnInit {
 
     // Update the center, whenever the center was changed
     this.subscribeToCenterChange();
+
+    // Update the svg, whenever the translation value was changed
+    this.subscribeToTranslationChange();
 
     // Update the svg, whenever the rotation value was changed
     this.subscribeToRotationChange();
@@ -133,12 +165,12 @@ export class RadarComponent implements OnInit {
         y: this.size / 2
       },
       {
-        name: 'S',
+        name: 'E',
         x: this.size - this.padding / 2,
         y: this.size / 2
       },
       {
-        name: 'E',
+        name: 'S',
         x: this.size / 2,
         y: this.size - this.padding / 2
       }
@@ -150,6 +182,15 @@ export class RadarComponent implements OnInit {
     // Rotation
     const i = d3.interpolateNumber(-1, 1);
     svg.call(d3.drag().on('drag', () => this.radarForm.dragRotation(i(d3.event.x / this.size), i(d3.event.y / this.size))));
+
+    // Scale
+    /*
+    svg.call(d3.zoom()
+      .scaleExtent([1, 8])
+      .on('zoom', () => this.radarForm.zoom(svg, d3.event.transform))
+    );
+
+     */
   }
 
   /**
@@ -182,15 +223,28 @@ export class RadarComponent implements OnInit {
   }
 
   /**
-   * Lets the radar listen to incoming rotation changes
+   * Lets the radar listen to incoming translation changes
    */
-  private subscribeToRotationChange(): void {
-    this.radarForm.rotationChanged$.subscribe((degree: number) => {
-      this.degree = degree;
+  private subscribeToTranslationChange(): void {
+    this.radarForm.translationChanged$.subscribe((translation: {x: number, y: number}) => {
+      this.translation = translation;
       this.transformElements();
     });
   }
 
+  /**
+   * Lets the radar listen to incoming rotation changes
+   */
+  private subscribeToRotationChange(): void {
+    this.radarForm.rotationChanged$.subscribe((degree: number) => {
+      this.rotation = degree;
+      this.transformElements();
+    });
+  }
+
+  /**
+   * Lets the radar listen to incoming scale changesx
+   */
   private subscribeToScaleChange(): void {
     this.radarForm.scaleChanged$.subscribe((value: number) => {
       this.scale = value;
@@ -198,9 +252,13 @@ export class RadarComponent implements OnInit {
     });
   }
 
+  /**
+   * Performs the transformation of the SVG elements
+   */
   private transformElements(): void {
     // Transform the circles
-    d3.select('#circles').style('transform', `scale(${this.scale}) rotateZ(${this.degree}deg)`);
+    d3.select('#circles')
+      .style('transform', `translate(${this.translation.x}px, ${this.translation.y}px) scale(${this.scale}) rotateZ(${this.rotation}deg)`);
 
     // Transform text position
     d3.select('#g-text')
@@ -211,6 +269,10 @@ export class RadarComponent implements OnInit {
       .text(d => d.name);
   }
 
+  /**
+   * Adds the 'circle' elements to the radar
+   * @param svg a d3 SVG element
+   */
   private addCircles(svg): void {
     const equidistantCircles = environment.visualization.radar.equidistant.circles;
     const distance = this.radius / equidistantCircles;
@@ -222,7 +284,6 @@ export class RadarComponent implements OnInit {
     const interpolation = d3.interpolateNumber(0.1, 0.7);
     const radarSize = 2 * this.radius;
 
-    // TODO: You should be able to scale the SVG
     const circles = svg.append('svg')
       .attr('x', this.padding)
       .attr('y', this.padding)
@@ -234,6 +295,7 @@ export class RadarComponent implements OnInit {
     const g = circles.append('g')
       .attr('id', 'circles');
 
+    // Add the outer circles
     g.selectAll('circle.circles')
       .data(radii.reverse())
       .enter()
@@ -244,6 +306,7 @@ export class RadarComponent implements OnInit {
       .style('fill', (d, i) => d3.interpolateGreys(interpolation(i / equidistantCircles)))
       .classed('circles', true);
 
+    // Add the center circle
     g.append('circle')
       .attr('cx', this.radius)
       .attr('cy', this.radius)
@@ -251,8 +314,11 @@ export class RadarComponent implements OnInit {
       .classed('center', true);
   }
 
+  /**
+   * Adds the 'direction' text elements to the radar
+   * @param svg a d3 SVG element
+   */
   private addText(svg): void {
-
     svg.append('g')
       .attr('id', 'g-text')
       .selectAll('text.direction')
@@ -359,37 +425,53 @@ export class RadarComponent implements OnInit {
       .attr('r', circle.r.baseVal.value / 1.5);
   }
 
+  /**
+   * Performs all geometric transformations (in x-direction) for the text inside the radar
+   * @param d the object containing information about a given direction
+   */
   private transformX(d: {x: number, y: number, name: string}): number {
-    // Rotate
     let x = this.rotationI(d.x / this.size);
     let y = this.rotationI(d.y / this.size);
-    x = x * Math.cos(this.degree * Math.PI / 180) - y * Math.sin(this.degree * Math.PI / 180);
+
+    // Rotate
+    x = x * Math.cos(this.rotation * Math.PI / 180) - y * Math.sin(this.rotation * Math.PI / 180);
 
     // Scale
     x *= this.scale;
 
     // We add '1' and divide by 2, so that all numbers in the range [-1;1] are between [0;1]
-    return this.rotationRI((x + 1) / 2);
+    // Translate (in px)
+    return this.rotationRI((x + 1) / 2) + this.translation.x;
   }
 
+  /**
+   * Performs all geometric transformations (in y-direction) for the text inside the radar
+   * @param d the object containing information about a given direction
+   */
   private transformY(d: {x: number, y: number, name: string}): number {
-    // Rotate
+    // Translate (in px)
     let x = this.rotationI(d.x / this.size);
     let y = this.rotationI(d.y / this.size);
-    y = x * Math.sin(this.degree * Math.PI / 180) + y * Math.cos(this.degree * Math.PI / 180);
+
+    // Rotate
+    y = x * Math.sin(this.rotation * Math.PI / 180) + y * Math.cos(this.rotation * Math.PI / 180);
 
     // Scale
     y *= this.scale;
 
-    return this.rotationRI((y + 1) / 2);
+    // Translate (in px)
+    return this.rotationRI((y + 1) / 2) + this.translation.y;
   }
 
+  /**
+   * Expands or collapses the configuration window in the radar component
+   */
   private toggleConfiguration(): void {
     const icon = document.getElementById('toggle-icon');
     this.isConfigOpen = !this.isConfigOpen;
 
     if (icon.innerText === 'keyboard_arrow_down') {
-      icon.innerText = 'keyboard_arrow_left';
+      icon.innerText = 'keyboard_arrow_right';
       icon.title = 'Expand radar configuration';
     } else {
       icon.innerText = 'keyboard_arrow_down';

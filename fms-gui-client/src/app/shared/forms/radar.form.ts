@@ -24,6 +24,12 @@ export class RadarForm {
   centerChanged$;
 
   // Observable number resource
+  private translationChangedSource;
+
+  // Observable number stream
+  translationChanged$;
+
+  // Observable number resource
   private rotationChangedSource;
 
   // Observable number stream
@@ -41,11 +47,16 @@ export class RadarForm {
         longitude: [''],
         latitude: ['']
       }),
+      translation: this.fb.group({
+        x: [''],
+        y: ['']
+      }),
       rotation: [''],
       scale: ['']
     });
 
-    this.initChangeListener();
+    this.initCenterListener();
+    this.initTranslationListener();
     this.initRotationListener();
     this.initScaleListener();
   }
@@ -53,7 +64,7 @@ export class RadarForm {
   /**
    * Initializes the center of the radar
    */
-  private initChangeListener(): void {
+  private initCenterListener(): void {
     this.centerChangedSource = new Subject<Position>();
     this.centerChanged$ = this.centerChangedSource.asObservable();
 
@@ -83,6 +94,26 @@ export class RadarForm {
 
     longitudeElem.setValue(environment.visualization.radar.position.center.longitude);
     latitudeElem.setValue(environment.visualization.radar.position.center.latitude);
+  }
+
+  /**
+   * Published the current translation value to all subscribers of 'translationChanged$'
+   */
+  private initTranslationListener(): void {
+    this.translationChangedSource = new Subject<{x: number, y: number}>();
+    this.translationChanged$ = this.translationChangedSource.asObservable();
+
+    const translation = this.configurationForm.get('translation');
+    const xElem = translation.get('x');
+    const yElem = translation.get('y');
+
+    xElem.valueChanges.subscribe(() => this.publishTranslation());
+    yElem.valueChanges.subscribe(() => this.publishTranslation());
+  }
+
+  private publishTranslation(): void {
+    const translation = this.configurationForm.get('translation');
+    this.translationChangedSource.next({x: translation.get('x').value, y: translation.get('y').value});
   }
 
   /**

@@ -23,6 +23,24 @@
           </mat-form-field>
         </div>
 
+        <div formGroupName="translation" class="d-flex flex-column">
+          <h3 class="mat-h3">Translation</h3>
+
+          <mat-form-field>
+            <mat-label>X</mat-label>
+            <label>
+              <input type="number" formControlName="x" matInput placeholder="0" step="1" value="0"/>
+            </label>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Y</mat-label>
+            <label>
+              <input type="number" formControlName="y" matInput placeholder="0" step="1" value="0"/>
+            </label>
+          </mat-form-field>
+        </div>
+
         <div class="d-flex flex-column">
           <h3 class="mat-h3">Rotation</h3>
 

@@ -29,17 +29,25 @@ export class RadarForm {
   // Observable number stream
   rotationChanged$;
 
+  // Observable number resource
+  private scaleChangedSource;
+
+  // Observable number stream
+  scaleChanged$;
+
   constructor(private fb: FormBuilder) {
     this.configurationForm = this.fb.group({
       center: this.fb.group({
         longitude: [''],
         latitude: ['']
       }),
-      rotation: ['']
+      rotation: [''],
+      scale: ['']
     });
 
     this.initChangeListener();
     this.initRotationListener();
+    this.initScaleListener();
   }
 
   /**
@@ -99,5 +107,16 @@ export class RadarForm {
 
     this.rotationChangedSource.next(angleInDeg);
     this.configurationForm.get('rotation').setValue(angleInDeg);
+  }
+
+  /**
+   * Publishes the current scale value to all subscribers of 'scaleChanged$'
+   */
+  private initScaleListener(): void {
+    this.scaleChangedSource = new Subject<number>();
+    this.scaleChanged$ = this.scaleChangedSource.asObservable();
+
+    const scale = this.configurationForm.get('scale');
+    scale.valueChanges.subscribe(() => this.scaleChangedSource.next(scale.value));
   }
 }

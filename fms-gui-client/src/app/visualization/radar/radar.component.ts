@@ -59,6 +59,9 @@ export class RadarComponent implements OnInit {
 
   private isConfigOpen;
 
+  private degree: number;
+  private scale: number;
+
   /**
    * Stores the current maximum altitude of the rocket
    * This value is needed for the calculation of distances between the center and the outer most border
@@ -70,6 +73,8 @@ export class RadarComponent implements OnInit {
     this.positions = [];
     this.maxAltitude = environment.visualization.radar.position.max.altitude;
     this.isConfigOpen = true;
+    this.scale = 1;
+    this.degree = 0;
   }
 
   ngOnInit() {
@@ -81,8 +86,11 @@ export class RadarComponent implements OnInit {
     // Update the center, whenever the center was changed
     this.subscribeToCenterChange();
 
-    // Update the svg, whenever the rotation was changed
+    // Update the svg, whenever the rotation value was changed
     this.subscribeToRotationChange();
+
+    // Update the svg, whenever the scale value was changed
+    this.subscribeToScaleChange();
   }
 
   /**
@@ -178,17 +186,29 @@ export class RadarComponent implements OnInit {
    */
   private subscribeToRotationChange(): void {
     this.radarForm.rotationChanged$.subscribe((degree: number) => {
-      // Rotate circles
-      d3.select('#circles').style('transform', `rotateZ(${degree}deg)`);
-
-      // Rotate text position
-      d3.select('#g-text')
-        .selectAll('text.direction')
-        .data(this.directions)
-        .attr('x', d => this.rotateX(d, degree))
-        .attr('y', d => this.rotateY(d, degree))
-        .text(d => d.name);
+      this.degree = degree;
+      this.transformElements();
     });
+  }
+
+  private subscribeToScaleChange(): void {
+    this.radarForm.scaleChanged$.subscribe((value: number) => {
+      this.scale = value;
+      this.transformElements();
+    });
+  }
+
+  private transformElements(): void {
+    // Transform the circles
+    d3.select('#circles').style('transform', `scale(${this.scale}) rotateZ(${this.degree}deg)`);
+
+    // Transform text position
+    d3.select('#g-text')
+      .selectAll('text.direction')
+      .data(this.directions)
+      .attr('x', d => this.transformX(d))
+      .attr('y', d => this.transformY(d))
+      .text(d => d.name);
   }
 
   private addCircles(svg): void {
@@ -339,18 +359,28 @@ export class RadarComponent implements OnInit {
       .attr('r', circle.r.baseVal.value / 1.5);
   }
 
-  private rotateX(d: {x: number, y: number, name: string}, degree: number): number {
+  private transformX(d: {x: number, y: number, name: string}): number {
+    // Rotate
     let x = this.rotationI(d.x / this.size);
     let y = this.rotationI(d.y / this.size);
-    x = x * Math.cos(degree * Math.PI / 180) - y * Math.sin(degree * Math.PI / 180);
+    x = x * Math.cos(this.degree * Math.PI / 180) - y * Math.sin(this.degree * Math.PI / 180);
+
+    // Scale
+    x *= this.scale;
+
+    // We add '1' and divide by 2, so that all numbers in the range [-1;1] are between [0;1]
     return this.rotationRI((x + 1) / 2);
   }
 
-  // We add '1' and divide by 2, so that all numbers in the range [-1;1] are between [0;1]
-  private rotateY(d: {x: number, y: number, name: string}, degree: number): number {
+  private transformY(d: {x: number, y: number, name: string}): number {
+    // Rotate
     let x = this.rotationI(d.x / this.size);
     let y = this.rotationI(d.y / this.size);
-    y = x * Math.sin(degree * Math.PI / 180) + y * Math.cos(degree * Math.PI / 180);
+    y = x * Math.sin(this.degree * Math.PI / 180) + y * Math.cos(this.degree * Math.PI / 180);
+
+    // Scale
+    y *= this.scale;
+
     return this.rotationRI((y + 1) / 2);
   }
 

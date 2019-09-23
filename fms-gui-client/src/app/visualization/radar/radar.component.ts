@@ -1,10 +1,11 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {Position} from '../../shared/model/flight/position';
-import * as d3 from 'd3';
 import {PositionService} from '../../shared/services/visualization/position/position.service';
 import {PositionUtil} from '../../shared/utils/position/position.util';
 import {environment} from '../../../environments/environment';
 import {RadarForm} from '../../shared/forms/radar.form';
+
+import * as d3 from 'd3';
 
 @Component({
   selector: 'app-radar',
@@ -56,6 +57,8 @@ export class RadarComponent implements OnInit {
   private rotationI;
   private rotationRI;
 
+  private isConfigOpen;
+
   /**
    * Stores the current maximum altitude of the rocket
    * This value is needed for the calculation of distances between the center and the outer most border
@@ -66,6 +69,7 @@ export class RadarComponent implements OnInit {
     // Initialize the local objects
     this.positions = [];
     this.maxAltitude = environment.visualization.radar.position.max.altitude;
+    this.isConfigOpen = true;
   }
 
   ngOnInit() {
@@ -348,5 +352,18 @@ export class RadarComponent implements OnInit {
     let y = this.rotationI(d.y / this.size);
     y = x * Math.sin(degree * Math.PI / 180) + y * Math.cos(degree * Math.PI / 180);
     return this.rotationRI((y + 1) / 2);
+  }
+
+  private toggleConfiguration(): void {
+    const icon = document.getElementById('toggle-icon');
+    this.isConfigOpen = !this.isConfigOpen;
+
+    if (icon.innerText === 'keyboard_arrow_down') {
+      icon.innerText = 'keyboard_arrow_left';
+      icon.title = 'Expand radar configuration';
+    } else {
+      icon.innerText = 'keyboard_arrow_down';
+      icon.title = 'Collapse radar configuration';
+    }
   }
 }

@@ -179,18 +179,13 @@ export class RadarComponent implements OnInit {
     // Add direction text to the group
     this.addText(svg);
 
+    // Add direction lines to the group
+    this.addDirectionLines();
+
     // Rotation
+    // TODO: Change the rotation to be changed on 'CTRL' + Drag
     const i = d3.interpolateNumber(-1, 1);
     svg.call(d3.drag().on('drag', () => this.radarForm.dragRotation(i(d3.event.x / this.size), i(d3.event.y / this.size))));
-
-    // Scale
-    /*
-    svg.call(d3.zoom()
-      .scaleExtent([1, 8])
-      .on('zoom', () => this.radarForm.zoom(svg, d3.event.transform))
-    );
-
-     */
   }
 
   /**
@@ -332,6 +327,46 @@ export class RadarComponent implements OnInit {
   }
 
   /**
+   * Adds the 'direction' lines, connecting the center with the directions inside the radar
+   */
+  private addDirectionLines(): void {
+    const w = Number(d3.select('#circles-container').attr('width'));
+    const lines = [
+      // N
+      {
+        x: w / 2,
+        y: 0
+      },
+      // S
+      {
+        x: w / 2,
+        y: w
+      },
+      // W
+      {
+        x: 0,
+        y: w / 2
+      },
+      // E
+      {
+        x: w,
+        y: w / 2
+      }
+    ];
+
+    d3.select('#circles')
+      .selectAll('line.direction')
+      .data(lines)
+      .enter()
+      .append('line')
+      .attr('x1', this.transformX({x: w / 2, y: w / 2}))
+      .attr('y1', this.transformY({x: w / 2, y: w / 2}))
+      .attr('x2', d => this.transformX(d))
+      .attr('y2', d => this.transformY(d))
+      .classed('direction', true);
+  }
+
+  /**
    * Removes all circles and paths from the radar chart
    */
   private clearChart(): void {
@@ -429,7 +464,7 @@ export class RadarComponent implements OnInit {
    * Performs all geometric transformations (in x-direction) for the text inside the radar
    * @param d the object containing information about a given direction
    */
-  private transformX(d: {x: number, y: number, name: string}): number {
+  private transformX(d: {x: number, y: number}): number {
     let x = this.rotationI(d.x / this.size);
     let y = this.rotationI(d.y / this.size);
 
@@ -448,7 +483,7 @@ export class RadarComponent implements OnInit {
    * Performs all geometric transformations (in y-direction) for the text inside the radar
    * @param d the object containing information about a given direction
    */
-  private transformY(d: {x: number, y: number, name: string}): number {
+  private transformY(d: {x: number, y: number}): number {
     // Translate (in px)
     let x = this.rotationI(d.x / this.size);
     let y = this.rotationI(d.y / this.size);

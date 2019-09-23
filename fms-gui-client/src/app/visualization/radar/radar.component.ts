@@ -26,11 +26,6 @@ export class RadarComponent implements OnInit {
   chartContainerId = 'radar-chart-div';
 
   /**
-   * The radar group id
-   */
-  radarGroupId = 'radar-group';
-
-  /**
    * The size of the container
    */
   size: number;
@@ -153,29 +148,6 @@ export class RadarComponent implements OnInit {
     // Circles
     this.addCircles(svg);
 
-    this.directions = [
-      {
-        name: 'N',
-        x: this.size / 2,
-        y: this.padding / 2
-      },
-      {
-        name: 'W',
-        x: this.padding / 2,
-        y: this.size / 2
-      },
-      {
-        name: 'E',
-        x: this.size - this.padding / 2,
-        y: this.size / 2
-      },
-      {
-        name: 'S',
-        x: this.size / 2,
-        y: this.size - this.padding / 2
-      }
-    ];
-
     // Add direction text to the group
     this.addText(svg);
 
@@ -198,10 +170,10 @@ export class RadarComponent implements OnInit {
         this.positions.push(position);
         if (position.altitude > this.maxAltitude) {
           this.maxAltitude = position.altitude;
-          this.clearChart();
+          RadarComponent.clearChart();
         }
+        this.addPositionsToChart();
       }
-      this.addPositionsToChart();
     });
   }
 
@@ -211,7 +183,7 @@ export class RadarComponent implements OnInit {
   private subscribeToCenterChange(): void {
     this.radarForm.centerChanged$.subscribe((center: Position) => {
       this.center = center;
-      this.clearChart();
+      RadarComponent.clearChart();
       this.addPositionsToChart();
     });
     this.radarForm.initCenter();
@@ -256,7 +228,7 @@ export class RadarComponent implements OnInit {
       .style('transform', `translate(${this.translation.x}px, ${this.translation.y}px) scale(${this.scale}) rotateZ(${this.rotation}deg)`);
 
     // Transform text position
-    d3.select('#g-text')
+    d3.select('#texts')
       .selectAll('text.direction')
       .data(this.directions)
       .attr('x', d => this.transformX(d))
@@ -314,9 +286,41 @@ export class RadarComponent implements OnInit {
    * @param svg a d3 SVG element
    */
   private addText(svg): void {
-    svg.append('g')
+    const texts = svg.append('svg')
       .attr('id', 'g-text')
-      .selectAll('text.direction')
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('width', this.size)
+      .attr('height', this.size)
+      .attr('id', 'text-container');
+
+    const t = texts.append('g')
+      .attr('id', 'texts');
+
+    this.directions = [
+      {
+        name: 'N',
+        x: this.size / 2,
+        y: this.padding / 2
+      },
+      {
+        name: 'W',
+        x: this.padding / 2,
+        y: this.size / 2
+      },
+      {
+        name: 'E',
+        x: this.size - this.padding / 2,
+        y: this.size / 2
+      },
+      {
+        name: 'S',
+        x: this.size / 2,
+        y: this.size - this.padding / 2
+      }
+    ];
+
+    t.selectAll('text.direction')
       .data(this.directions)
       .enter()
       .append('text')
@@ -369,11 +373,9 @@ export class RadarComponent implements OnInit {
   /**
    * Removes all circles and paths from the radar chart
    */
-  private clearChart(): void {
-    const g = d3.select('#' + this.radarGroupId);
-
-    g.selectAll('path.connection').remove();
-    g.selectAll('circle.position').remove();
+  private static clearChart(): void {
+    d3.selectAll('path.connection').remove();
+    d3.selectAll('circle.position').remove();
   }
 
   /**
@@ -404,8 +406,8 @@ export class RadarComponent implements OnInit {
       .attr('r', environment.visualization.radar.circle.radius)
       .attr('fill', position => d3.interpolatePlasma((1 / this.maxAltitude) * position.altitude))
       .attr('class', 'position')
-      .on('mouseenter', this.handleMouseEnterPositionCircle)
-      .on('mouseleave', this.handleMouseLeavePositionCircle);
+      .on('mouseenter', RadarComponent.handleMouseEnterPositionCircle)
+      .on('mouseleave', RadarComponent.handleMouseLeavePositionCircle);
 
     // Re-insert (raise) the circle elements, so that they are always on top
     g.selectAll('circle.position').raise();
@@ -441,8 +443,7 @@ export class RadarComponent implements OnInit {
    * @param i the index of the circle inside the positions array
    * @param circles the array of circle, in which we can find the current circle
    */
-  private handleMouseEnterPositionCircle(d: Position, i: number, circles: SVGCircleElement[]): void {
-    // const position = new Position(d.longitude, d.latitude, d.altitude, d.timestamp);
+  private static handleMouseEnterPositionCircle(d: Position, i: number, circles: SVGCircleElement[]): void {
     const circle = circles[i];
     d3.select(circle)
       .attr('r', circle.r.baseVal.value * 1.5);
@@ -454,7 +455,7 @@ export class RadarComponent implements OnInit {
    * @param i the index of the circle inside the positions array
    * @param circles the array of circle, in which we can find the current circle
    */
-  private handleMouseLeavePositionCircle(d: Position, i: number, circles: SVGCircleElement[]): void {
+  private static handleMouseLeavePositionCircle(d: Position, i: number, circles: SVGCircleElement[]): void {
     const circle = circles[i];
     d3.select(circle)
       .attr('r', circle.r.baseVal.value / 1.5);

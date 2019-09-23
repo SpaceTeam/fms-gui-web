@@ -24,10 +24,22 @@ export class RadarForm {
   centerChanged$;
 
   // Observable number resource
+  private translationChangedSource;
+
+  // Observable number stream
+  translationChanged$;
+
+  // Observable number resource
   private rotationChangedSource;
 
   // Observable number stream
   rotationChanged$;
+
+  // Observable number resource
+  private scaleChangedSource;
+
+  // Observable number stream
+  scaleChanged$;
 
   constructor(private fb: FormBuilder) {
     this.configurationForm = this.fb.group({
@@ -35,17 +47,24 @@ export class RadarForm {
         longitude: [''],
         latitude: ['']
       }),
-      rotation: ['']
+      translation: this.fb.group({
+        x: [''],
+        y: ['']
+      }),
+      rotation: [''],
+      scale: ['']
     });
 
-    this.initChangeListener();
+    this.initCenterListener();
+    this.initTranslationListener();
     this.initRotationListener();
+    this.initScaleListener();
   }
 
   /**
    * Initializes the center of the radar
    */
-  private initChangeListener(): void {
+  private initCenterListener(): void {
     this.centerChangedSource = new Subject<Position>();
     this.centerChanged$ = this.centerChangedSource.asObservable();
 
@@ -78,6 +97,26 @@ export class RadarForm {
   }
 
   /**
+   * Published the current translation value to all subscribers of 'translationChanged$'
+   */
+  private initTranslationListener(): void {
+    this.translationChangedSource = new Subject<{x: number, y: number}>();
+    this.translationChanged$ = this.translationChangedSource.asObservable();
+
+    const translation = this.configurationForm.get('translation');
+    const xElem = translation.get('x');
+    const yElem = translation.get('y');
+
+    xElem.valueChanges.subscribe(() => this.publishTranslation());
+    yElem.valueChanges.subscribe(() => this.publishTranslation());
+  }
+
+  private publishTranslation(): void {
+    const translation = this.configurationForm.get('translation');
+    this.translationChangedSource.next({x: translation.get('x').value, y: translation.get('y').value});
+  }
+
+  /**
    * Publishes the current rotation value to all subscribers of 'rotationChanged$'
    */
   private initRotationListener(): void {
@@ -99,5 +138,16 @@ export class RadarForm {
 
     this.rotationChangedSource.next(angleInDeg);
     this.configurationForm.get('rotation').setValue(angleInDeg);
+  }
+
+  /**
+   * Publishes the current scale value to all subscribers of 'scaleChanged$'
+   */
+  private initScaleListener(): void {
+    this.scaleChangedSource = new Subject<number>();
+    this.scaleChanged$ = this.scaleChangedSource.asObservable();
+
+    const scale = this.configurationForm.get('scale');
+    scale.valueChanges.subscribe(() => this.scaleChangedSource.next(scale.value));
   }
 }

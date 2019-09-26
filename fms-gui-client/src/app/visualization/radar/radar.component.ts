@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewEncapsulation} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core';
 import {Position} from '../../shared/model/flight/position';
 import {PositionService} from '../../shared/services/visualization/position/position.service';
 import {PositionUtil} from '../../shared/utils/position/position.util';
@@ -6,6 +6,7 @@ import {environment} from '../../../environments/environment';
 import {RadarForm} from '../../shared/forms/radar.form';
 
 import * as d3 from 'd3';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-radar',
@@ -13,7 +14,7 @@ import * as d3 from 'd3';
   styleUrls: ['./radar.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class RadarComponent implements OnInit {
+export class RadarComponent implements OnInit, OnDestroy {
 
   /**
    * The SVG element's id
@@ -93,6 +94,8 @@ export class RadarComponent implements OnInit {
 
   private zoom;
 
+  private subscriptions: Array<Subscription>;
+
   constructor(private positionService: PositionService, private radarForm: RadarForm) {
     // Initialize the local objects
     this.positions = [];
@@ -101,6 +104,7 @@ export class RadarComponent implements OnInit {
     this.translation = {x: 0, y: 0};
     this.scale = 1;
     this.rotation = 0;
+    this.subscriptions = [];
   }
 
   ngOnInit() {
@@ -113,13 +117,17 @@ export class RadarComponent implements OnInit {
     this.subscribeToCenterChange();
 
     // Update the svg, whenever the translation value was changed
-    this.subscribeToTranslationChange();
+    // this.subscribeToTranslationChange();
 
     // Update the svg, whenever the rotation value was changed
     this.subscribeToRotationChange();
 
     // Update the svg, whenever the scale value was changed
-    this.subscribeToScaleChange();
+    // this.subscribeToScaleChange();
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
   /**
@@ -177,28 +185,32 @@ export class RadarComponent implements OnInit {
    * Lets the radar listen to incoming positions
    */
   private subscribeToPositions(): void {
-    this.positionService.positionAnnounced$.subscribe((position: Position) => {
-      // Only add the position, if really necessary
-      if (this.positions.filter(pos => PositionUtil.newPosition(pos).equals(position)).length === 0) {
-        this.positions.push(position);
-        if (position.altitude > this.maxAltitude) {
-          this.maxAltitude = position.altitude;
-          RadarComponent.clearChart();
+    this.subscriptions.push(
+      this.positionService.positionAnnounced$.subscribe((position: Position) => {
+        // Only add the position, if really necessary
+        if (this.positions.filter(pos => PositionUtil.newPosition(pos).equals(position)).length === 0) {
+          this.positions.push(position);
+          if (position.altitude > this.maxAltitude) {
+            this.maxAltitude = position.altitude;
+            RadarComponent.clearChart();
+          }
+          this.addPositionsToChart();
         }
-        this.addPositionsToChart();
-      }
-    });
+      })
+    );
   }
 
   /**
    * Lets the radar listen to incoming center changes
    */
   private subscribeToCenterChange(): void {
-    this.radarForm.centerChanged$.subscribe((center: Position) => {
-      this.center = center;
-      RadarComponent.clearChart();
-      this.addPositionsToChart();
-    });
+    this.subscriptions.push(
+      this.radarForm.centerChanged$.subscribe((center: Position) => {
+        this.center = center;
+        RadarComponent.clearChart();
+        this.addPositionsToChart();
+      })
+    );
     this.radarForm.initCenter();
   }
 
@@ -206,30 +218,36 @@ export class RadarComponent implements OnInit {
    * Lets the radar listen to incoming translation changes
    */
   private subscribeToTranslationChange(): void {
-    this.radarForm.translationChanged$.subscribe((translation: {x: number, y: number}) => {
-      this.translation = translation;
-      this.transformElements();
-    });
+    this.subscriptions.push(
+      this.radarForm.translationChanged$.subscribe((translation: { x: number, y: number }) => {
+        this.translation = translation;
+        this.transformElements();
+      })
+    );
   }
 
   /**
    * Lets the radar listen to incoming rotation changes
    */
   private subscribeToRotationChange(): void {
-    this.radarForm.rotationChanged$.subscribe((degree: number) => {
-      this.rotation = degree;
-      this.transformElements();
-    });
+    this.subscriptions.push(
+      this.radarForm.rotationChanged$.subscribe((degree: number) => {
+        this.rotation = degree;
+        this.transformElements();
+      })
+    );
   }
 
   /**
-   * Lets the radar listen to incoming scale changesx
+   * Lets the radar listen to incoming scale changes
    */
   private subscribeToScaleChange(): void {
-    this.radarForm.scaleChanged$.subscribe((value: number) => {
-      this.scale = value;
-      this.transformElements();
-    });
+    this.subscriptions.push(
+      this.radarForm.scaleChanged$.subscribe((value: number) => {
+        this.scale = value;
+        this.transformElements();
+      })
+    );
   }
 
   /**
@@ -531,7 +549,7 @@ export class RadarComponent implements OnInit {
   /**
    * Resets the zoom
    */
-  private reset() {
+  private resetZoom() {
     const svg = d3.select('#' + this.chartId);
     const node = <Element>svg.node();
     svg.transition().duration(750).call(

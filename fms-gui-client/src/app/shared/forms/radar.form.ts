@@ -47,18 +47,20 @@ export class RadarForm {
         longitude: [''],
         latitude: ['']
       }),
+      /*
       translation: this.fb.group({
         x: [''],
         y: ['']
       }),
+       */
       rotation: [''],
-      scale: ['']
+      // scale: ['']
     });
 
     this.initCenterListener();
-    this.initTranslationListener();
+    // this.initTranslationListener();
     this.initRotationListener();
-    this.initScaleListener();
+    // this.initScaleListener();
   }
 
   /**

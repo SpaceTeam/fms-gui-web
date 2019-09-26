@@ -91,6 +91,8 @@ export class RadarComponent implements OnInit {
    */
   private maxAltitude: number;
 
+  private zoom;
+
   constructor(private positionService: PositionService, private radarForm: RadarForm) {
     // Initialize the local objects
     this.positions = [];
@@ -155,9 +157,20 @@ export class RadarComponent implements OnInit {
     this.addDirectionLines();
 
     // Rotation
-    // TODO: Change the rotation to be changed on 'CTRL' + Drag
     const i = d3.interpolateNumber(-1, 1);
-    svg.call(d3.drag().on('drag', () => this.radarForm.dragRotation(i(d3.event.x / this.size), i(d3.event.y / this.size))));
+    svg.call(d3.drag()
+      .filter(() => d3.event.ctrlKey)
+      .on('drag', () => this.radarForm.dragRotation(i(d3.event.x / this.size), i(d3.event.y / this.size))));
+
+    // Zoom
+    this.zoom = d3.zoom()
+      .extent([[0, 0], [this.size, this.size]])
+      .scaleExtent([0.1, 1.5])
+      .on('zoom', () => {
+        d3.select('#circles-container').attr("transform", d3.event.transform);
+        d3.select('#text-container').attr("transform", d3.event.transform);
+      });
+    svg.call(this.zoom);
   }
 
   /**
@@ -513,5 +526,18 @@ export class RadarComponent implements OnInit {
       icon.innerText = 'keyboard_arrow_down';
       icon.title = 'Collapse radar configuration';
     }
+  }
+
+  /**
+   * Resets the zoom
+   */
+  private reset() {
+    const svg = d3.select('#' + this.chartId);
+    const node = <Element>svg.node();
+    svg.transition().duration(750).call(
+      this.zoom.transform,
+      d3.zoomIdentity,
+      d3.zoomTransform(node).invert([this.size / 2, this.size / 2])
+    );
   }
 }

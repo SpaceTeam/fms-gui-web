@@ -19,32 +19,32 @@ export class RadarComponent implements OnInit, OnDestroy {
   /**
    * The SVG element's id
    */
-  chartId = 'radar-chart-svg';
+  private chartId = 'radar-chart-svg';
 
   /**
    * The SVG parent's id
    */
-  chartContainerId = 'radar-chart-div';
+  private chartContainerId = 'radar-chart-div';
 
   /**
    * The size of the container
    */
-  size: number;
+  private size: number;
 
   /**
    * The current and previous positions of the flight object
    */
-  positions: Array<Position>;
+  private positions: Array<Position>;
 
   /**
    * Custom position
    */
-  center: Position;
+  private center: Position;
 
   /**
    * The radius of the radar
    */
-  radius: number;
+  private radius: number;
 
   /**
    * The radar's padding
@@ -92,8 +92,14 @@ export class RadarComponent implements OnInit, OnDestroy {
    */
   private maxAltitude: number;
 
+  /**
+   * The d3 zoom method
+   */
   private zoom;
 
+  /**
+   * An array used for storing subscriptions and, when the component is destroyed, for unsubscribing from the subscriptions
+   */
   private subscriptions: Array<Subscription>;
 
   constructor(private positionService: PositionService, private radarForm: RadarForm) {
@@ -159,7 +165,7 @@ export class RadarComponent implements OnInit, OnDestroy {
     this.addCircles(svg);
 
     // Add direction text to the group
-    this.addText(svg);
+    this.addDirectionText(svg);
 
     // Add direction lines to the group
     this.addDirectionLines();
@@ -173,7 +179,7 @@ export class RadarComponent implements OnInit, OnDestroy {
     // Zoom
     this.zoom = d3.zoom()
       .extent([[0, 0], [this.size, this.size]])
-      .scaleExtent([0.1, 1.5])
+      .scaleExtent([1, 10])
       .on('zoom', () => {
         d3.select('#circles-container').attr("transform", d3.event.transform);
         d3.select('#text-container').attr("transform", d3.event.transform);
@@ -276,6 +282,7 @@ export class RadarComponent implements OnInit, OnDestroy {
     const distance = this.radius / equidistantCircles;
     const radii = [];
 
+    // Add the radii of the circles
     for (let i = 1; i <= equidistantCircles; i++) {
       radii.push(distance * i);
     }
@@ -316,7 +323,7 @@ export class RadarComponent implements OnInit, OnDestroy {
    * Adds the 'direction' text elements to the radar
    * @param svg a d3 SVG element
    */
-  private addText(svg): void {
+  private addDirectionText(svg): void {
     const texts = svg.append('svg')
       .attr('id', 'g-text')
       .attr('x', 0)
@@ -438,7 +445,9 @@ export class RadarComponent implements OnInit, OnDestroy {
       .attr('fill', position => d3.interpolatePlasma((1 / this.maxAltitude) * position.altitude))
       .attr('class', 'position')
       .on('mouseenter', RadarComponent.handleMouseEnterPositionCircle)
-      .on('mouseleave', RadarComponent.handleMouseLeavePositionCircle);
+      .on('mouseleave', RadarComponent.handleMouseLeavePositionCircle)
+      .append('title')
+      .html(position => `(lat: ${position.latitude}, lon: ${position.longitude}, alt: ${position.altitude})`);
 
     // Re-insert (raise) the circle elements, so that they are always on top
     g.selectAll('circle.position').raise();
@@ -476,8 +485,7 @@ export class RadarComponent implements OnInit, OnDestroy {
    */
   private static handleMouseEnterPositionCircle(d: Position, i: number, circles: SVGCircleElement[]): void {
     const circle = circles[i];
-    d3.select(circle)
-      .attr('r', circle.r.baseVal.value * 1.5);
+    d3.select(circle).attr('r', circle.r.baseVal.value * 1.5);
   }
 
   /**
@@ -488,8 +496,8 @@ export class RadarComponent implements OnInit, OnDestroy {
    */
   private static handleMouseLeavePositionCircle(d: Position, i: number, circles: SVGCircleElement[]): void {
     const circle = circles[i];
-    d3.select(circle)
-      .attr('r', circle.r.baseVal.value / 1.5);
+    d3.select(circle).attr('r', circle.r.baseVal.value / 1.5);
+    d3.select('#tooltip').classed('visible', false).classed('invisible', true);
   }
 
   /**
@@ -504,11 +512,11 @@ export class RadarComponent implements OnInit, OnDestroy {
     x = x * Math.cos(this.rotation * Math.PI / 180) - y * Math.sin(this.rotation * Math.PI / 180);
 
     // Scale
-    x *= this.scale;
+    // x *= this.scale;
 
     // We add '1' and divide by 2, so that all numbers in the range [-1;1] are between [0;1]
     // Translate (in px)
-    return this.rotationRI((x + 1) / 2) + this.translation.x;
+    return this.rotationRI((x + 1) / 2); // + this.translation.x;
   }
 
   /**
@@ -516,7 +524,6 @@ export class RadarComponent implements OnInit, OnDestroy {
    * @param d the object containing information about a given direction
    */
   private transformY(d: {x: number, y: number}): number {
-    // Translate (in px)
     let x = this.rotationI(d.x / this.size);
     let y = this.rotationI(d.y / this.size);
 
@@ -524,10 +531,10 @@ export class RadarComponent implements OnInit, OnDestroy {
     y = x * Math.sin(this.rotation * Math.PI / 180) + y * Math.cos(this.rotation * Math.PI / 180);
 
     // Scale
-    y *= this.scale;
+    // y *= this.scale;
 
     // Translate (in px)
-    return this.rotationRI((y + 1) / 2) + this.translation.y;
+    return this.rotationRI((y + 1) / 2); // + this.translation.y;
   }
 
   /**

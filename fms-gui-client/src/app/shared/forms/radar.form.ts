@@ -113,6 +113,9 @@ export class RadarForm {
     yElem.valueChanges.subscribe(() => this.publishTranslation());
   }
 
+  /**
+   * The actual 'publishing' method of the translation subject
+   */
   private publishTranslation(): void {
     const translation = this.configurationForm.get('translation');
     this.translationChangedSource.next({x: translation.get('x').value, y: translation.get('y').value});

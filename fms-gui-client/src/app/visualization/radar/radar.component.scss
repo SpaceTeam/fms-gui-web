@@ -18,27 +18,16 @@
 }
 
 .direction text {
-  font-size: 1.2em;
+  font-size: 1.4em;
+  text-anchor: middle;
 }
 
 label {
   margin-bottom: 0;
 }
 
-line {
-  &.direction {
-    stroke: black;
-    stroke-width: 1;
-    opacity: 0.5;
-  }
-}
-
 g {
   transform-origin: center;
-}
-
-text {
-  text-anchor: middle;
 }
 
 #altitudes {

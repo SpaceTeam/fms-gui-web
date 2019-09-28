@@ -164,7 +164,7 @@ export class RadarComponent implements OnInit, OnDestroy {
       .scaleExtent([1, 10])
       .on('zoom', () => {
         d3.select('#circles-container').attr("transform", d3.event.transform);
-        d3.select('#text-container').attr("transform", d3.event.transform);
+        d3.select('#direction-container').attr("transform", d3.event.transform);
       });
     svg.call(this.zoom);
   }
@@ -271,6 +271,7 @@ export class RadarComponent implements OnInit, OnDestroy {
   private setDirectionAxis(): void {
     const width = Number(d3.select('#circles-container').attr('width'));
     const radius = width / 2;
+    const distance: number = 15;
 
     const domainVertical: Array<string> = ['N', '', 'S'];
     const domainHorizontal: Array<string> = ['W', '', 'E'];
@@ -283,25 +284,45 @@ export class RadarComponent implements OnInit, OnDestroy {
       .domain(domainHorizontal)
       .range([0, width]);
 
-    const svg = d3.select('#' + this.chartId);
-
     // Set the initial translation values of the axis
     this.horizontal = {x: this.padding, y: radius + this.padding};
     this.vertical = {x: radius + this.padding, y: this.padding};
 
-    svg.append('g')
+    const container = d3.select('#' + this.chartId)
+      .append('svg')
+      .attr('id', 'direction-container');
+
+    const horizontal = container.append('g')
       .attr('id', 'direction-horizontal')
       .attr('class', 'direction')
       .attr('transform', `translate(${this.horizontal.x}, ${this.horizontal.y})`)
-      .call(d3.axisBottom(scalePointHorizontal).tickSize(0))
-      .selectAll('text').attr('x', 0).attr('y', 0).attr('dx', 0).attr('dy', 0);
+      .call(d3.axisBottom(scalePointHorizontal).tickSize(0));
 
-    svg.append('g')
+    horizontal.selectAll('g')
+      .attr('id', (d: string) => `group-${d}`)
+      .attr('transform', (d: string) => `translate(${(d === 'W') ? -distance : width + distance}, 0)`);
+
+    horizontal.selectAll('text')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('dx', 0)
+        .attr('dy', 0);
+
+    const vertical = container.append('g')
       .attr('id', 'direction-vertical')
       .attr('class', 'direction')
       .attr('transform', `translate(${this.vertical.x}, ${this.vertical.y})`)
-      .call(d3.axisLeft(scalePointVertical).tickSize(0))
-      .selectAll('text').attr('x', 0).attr('y', 0).attr('dx', 0).attr('dy', 0);
+      .call(d3.axisLeft(scalePointVertical).tickSize(0));
+
+    vertical.selectAll('g')
+      .attr('id', (d: string) => `group-${d}`)
+      .attr('transform', (d: string) => `translate(0, ${(d === 'N') ? -distance : width + distance})`);
+
+    vertical.selectAll('text')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('dx', 0)
+        .attr('dy', 0);
   }
 
   /**

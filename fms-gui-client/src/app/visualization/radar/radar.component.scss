@@ -1,4 +1,4 @@
-.circles {
+.circles, .domain {
   opacity: 0.5;
 }
 
@@ -17,6 +17,10 @@
   fill: none;
 }
 
+.direction text {
+  font-size: 1.2em;
+}
+
 label {
   margin-bottom: 0;
 }
@@ -31,6 +35,16 @@ line {
 
 g {
   transform-origin: center;
+}
+
+text {
+  text-anchor: middle;
+}
+
+#altitudes {
+  .domain {
+    stroke: none;
+  }
 }
 
 #toggle-icon {

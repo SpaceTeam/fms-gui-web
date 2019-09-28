@@ -53,11 +53,6 @@ export class RadarComponent implements OnInit, OnDestroy {
   private padding: number;
 
   /**
-   * Contains ['N', 'W', 'S', 'E'] and their positions
-   */
-  private directions: Array<{name: string, point: Point}>;
-
-  /**
    * The interpolator for the transformation in the range [0,1]
    */
   private rotationI;
@@ -76,6 +71,10 @@ export class RadarComponent implements OnInit, OnDestroy {
    * The 'rotation' value used for the rotation transformation
    */
   private rotation: number;
+
+  private vertical: Point;
+
+  private horizontal: Point;
 
   /**
    * Stores the current maximum altitude of the rocket
@@ -147,11 +146,8 @@ export class RadarComponent implements OnInit, OnDestroy {
     // Circles
     this.addCircles(svg);
 
-    // Add direction text to the group
-    this.addDirectionText(svg);
-
-    // Add direction lines to the group
-    this.addDirectionLines();
+    // Add direction texts to the group
+    this.setDirectionAxis();
 
     // Add the altitude text to the group
     this.setAltitudeAxis();
@@ -240,7 +236,7 @@ export class RadarComponent implements OnInit, OnDestroy {
       .attr('y', this.padding)
       .attr('width', radarSize)
       .attr('height', radarSize)
-      .attr('viewport', `[0 0 ${radarSize} ${radarSize}]`)
+      .attr('viewport', `[-20 -20 ${radarSize + this.padding / 2} ${radarSize + this.padding / 2}]`)
       .attr('id', 'circles-container');
 
     const g = circles.append('g')
@@ -270,52 +266,42 @@ export class RadarComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Adds the 'direction' text elements to the radar
-   * @param svg a d3 SVG element
-   */
-  private addDirectionText(svg): void {
-    const texts = svg.append('svg')
-      .attr('id', 'g-text')
-      .attr('x', 0)
-      .attr('y', 0)
-      .attr('width', this.size)
-      .attr('height', this.size)
-      .attr('id', 'text-container');
-
-    const t = texts.append('g')
-      .attr('id', 'texts');
-
-    this.directions = this.getDirectionPositions();
-
-    t.selectAll('text.direction')
-      .data(this.directions)
-      .enter()
-      .append('text')
-      .attr('x', (d: {name: string, point: Point}) => d.point.x)
-      .attr('y', (d: {name: string, point: Point}) => d.point.y)
-      .text((d: {name: string, point: Point}) => d.name)
-      .classed('direction', true);
-  }
-
-  /**
    * Adds the 'direction' lines, connecting the center with the directions inside the radar
    */
-  private addDirectionLines(): void {
-    const w = Number(d3.select('#circles-container').attr('width'));
-    const lines = RadarComponent.getDirectionLinePositions(w);
+  private setDirectionAxis(): void {
+    const width = Number(d3.select('#circles-container').attr('width'));
+    const radius = width / 2;
 
-    const centerPoint: Point = {x: w / 2, y: w / 2};
+    const domainVertical: Array<string> = ['N', '', 'S'];
+    const domainHorizontal: Array<string> = ['W', '', 'E'];
 
-    d3.select('#circles')
-      .selectAll('line.direction')
-      .data(lines)
-      .enter()
-      .append('line')
-      .attr('x1', this.rotateX(centerPoint, this.rotation))
-      .attr('y1', this.rotateY(centerPoint, this.rotation))
-      .attr('x2', d => this.rotateX(d, this.rotation))
-      .attr('y2', d => this.rotateY(d, this.rotation))
-      .classed('direction', true);
+    const scalePointVertical = d3.scalePoint()
+      .domain(domainVertical)
+      .range([0, width]);
+
+    const scalePointHorizontal = d3.scalePoint()
+      .domain(domainHorizontal)
+      .range([0, width]);
+
+    const svg = d3.select('#' + this.chartId);
+
+    // Set the initial translation values of the axis
+    this.horizontal = {x: this.padding, y: radius + this.padding};
+    this.vertical = {x: radius + this.padding, y: this.padding};
+
+    svg.append('g')
+      .attr('id', 'direction-horizontal')
+      .attr('class', 'direction')
+      .attr('transform', `translate(${this.horizontal.x}, ${this.horizontal.y})`)
+      .call(d3.axisBottom(scalePointHorizontal).tickSize(0))
+      .selectAll('text').attr('x', 0).attr('y', 0).attr('dx', 0).attr('dy', 0);
+
+    svg.append('g')
+      .attr('id', 'direction-vertical')
+      .attr('class', 'direction')
+      .attr('transform', `translate(${this.vertical.x}, ${this.vertical.y})`)
+      .call(d3.axisLeft(scalePointVertical).tickSize(0))
+      .selectAll('text').attr('x', 0).attr('y', 0).attr('dx', 0).attr('dy', 0);
   }
 
   /**
@@ -396,121 +382,25 @@ export class RadarComponent implements OnInit, OnDestroy {
    * Performs the rotation of the SVG elements
    */
   private rotateElements(): void {
+    // [*,*] => [0, 360]
+    let value = this.rotation;
+    while (value < 0) {
+      value += 360;
+    }
+    while (value > 360) {
+      value -= 360;
+    }
+
     // Transform the circles
-    d3.select('#circles')
-      .style('transform', `rotateZ(${this.rotation}deg)`);
+    d3.select('#circles').style('transform', `rotateZ(${value}deg)`);
 
-    // Transform text position
-    d3.select('#texts')
-      .selectAll('text.direction')
-      .data(this.directions)
-      .attr('x', d => this.rotateX(d.point, this.rotation))
-      .attr('y', d => this.rotateY(d.point, this.rotation))
-      .text(d => d.name);
-  }
-
-  /**
-   * Calculates the positions of the direction texts (N, W, S, E) and returns the array
-   * @return the array with the texts and their positions
-   */
-  private getDirectionPositions(): Array<{name: string, point: Point}> {
-    return [
-      {
-        name: 'N',
-        point: {
-          x: this.size / 2,
-          y: this.padding / 2
-        }
-      },
-      {
-        name: 'W',
-        point: {
-          x: this.padding / 2,
-          y: this.size / 2
-        }
-      },
-      {
-        name: 'E',
-        point: {
-          x: this.size - this.padding / 2,
-          y: this.size / 2
-        }
-      },
-      {
-        name: 'S',
-        point: {
-          x: this.size / 2,
-          y: this.size - this.padding / 2
-        }
-      }
-    ]
-  }
-
-  /**
-   * Calculates the outer most points in a given direction (N, W, S, E) and returns the array
-   * @param w the width of the SVG element, where the lines should be stored
-   * @return the array with the positions of
-   */
-  private static getDirectionLinePositions(w: number): Array<Point> {
-    return [
-      // N
-      {
-        x: w / 2,
-        y: 0
-      },
-      // S
-      {
-        x: w / 2,
-        y: w
-      },
-      // W
-      {
-        x: 0,
-        y: w / 2
-      },
-      // E
-      {
-        x: w,
-        y: w / 2
-      }
-    ];
-  }
-
-  /**
-   * Rotates the text inside the radar in x-direction
-   * @param d the object containing information about a given direction
-   * @param rotation the degree
-   */
-  private rotateX(d: Point, rotation: number): number {
-    const point = this.interpolatePoint(d);
-    let x = point.x;
-    let y = point.y;
-
-    const radians = RadarComponent.toRadians(rotation);
-
-    // Rotate
-    x = x * Math.cos(radians) - y * Math.sin(radians);
-
-    // We add '1' and divide by 2, so that all numbers in the range [-1;1] are between [0;1]
-    return this.rotationRI((x + 1) / 2);
-  }
-
-  /**
-   * Rotates the text inside the radar in y-direction
-   * @param d the object containing information about a given direction
-   * @param rotation the degree
-   */
-  private rotateY(d: Point, rotation: number): number {
-    const point = this.interpolatePoint(d);
-    let x = point.x;
-    let y = point.y;
-
-    const radians = RadarComponent.toRadians(rotation);
-
-    // Rotate
-    y = x * Math.sin(radians) + y * Math.cos(radians);
-
-    return this.rotationRI((y + 1) / 2);
+    // Transform text axis
+    d3.select('#direction-vertical')
+      .style('transform', `rotateZ(${value}deg) translateX(${this.vertical.x}px) translateY(${this.vertical.y}px)`)
+      .selectAll('text').style('transform', `rotateZ(-${value}deg)`);
+    d3.select('#direction-horizontal')
+      .style('transform', `rotateZ(${value}deg) translateX(${this.horizontal.x}px) translateY(${this.horizontal.y}px)`)
+      .selectAll('text').style('transform', `rotateZ(-${value}deg)`);
   }
 
   /**
@@ -558,20 +448,6 @@ export class RadarComponent implements OnInit, OnDestroy {
    */
   private altitudeStep(altitude: number): number {
     return (altitude / this.maxAltitude) * this.radius;
-  }
-
-  private interpolatePoint(d: Point): Point {
-    let x = this.rotationI(d.x / this.size);
-    let y = this.rotationI(d.y / this.size);
-    return {x: x, y: y}
-  }
-
-  /**
-   * Converts the given degrees to radians
-   * @param degree an arbitrary number, that needs to be converted to radians
-   */
-  private static toRadians(degree: number): number {
-    return degree * (Math.PI / 180);
   }
 
   /**

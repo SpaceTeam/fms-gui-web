@@ -161,7 +161,7 @@ export class RadarComponent implements OnInit, OnDestroy {
     // Zoom
     this.zoom = d3.zoom()
       .extent([[0, 0], [this.size, this.size]])
-      .scaleExtent([1, 10])
+      .scaleExtent([1, 50])
       .on('zoom', () => {
         d3.select('#circles-container').attr("transform", d3.event.transform);
         d3.select('#direction-container').attr("transform", d3.event.transform);
@@ -475,7 +475,7 @@ export class RadarComponent implements OnInit, OnDestroy {
    * Expands or collapses the configuration window in the radar component
    */
   private toggleConfiguration(): void {
-    const icon = document.getElementById('toggle-icon');
+    const icon = <HTMLElement>document.getElementsByClassName('toggle-icon')[0];
     this.isConfigOpen = !this.isConfigOpen;
 
     if (icon.innerText === 'keyboard_arrow_down') {

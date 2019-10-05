@@ -13,5 +13,15 @@
     "path": "flight-mode",
     "title": "Flight Mode",
     "icon": "flight"
+  },
+  {
+    "path": "controls",
+    "title": "Controls",
+    "icon": "games"
+  },
+  {
+    "path": "cards",
+    "title": "Cards",
+    "icon": "view_column"
   }
 ]

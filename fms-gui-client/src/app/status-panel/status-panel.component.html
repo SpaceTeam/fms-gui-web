@@ -3,21 +3,29 @@
   <mat-toolbar>{{ title }}</mat-toolbar>
   <div class="margin-side-1em" *ngIf="fmsDataService.isDataPresent">
     <!-- Contains the status bytes, which indicate if something is on or off -->
-    <h2>Flags</h2>
-    <div class="grid-cols-4 grid-gap-sm">
-      <div *ngFor='let item of Utils.castToArray(fmsDataService.getValue(basePath))'>
-        <div class="status-element d-flex left align-items-center" [id]="item.name"
-             [appStatusHighlight]="(this.fmsDataService.isDifferentValue(this.basePath + '/' + item.name)) ? item : null">
-          <span class="badge" [ngClass]="{
-            'badge-success': item.value,
-            'badge-danger': !item.value
-          }">
-            &nbsp;
-          </span>
-          <span class="margin-left-0-5em">{{item.name}}</span>
+    <mat-tab-group>
+      <mat-tab label="Flags">
+        <div class="grid-cols-4 grid-gap-sm">
+          <div *ngFor='let item of Utils.castToArray(fmsDataService.getValue(basePath))'>
+            <div class="status-element d-flex left align-items-center" [id]="item.name"
+                 [appStatusHighlight]="(this.fmsDataService.isDifferentValue(this.basePath + '/' + item.name)) ? item : null">
+              <span class="badge" [ngClass]="{
+                'badge-success': item.value,
+                'badge-danger': !item.value
+                }">
+                &nbsp;
+              </span>
+              <span class="margin-left-0-5em">
+                {{item.name}}
+              </span>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      </mat-tab>
+      <mat-tab label="Status Matrix">
+        <app-status-matrix></app-status-matrix>
+      </mat-tab>
+    </mat-tab-group>
   </div>
   <app-loading *ngIf="!fmsDataService.isDataPresent"></app-loading>
 </main>

@@ -1,0 +1,13 @@
+#status-matrix-config-container {
+  width: 200px;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.search-entry, .pointer {
+  &:hover {
+    background-color: lightgrey;
+  }
+}

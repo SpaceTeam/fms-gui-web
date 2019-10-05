@@ -1,6 +1,6 @@
 <div id="radar-chart-div" class="d-flex h-100">
   <div id="radar-configuration">
-    <mat-icon id="toggle-icon" (click)="toggleConfiguration()" title="Collapse radar configuration">
+    <mat-icon class="toggle-icon" (click)="toggleConfiguration()" title="Collapse radar configuration">
       keyboard_arrow_down
     </mat-icon>
     <form [formGroup]="radarForm.configurationForm">
@@ -23,26 +23,6 @@
           </mat-form-field>
         </div>
 
-        <!--
-        <div formGroupName="translation" class="d-flex flex-column">
-          <h3 class="mat-h3">Translation</h3>
-
-          <mat-form-field>
-            <mat-label>X</mat-label>
-            <label>
-              <input type="number" formControlName="x" matInput placeholder="0" step="1" value="0"/>
-            </label>
-          </mat-form-field>
-
-          <mat-form-field>
-            <mat-label>Y</mat-label>
-            <label>
-              <input type="number" formControlName="y" matInput placeholder="0" step="1" value="0"/>
-            </label>
-          </mat-form-field>
-        </div>
-        -->
-
         <div class="d-flex flex-column">
           <h3 class="mat-h3">Rotation</h3>
 
@@ -53,19 +33,6 @@
             </label>
           </mat-form-field>
         </div>
-
-        <!--
-        <div class="d-flex flex-column">
-          <h3 class="mat-h3">Scale</h3>
-
-          <mat-form-field>
-            <mat-label>Value</mat-label>
-            <label>
-              <input type="number" formControlName="scale" matInput placeholder="1" min="0" step="0.01" value="1"/>
-            </label>
-          </mat-form-field>
-        </div>
-        -->
 
         <button mat-raised-button (click)="resetZoom()" value="Reset Zoom">Reset Zoom</button>
       </div>

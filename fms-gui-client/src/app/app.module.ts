@@ -18,6 +18,8 @@ import {LoadingComponent} from './loading/loading.component';
 import {AlertComponent} from './alert/alert.component';
 import {StatusHighlightDirective} from './shared/directives/status-highlight/status-highlight.directive';
 import {RadarComponent} from './visualization/radar/radar.component';
+import {StatusMatrixComponent} from './visualization/status-matrix/status-matrix.component';
+import {SharedModule} from './shared/shared.module';
 
 @NgModule({
   imports: [
@@ -27,7 +29,8 @@ import {RadarComponent} from './visualization/radar/radar.component';
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    MaterialModule
+    MaterialModule,
+    SharedModule
   ],
   declarations: [
     AppComponent,
@@ -41,7 +44,8 @@ import {RadarComponent} from './visualization/radar/radar.component';
     LoadingComponent,
     AlertComponent,
     StatusHighlightDirective,
-    RadarComponent
+    RadarComponent,
+    StatusMatrixComponent
   ],
   bootstrap: [AppComponent]
 })

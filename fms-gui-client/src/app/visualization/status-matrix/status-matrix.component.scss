@@ -2,12 +2,32 @@
   width: 200px;
 }
 
+.last-flex-item {
+  margin-left: auto;
+}
+
 .pointer {
   cursor: pointer;
 }
 
+.search-box {
+  max-height: 200px;
+  overflow: auto;
+}
+
 .search-entry, .pointer {
   &:hover {
-    background-color: lightgrey;
+    background: #f8f8f8;
+    filter: brightness(90%);
   }
+}
+
+.search-entry {
+  width: 100%;
+  min-height: 2em;
+  padding: 0.5em;
+}
+
+ul {
+  padding: 0;
 }

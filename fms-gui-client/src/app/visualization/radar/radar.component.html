@@ -1,6 +1,6 @@
 <div id="radar-chart-div" class="d-flex h-100">
   <div id="radar-configuration">
-    <mat-icon class="toggle-icon" (click)="toggleConfiguration()" title="Collapse radar configuration">
+    <mat-icon id="toggle-icon" class="pointer" (click)="toggleConfiguration()" title="Collapse radar configuration">
       keyboard_arrow_down
     </mat-icon>
     <form [formGroup]="radarForm.configurationForm">

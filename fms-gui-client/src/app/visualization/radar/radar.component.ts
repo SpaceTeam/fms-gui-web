@@ -53,16 +53,6 @@ export class RadarComponent implements OnInit, OnDestroy {
   private padding: number;
 
   /**
-   * The interpolator for the transformation in the range [0,1]
-   */
-  private rotationI;
-
-  /**
-   * The reversed interpolator for getting the right values for the SVG
-   */
-  private rotationRI;
-
-  /**
    * A flag for telling, if the radar configuration window is open
    */
   private isConfigOpen;
@@ -72,9 +62,15 @@ export class RadarComponent implements OnInit, OnDestroy {
    */
   private rotation: number;
 
-  private vertical: Point;
+  /**
+   * Describes the starting point of the vertical axis
+   */
+  private verticalStartingPoint: Point;
 
-  private horizontal: Point;
+  /**
+   * Describes the starting point of the horizontal axis
+   */
+  private horizontalStartingPoint: Point;
 
   /**
    * Stores the current maximum altitude of the rocket
@@ -130,9 +126,6 @@ export class RadarComponent implements OnInit, OnDestroy {
     this.padding = environment.visualization.radar.style.padding;
     this.size = Math.min(Number(svg.style('width').slice(0, -2)), Number(svg.style('height').slice(0, -2)));
     this.radius = (this.size - 2 * this.padding) / 2;
-
-    this.rotationI = d3.interpolate(-1, 1);
-    this.rotationRI = d3.interpolate(0, this.size);
 
     // We need to set the width and height, so that the rotation works properly
     // Somehow transform-origin uses the outer most width and height for setting the transform origin
@@ -284,18 +277,19 @@ export class RadarComponent implements OnInit, OnDestroy {
       .domain(domainHorizontal)
       .range([0, width]);
 
-    // Set the initial translation values of the axis
-    this.horizontal = {x: this.padding, y: radius + this.padding};
-    this.vertical = {x: radius + this.padding, y: this.padding};
+    // Set the initial translation values of the axis (the starting points)
+    this.horizontalStartingPoint = {x: this.padding, y: radius + this.padding};
+    this.verticalStartingPoint = {x: radius + this.padding, y: this.padding};
 
     const container = d3.select('#' + this.chartId)
       .append('svg')
       .attr('id', 'direction-container');
 
+    // Add a group for the 'horizontal' directions 'W' and 'E'
     const horizontal = container.append('g')
       .attr('id', 'direction-horizontal')
       .attr('class', 'direction')
-      .attr('transform', `translate(${this.horizontal.x}, ${this.horizontal.y})`)
+      .attr('transform', `translate(${this.horizontalStartingPoint.x}, ${this.horizontalStartingPoint.y})`)
       .call(d3.axisBottom(scalePointHorizontal).tickSize(0));
 
     horizontal.selectAll('g')
@@ -308,10 +302,11 @@ export class RadarComponent implements OnInit, OnDestroy {
         .attr('dx', 0)
         .attr('dy', 0);
 
+    // Add a group for the 'vertical' directions 'N' and 'S'
     const vertical = container.append('g')
       .attr('id', 'direction-vertical')
       .attr('class', 'direction')
-      .attr('transform', `translate(${this.vertical.x}, ${this.vertical.y})`)
+      .attr('transform', `translate(${this.verticalStartingPoint.x}, ${this.verticalStartingPoint.y})`)
       .call(d3.axisLeft(scalePointVertical).tickSize(0));
 
     vertical.selectAll('g')
@@ -417,10 +412,10 @@ export class RadarComponent implements OnInit, OnDestroy {
 
     // Transform text axis
     d3.select('#direction-vertical')
-      .style('transform', `rotateZ(${value}deg) translateX(${this.vertical.x}px) translateY(${this.vertical.y}px)`)
+      .style('transform', `rotateZ(${value}deg) translateX(${this.verticalStartingPoint.x}px) translateY(${this.verticalStartingPoint.y}px)`)
       .selectAll('text').style('transform', `rotateZ(-${value}deg)`);
     d3.select('#direction-horizontal')
-      .style('transform', `rotateZ(${value}deg) translateX(${this.horizontal.x}px) translateY(${this.horizontal.y}px)`)
+      .style('transform', `rotateZ(${value}deg) translateX(${this.horizontalStartingPoint.x}px) translateY(${this.horizontalStartingPoint.y}px)`)
       .selectAll('text').style('transform', `rotateZ(-${value}deg)`);
   }
 
@@ -475,7 +470,7 @@ export class RadarComponent implements OnInit, OnDestroy {
    * Expands or collapses the configuration window in the radar component
    */
   private toggleConfiguration(): void {
-    const icon = <HTMLElement>document.getElementsByClassName('toggle-icon')[0];
+    const icon = <HTMLElement>document.getElementById('toggle-icon');
     this.isConfigOpen = !this.isConfigOpen;
 
     if (icon.innerText === 'keyboard_arrow_down') {

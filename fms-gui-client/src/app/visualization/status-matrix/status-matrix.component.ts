@@ -36,7 +36,7 @@ export class StatusMatrixComponent implements OnInit, OnDestroy {
     this.isConfigOpen = true;
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
   }
 
   ngOnDestroy(): void {
@@ -66,7 +66,7 @@ export class StatusMatrixComponent implements OnInit, OnDestroy {
    * Expands or collapses the configuration window in the radar component
    */
   private toggleConfiguration(): void {
-    const icon = <HTMLElement>document.getElementsByClassName('toggle-icon')[0];
+    const icon = <HTMLElement>document.getElementById('toggle-icon');
     this.isConfigOpen = !this.isConfigOpen;
 
     if (icon.innerText === 'keyboard_arrow_down') {
@@ -77,5 +77,4 @@ export class StatusMatrixComponent implements OnInit, OnDestroy {
       icon.title = 'Collapse radar configuration';
     }
   }
-
 }

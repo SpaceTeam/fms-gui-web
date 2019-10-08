@@ -18,7 +18,8 @@ export class FilterPipe implements PipeTransform {
     // We can be sure, that the items array now is a string array
     items = items as string[];
 
-    return items.filter(item => item.toLocaleLowerCase().startsWith(searchText.toLocaleLowerCase()));
+    // Check, if the given searchText is included in the name of one of the attributes
+    return items.filter(item => item.toLocaleLowerCase().includes(searchText.toLocaleLowerCase()));
   }
 
   static isNameValuePairArray(items: any[]): boolean {

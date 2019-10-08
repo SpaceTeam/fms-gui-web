@@ -36,10 +36,11 @@ g {
   }
 }
 
-#toggle-icon {
+.pointer {
   cursor: pointer;
 
   &:hover {
-    background-color: lightgrey;
+    background: #f8f8f8;
+    filter: brightness(90%);
   }
 }

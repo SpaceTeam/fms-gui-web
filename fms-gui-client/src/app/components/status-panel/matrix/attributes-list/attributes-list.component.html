@@ -1,0 +1,12 @@
+<div *ngIf="attributeService.selectedAttributes.length > 0" id="selected-attributes">
+  <h3 class="mat-h3">Selected</h3>
+  <mat-list>
+    <mat-list-item *ngFor="let attribute of attributeService.selectedAttributes" class="attribute round-corners">
+      <mat-icon mat-list-icon class="reorder">reorder</mat-icon>
+      <span matLine>{{attribute}}</span>
+      <button mat-icon-button (click)="attributeService.removeAttribute(attribute)" class="pointer">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-list-item>
+  </mat-list>
+</div>

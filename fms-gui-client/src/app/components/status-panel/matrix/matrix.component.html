@@ -1,0 +1,29 @@
+<div class="d-flex h-100">
+  <app-status-matrix class="w-100"></app-status-matrix>
+  <div id="status-matrix-configuration">
+    <mat-icon id="toggle-icon" class="pointer" (click)="toggleConfiguration()"
+              title="Collapse status matrix configuration">
+      keyboard_arrow_down
+    </mat-icon>
+
+    <div id="status-matrix-config-container" *ngIf="isConfigOpen">
+      <mat-form-field class="w-100">
+        <mat-label>Status</mat-label>
+        <label>
+          <input matInput id="search" type="text" placeholder="e.g. ADC" [(ngModel)]="searchText"/>
+        </label>
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+      <mat-list class="search-box">
+        <mat-list-item *ngFor="let data of Utils.castToArray(fmsDataService.getValue(flagsPath)) | filter: searchText"
+                       class="pointer">
+          <span (click)="selectAttribute(data)">
+            {{data}}
+          </span>
+        </mat-list-item>
+      </mat-list>
+
+      <app-attributes-list></app-attributes-list>
+    </div>
+  </div>
+</div>

@@ -1,6 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
 @import 'styles/grid';
 
+$grey: #f8f8f8;
+
 * {
   line-height: 1.5em;
 }
@@ -18,12 +20,17 @@
   margin-left: 0.5em;
 }
 
-.toggle-icon {
+.pointer {
   cursor: pointer;
 
   &:hover {
-    background-color: lightgrey;
+    background: $grey;
+    filter: brightness(90%);
   }
+}
+
+.round-corners {
+  border-radius: 5px;
 }
 
 .w-5rem {
@@ -56,7 +63,7 @@ body {
 }
 
 main {
-  min-height: 50vh;
+  height: 100%;
 }
 
 mat-card {
@@ -68,6 +75,10 @@ mat-card {
     margin-bottom: 1rem !important;
     width: 100%;
   }
+}
+
+mat-list {
+  padding: 0;
 }
 
 ul, ol {

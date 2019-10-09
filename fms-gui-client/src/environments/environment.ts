@@ -3,6 +3,9 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
+  paths: {
+    flags: 'status/flags1'
+  },
   production: false,
   server : {
     secure: false,

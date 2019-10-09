@@ -1,0 +1,13 @@
+<div class="grid-cols-4 grid-gap-sm">
+  <div *ngFor='let item of Utils.castToArray(fmsDataService.getValue(basePath))'>
+    <div class="status-element d-flex align-items-center" [id]="item.name"
+         [appStatusHighlight]="(this.fmsDataService.isDifferentValue(this.basePath + '/' + item.name)) ? item : null">
+      <span class="badge" [ngClass]="{'badge-success': item.value, 'badge-danger': !item.value}">
+        &nbsp;
+      </span>
+      <span class="margin-left-0-5em">
+        {{item.name}}
+      </span>
+    </div>
+  </div>
+</div>

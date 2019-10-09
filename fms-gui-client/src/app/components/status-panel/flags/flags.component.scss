@@ -1,0 +1,12 @@
+$grey: #f8f8f8;
+
+.status-element {
+  align-items: center;
+  padding-left: 4px;
+  border-radius: 4px;
+
+  &:hover {
+    background: $grey;
+    filter: brightness(90%);
+  }
+}

@@ -7,19 +7,23 @@ import {MaterialModule} from './material.module';
 import {AppRoutingModule} from './app-routing.module';
 
 import {AppComponent} from './app.component';
-import {NavComponent} from './nav/nav.component';
-import {FlightModeComponent} from './flight-mode/flight-mode.component';
-import {MainComponent} from './main/main.component';
-import {StatusPanelComponent} from './status-panel/status-panel.component';
-import {ControlsComponent} from './controls/controls.component';
-import {PageNotFoundComponent} from './page-not-found/page-not-found.component';
-import {CardsComponent} from './cards/cards.component';
-import {LoadingComponent} from './loading/loading.component';
-import {AlertComponent} from './alert/alert.component';
+import {NavComponent} from './components/nav/nav.component';
+import {FlightModeComponent} from './components/flight-mode/flight-mode.component';
+import {MainComponent} from './components/main/main.component';
+import {StatusPanelComponent} from './components/status-panel/status-panel.component';
+import {ControlsComponent} from './components/controls/controls.component';
+import {PageNotFoundComponent} from './components/page-not-found/page-not-found.component';
+import {CardsComponent} from './components/cards/cards.component';
+import {LoadingComponent} from './components/loading/loading.component';
+import {AlertComponent} from './components/alert/alert.component';
 import {StatusHighlightDirective} from './shared/directives/status-highlight/status-highlight.directive';
-import {RadarComponent} from './visualization/radar/radar.component';
-import {StatusMatrixComponent} from './visualization/status-matrix/status-matrix.component';
+import {RadarComponent} from './components/visualization/radar/radar.component';
+import {StatusMatrixComponent} from './components/visualization/status-matrix/status-matrix.component';
 import {SharedModule} from './shared/shared.module';
+import { MatrixComponent } from './components/status-panel/matrix/matrix.component';
+import { FlagsComponent } from './components/status-panel/flags/flags.component';
+import { AttributesListComponent } from './components/status-panel/matrix/attributes-list/attributes-list.component';
+import {StatusCellComponent} from './components/visualization/status-matrix/status-cell/status-cell.component';
 
 @NgModule({
   imports: [
@@ -45,7 +49,11 @@ import {SharedModule} from './shared/shared.module';
     AlertComponent,
     StatusHighlightDirective,
     RadarComponent,
-    StatusMatrixComponent
+    StatusMatrixComponent,
+    MatrixComponent,
+    FlagsComponent,
+    StatusCellComponent,
+    AttributesListComponent
   ],
   bootstrap: [AppComponent]
 })

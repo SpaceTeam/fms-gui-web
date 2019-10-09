@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import {MainComponent} from './main/main.component';
-import {StatusPanelComponent} from './status-panel/status-panel.component';
-import {FlightModeComponent} from './flight-mode/flight-mode.component';
-import {ControlsComponent} from './controls/controls.component';
-import {PageNotFoundComponent} from './page-not-found/page-not-found.component';
-import {CardsComponent} from './cards/cards.component';
+import {MainComponent} from './components/main/main.component';
+import {StatusPanelComponent} from './components/status-panel/status-panel.component';
+import {FlightModeComponent} from './components/flight-mode/flight-mode.component';
+import {ControlsComponent} from './components/controls/controls.component';
+import {PageNotFoundComponent} from './components/page-not-found/page-not-found.component';
+import {CardsComponent} from './components/cards/cards.component';
 
 const routes: Routes = [
   { path: '', component: MainComponent},

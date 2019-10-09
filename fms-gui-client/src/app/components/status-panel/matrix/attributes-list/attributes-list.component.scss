@@ -1,0 +1,18 @@
+$grey: #f8f8f8;
+
+.attribute {
+  border: 1px solid $grey;
+  filter: brightness(90%);
+}
+
+.reorder {
+  &:hover {
+    cursor: grabbing;
+  }
+}
+
+button.mat-icon-button {
+  width: auto;
+  height: auto;
+  line-height: normal;
+}

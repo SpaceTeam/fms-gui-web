@@ -30,6 +30,9 @@ $cols: 5;
 }
 
 .grid-cols-2 {
+  &.gtc-90-10 {
+    grid-template-columns: 90% 10%;
+  }
   &.gtc-80-20 {
     grid-template-columns: 80% 20%;
   }

@@ -286,38 +286,43 @@ export class RadarComponent implements OnInit, OnDestroy {
       .attr('id', 'direction-container');
 
     // Add a group for the 'horizontal' directions 'W' and 'E'
-    const horizontal = container.append('g')
-      .attr('id', 'direction-horizontal')
-      .attr('class', 'direction')
-      .attr('transform', `translate(${this.horizontalStartingPoint.x}, ${this.horizontalStartingPoint.y})`)
-      .call(d3.axisBottom(scalePointHorizontal).tickSize(0));
+    const horizontal = RadarComponent.createAxisGroupAndSetToStartingPosition(container, 'direction-horizontal', this.horizontalStartingPoint);
+    horizontal.call(d3.axisBottom(scalePointHorizontal).tickSize(0));
 
     horizontal.selectAll('g')
       .attr('id', (d: string) => `group-${d}`)
       .attr('transform', (d: string) => `translate(${(d === 'W') ? -distance : width + distance}, 0)`);
 
-    horizontal.selectAll('text')
-        .attr('x', 0)
-        .attr('y', 0)
-        .attr('dx', 0)
-        .attr('dy', 0);
+    RadarComponent.setTextPositionToZero(horizontal);
 
     // Add a group for the 'vertical' directions 'N' and 'S'
-    const vertical = container.append('g')
-      .attr('id', 'direction-vertical')
-      .attr('class', 'direction')
-      .attr('transform', `translate(${this.verticalStartingPoint.x}, ${this.verticalStartingPoint.y})`)
-      .call(d3.axisLeft(scalePointVertical).tickSize(0));
+    const vertical = RadarComponent.createAxisGroupAndSetToStartingPosition(container, 'direction-vertical', this.verticalStartingPoint);
+    vertical.call(d3.axisLeft(scalePointVertical).tickSize(0));
 
     vertical.selectAll('g')
       .attr('id', (d: string) => `group-${d}`)
       .attr('transform', (d: string) => `translate(0, ${(d === 'N') ? -distance : width + distance})`);
 
-    vertical.selectAll('text')
-        .attr('x', 0)
-        .attr('y', 0)
-        .attr('dx', 0)
-        .attr('dy', 0);
+    RadarComponent.setTextPositionToZero(vertical);
+  }
+
+  private static createAxisGroupAndSetToStartingPosition(container, id: string, point: Point): any {
+    return container.append('g')
+      .attr('id', id)
+      .attr('class', 'direction')
+      .attr('transform', `translate(${point.x}, ${point.y})`);
+  }
+
+  /**
+   * Sets the position of all texts inside the group to 0
+   * @param group the d3 group containing the text elements
+   */
+  private static setTextPositionToZero(group): void {
+    group.selectAll('text')
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('dx', 0)
+      .attr('dy', 0);
   }
 
   /**
@@ -333,7 +338,7 @@ export class RadarComponent implements OnInit, OnDestroy {
     const domain = [''];
 
     for (let i = 1; i <= numEquidistantCircles; i++) {
-      domain.push(`${step * i}m`);
+      domain.push(`${RadarComponent.roundNumberToFixedDecimalPlaces(step * i, 2)}m`);
     }
 
     const scalePoint = d3.scalePoint()
@@ -343,10 +348,12 @@ export class RadarComponent implements OnInit, OnDestroy {
     d3.select('#altitudes')
       .style('transform', `rotateZ(-45deg) translateY(${radius}px)`)
       .style('opacity', 0.8)
-      .call(
-        d3.axisBottom(scalePoint)
-          .tickSize(0)
-      );
+      .call(d3.axisBottom(scalePoint).tickSize(0));
+  }
+
+  private static roundNumberToFixedDecimalPlaces(num: number, decimal: number): number {
+    const power = Math.pow(10, decimal);
+    return Math.round(num * power) / power;
   }
 
   /**

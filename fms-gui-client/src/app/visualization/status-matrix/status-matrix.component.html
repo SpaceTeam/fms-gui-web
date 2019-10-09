@@ -1,37 +1,38 @@
 <div id="status-matrix-chart-div" class="h-100">
   <div id="status-matrix-configuration">
-    <mat-icon id="toggle-icon" class="pointer" (click)="toggleConfiguration()" title="Collapse status matrix configuration">
+    <mat-icon id="toggle-icon" class="pointer" (click)="toggleConfiguration()"
+              title="Collapse status matrix configuration">
       keyboard_arrow_down
     </mat-icon>
 
     <div id="status-matrix-config-container" *ngIf="isConfigOpen">
-      <div>
-        <mat-form-field>
-          <mat-label>Status</mat-label>
-          <label>
-            <input matInput id="search" type="search" placeholder="e.g. ADC" [(ngModel)]="searchText"/>
-          </label>
-          <mat-icon matSuffix>search</mat-icon>
-        </mat-form-field>
-      </div>
-      <div *ngIf="searchText" class="search-box">
-        <ul>
-          <li class="search-entry pointer" *ngFor="let data of Utils.castToArray(fmsDataService.getValue(basePath)) | filter: searchText">
-            <span (click)="selectAttribute(data)">
-              {{data}}
-            </span>
-          </li>
-        </ul>
-      </div>
+      <mat-form-field class="w-100">
+        <mat-label>Status</mat-label>
+        <label>
+          <input matInput id="search" type="text" placeholder="e.g. ADC" [(ngModel)]="searchText"/>
+        </label>
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+      <mat-list class="search-box">
+        <mat-list-item *ngFor="let data of Utils.castToArray(fmsDataService.getValue(basePath)) | filter: searchText"
+                       class="pointer">
+          <span (click)="selectAttribute(data)">
+            {{data}}
+          </span>
+        </mat-list-item>
+      </mat-list>
 
       <div *ngIf="selectedAttributes.length > 0" id="selected-attributes">
         <h3 class="mat-h3">Selected</h3>
-        <ul>
-          <li *ngFor="let attribute of selectedAttributes" class="d-flex align-items-center">
-            <span>{{attribute}}</span>
-            <mat-icon matSuffix (click)="removeAttribute(attribute)" class="pointer last-flex-item">close</mat-icon>
-          </li>
-        </ul>
+        <mat-list>
+          <mat-list-item *ngFor="let attribute of selectedAttributes" class="attribute">
+            <mat-icon mat-list-icon class="reorder">reorder</mat-icon>
+            <span matLine>{{attribute}}</span>
+            <button mat-icon-button (click)="removeAttribute(attribute)" class="pointer">
+              <mat-icon>close</mat-icon>
+            </button>
+          </mat-list-item>
+        </mat-list>
       </div>
     </div>
   </div>

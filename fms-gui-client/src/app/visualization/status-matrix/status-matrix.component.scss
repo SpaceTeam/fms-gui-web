@@ -1,13 +1,28 @@
+$grey: #f8f8f8;
+
 #status-matrix-config-container {
-  width: 200px;
+  width: 250px;
 }
 
-.last-flex-item {
-  margin-left: auto;
+.attribute {
+  border: 1px solid $grey;
+  filter: brightness(90%);
+  border-radius: 5px;
 }
 
 .pointer {
   cursor: pointer;
+
+  &:hover {
+    background: $grey;
+    filter: brightness(90%);
+  }
+}
+
+.reorder {
+  &:hover {
+    cursor: grabbing;
+  }
 }
 
 .search-box {
@@ -15,19 +30,12 @@
   overflow: auto;
 }
 
-.search-entry, .pointer {
-  &:hover {
-    background: #f8f8f8;
-    filter: brightness(90%);
-  }
-}
-
-.search-entry {
-  width: 100%;
-  min-height: 2em;
-  padding: 0.5em;
-}
-
-ul {
+mat-list {
   padding: 0;
+}
+
+button.mat-icon-button {
+  width: auto;
+  height: auto;
+  line-height: normal;
 }

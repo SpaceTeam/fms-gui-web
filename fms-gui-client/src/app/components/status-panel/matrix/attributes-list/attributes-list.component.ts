@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {AttributeService} from '../../../../shared/services/visualization/attribute/attribute.service';
+import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-attributes-list',
@@ -12,5 +13,9 @@ export class AttributesListComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  drop(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.attributeService.dragDropAttributes(), event.previousIndex, event.currentIndex);
   }
 }

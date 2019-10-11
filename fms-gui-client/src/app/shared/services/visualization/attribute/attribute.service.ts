@@ -54,6 +54,10 @@ export class AttributeService {
     return [...this.attributes];
   }
 
+  dragDropAttributes(): Array<string> {
+    return this.attributes;
+  }
+
   /**
    * Returns all received values for that given attribute
    * @param attribute the attribute which values and timestamp need to be returned

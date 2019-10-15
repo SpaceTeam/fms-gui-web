@@ -450,7 +450,7 @@ export class RadarComponent implements OnInit, OnDestroy {
    */
   private static handleMouseEnterPositionCircle(d: Position, i: number, circles: SVGCircleElement[]): void {
     const circle = circles[i];
-    d3.select(circle).attr('r', circle.r.baseVal.value * 1.5);
+    d3.select(circle).attr('r', environment.visualization.radar.circle.radius * 1.5);
   }
 
   /**
@@ -461,7 +461,7 @@ export class RadarComponent implements OnInit, OnDestroy {
    */
   private static handleMouseLeavePositionCircle(d: Position, i: number, circles: SVGCircleElement[]): void {
     const circle = circles[i];
-    d3.select(circle).attr('r', circle.r.baseVal.value / 1.5);
+    d3.select(circle).attr('r', environment.visualization.radar.circle.radius);
     d3.select('#tooltip').classed('visible', false).classed('invisible', true);
   }
 

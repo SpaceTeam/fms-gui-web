@@ -16,11 +16,13 @@ export class StatusMatrixComponent implements OnInit, OnDestroy {
   private readonly matrixId: string;
   private readonly flagsPath: string;
   private subscriptions: Array<Subscription>;
+  private rows: Array<string>;
 
   constructor(private attributeService: AttributeService, private fmsDataService: FmsDataService) {
     this.matrixId = '#status-matrix-attributes';
     this.flagsPath = 'status/flags1';
     this.subscriptions = [];
+    this.rows = [];
   }
 
   ngOnInit(): void {
@@ -34,7 +36,7 @@ export class StatusMatrixComponent implements OnInit, OnDestroy {
 
   private subscribeToAttributeChange(): void {
     this.subscriptions.push(this.attributeService.newAttribute$.subscribe(attribute => this.addAttribute(attribute)));
-    this.subscriptions.push(this.attributeService.removeAttribute$.subscribe(attribute => StatusMatrixComponent.removeAttribute(attribute)));
+    this.subscriptions.push(this.attributeService.removeAttribute$.subscribe(attribute => this.removeAttribute(attribute)));
   }
 
   private subscribeToFMSChange(): void {
@@ -48,44 +50,53 @@ export class StatusMatrixComponent implements OnInit, OnDestroy {
   }
 
   private addAttribute(attribute: string): void {
-    const matrix = d3.select(this.matrixId);
-    const row = matrix.append('div')
+    const rowId = `${StatusMatrixComponent.replaceWhitespaceWithDash(attribute)}`;
+    d3.select(this.matrixId)
+      .append('div')
+      .attr('id', rowId)
       .attr('data-attribute', attribute)
       .attr('class', 'grid-cols-2 gtc-90-10 w-100 js-row');
 
-    this.appendStatusToRow(row);
-    StatusMatrixComponent.appendAttributeNameToRow(row);
+    this.appendStatusToRowWithId(rowId);
+    StatusMatrixComponent.appendAttributeNameToRowWithId(rowId);
+
+    this.rows.push(rowId);
   }
 
-  private appendStatusToRow(row): void {
-    row.append('div')
-      .attr('class', 'd-flex align-items-center p-1 w-100 js-row')
-      .classed('status', true);
+  private appendStatusToRowWithId(rowId: string): void {
+    d3.select(`#${rowId}`)
+      .append('div')
+      .attr('id', `${rowId}-status`)
+      .attr('class', 'd-flex align-items-center p-1 w-100');
 
-    this.addValuesToRow(row);
+    this.updateRows();
   }
 
-  private static appendAttributeNameToRow(row): void {
+  private static appendAttributeNameToRowWithId(rowId: string): void {
+    const row = d3.select(`#${rowId}`);
+
     row.append('div')
+      .attr('id', `${rowId}-name`)
       .attr('class', 'd-flex align-items-center')
-      .text(row.attr('data-attribute'))
-      .classed('name', true);
+      .text(row.attr('data-attribute'));
   }
 
   private updateRows(): void {
-    d3.selectAll('js-row')
-      .each(row => this.addValuesToRow(row));
+    this.rows.forEach(rowId => this.addValuesToRowWithId(rowId));
   }
 
-  private addValuesToRow(row): void {
-    const values = this.attributeService.getAllValuesForAttribute(row.attr('data-attribute'));
+  private addValuesToRowWithId(rowId: string): void {
+    const row = d3.select(`#${rowId}`);
+    const attribute = row.attr('data-attribute');
 
-    row.selectAll('.status')
-      .selectAll('.cell')
+    const values = this.attributeService.getAllValuesForAttribute(attribute);
+
+    const statusRow = d3.select(`#${rowId}-status`);
+    statusRow.selectAll(`.cell`)
       .data([...values])
       .enter()
       .append('div')
-      .attr('class', d => `cell js-${d.timestamp}`)
+      .attr('class', d => `cell w-100 js-${d.timestamp}`)
       .classed('bg-success', d => d.value)
       .classed('bg-danger', d => !d.value)
       .html('&nbsp;')
@@ -93,7 +104,12 @@ export class StatusMatrixComponent implements OnInit, OnDestroy {
       .on('mouseleave', d => CellService.removeHoverFromCellsWithTimestamp(d.timestamp));
   }
 
-  private static removeAttribute(attribute: string): void {
-    d3.select(`.js-row[data-attribute="${attribute}"]`).remove();
+  private removeAttribute(attribute: string): void {
+    d3.select(`#${StatusMatrixComponent.replaceWhitespaceWithDash(attribute)}`).remove();
+    this.rows = this.rows.filter(rowId => rowId !== StatusMatrixComponent.replaceWhitespaceWithDash(attribute));
+  }
+
+  private static replaceWhitespaceWithDash(str: string): string {
+    return str.replace(/\s+/g, '-');
   }
 }

@@ -79,14 +79,17 @@ export class AttributeService {
     let tree;
     let attributePair: NameValuePair;
     let timestamp: number;
+    let timestamps: Array<number> = [];
 
     for (let dataSet of allData) {
       tree = NameValuePairUtils.getValueFromTree(this.flagsPath, dataSet);
       attributePair = NameValuePairUtils.castToArray(tree).filter(data => data.name === attribute)[0];
 
       timestamp = NameValuePairUtils.getValueFromTree(this.timestampPath, dataSet) as number;
-
-      values.push({value: attributePair.value, timestamp: timestamp});
+      if (timestamps.indexOf(timestamp) < 0) {
+        timestamps.push(timestamp);
+        values.push({value: attributePair.value, timestamp: timestamp});
+      }
     }
 
     return values;

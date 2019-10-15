@@ -1,13 +1,1 @@
-<div id="status-matrix-attributes" class="w-100 d-flex">
-  <mat-list class="w-100">
-    <mat-list-item *ngFor="let attribute of attributeService.selectedAttributes" class="attribute w-100">
-      <div class="w-100 grid-cols-2 gtc-90-10 h-100">
-        <div class="d-flex align-items-center p-2">
-          <app-status-cell *ngFor="let data of attributeService.getAllValuesForAttribute(attribute)" class="w-100"
-                           [status]="data.value" [timestamp]="data.timestamp"></app-status-cell>
-        </div>
-        <div class="d-flex align-items-center">{{attribute}}</div>
-      </div>
-    </mat-list-item>
-  </mat-list>
-</div>
+<div id="status-matrix-attributes"></div>

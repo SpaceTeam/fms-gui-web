@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {NameValuePairUtils} from '../../../shared/utils/NameValuePairUtils';
 import {FmsDataService} from '../../../shared/services/fms-data/fms-data.service';
 import {AttributeService} from '../../../shared/services/visualization/attribute/attribute.service';
@@ -9,7 +9,7 @@ import {environment} from '../../../../environments/environment';
   templateUrl: './matrix.component.html',
   styleUrls: ['./matrix.component.scss']
 })
-export class MatrixComponent implements OnInit {
+export class MatrixComponent implements OnInit, OnDestroy {
 
   /**
    * A flag for telling, if the status-matrix configuration window is open
@@ -30,6 +30,10 @@ export class MatrixComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  }
+
+  ngOnDestroy(): void {
+    this.attributeService.clear();
   }
 
   /**

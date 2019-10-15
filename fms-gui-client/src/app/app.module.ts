@@ -20,10 +20,9 @@ import {StatusHighlightDirective} from './shared/directives/status-highlight/sta
 import {RadarComponent} from './components/visualization/radar/radar.component';
 import {StatusMatrixComponent} from './components/visualization/status-matrix/status-matrix.component';
 import {SharedModule} from './shared/shared.module';
-import { MatrixComponent } from './components/status-panel/matrix/matrix.component';
-import { FlagsComponent } from './components/status-panel/flags/flags.component';
-import { AttributesListComponent } from './components/status-panel/matrix/attributes-list/attributes-list.component';
-import {StatusCellComponent} from './components/visualization/status-matrix/status-cell/status-cell.component';
+import {MatrixComponent} from './components/status-panel/matrix/matrix.component';
+import {FlagsComponent} from './components/status-panel/flags/flags.component';
+import {AttributesListComponent} from './components/status-panel/matrix/attributes-list/attributes-list.component';
 
 @NgModule({
   imports: [
@@ -52,7 +51,6 @@ import {StatusCellComponent} from './components/visualization/status-matrix/stat
     StatusMatrixComponent,
     MatrixComponent,
     FlagsComponent,
-    StatusCellComponent,
     AttributesListComponent
   ],
   bootstrap: [AppComponent]

@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import {NameValuePair} from '../model/name-value-pair/name-value-pair.model';
+import {NameValuePair} from '../../model/name-value-pair/name-value-pair.model';
 
 @Pipe({
   name: 'filter'

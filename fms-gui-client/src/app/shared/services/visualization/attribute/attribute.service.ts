@@ -25,7 +25,7 @@ export class AttributeService {
   /**
    * A list containing the search terms the user selected for display
    */
-  private attributes: Array<string>;
+  attributes: Array<string>;
 
   constructor(private fmsDataService: FmsDataService) {
     this.newAttributeSource = new Subject<string>();
@@ -62,13 +62,6 @@ export class AttributeService {
   }
 
   /**
-   * Returns the attributes used for the drag and drop functionality
-   */
-  dragDropAttributes(): Array<string> {
-    return this.attributes;
-  }
-
-  /**
    * Returns all received values for that given attribute
    * @param attribute the attribute which values and timestamp need to be returned
    */
@@ -93,6 +86,12 @@ export class AttributeService {
     }
 
     return values;
+  }
+
+  reorderAttributes(): void {
+    const attributes = [...this.attributes];
+    this.attributes.forEach(attribute => this.removeAttribute(attribute));
+    attributes.forEach(attribute => this.newAttribute(attribute));
   }
 
   clear(): void {

@@ -16,6 +16,7 @@ export class AttributesListComponent implements OnInit {
   }
 
   drop(event: CdkDragDrop<string[]>) {
-    moveItemInArray(this.attributeService.dragDropAttributes(), event.previousIndex, event.currentIndex);
+    moveItemInArray(this.attributeService.attributes, event.previousIndex, event.currentIndex);
+    this.attributeService.reorderAttributes();
   }
 }

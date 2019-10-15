@@ -57,10 +57,9 @@ export class StatusMatrixComponent implements OnInit, OnDestroy {
       .attr('data-attribute', attribute)
       .attr('class', 'grid-cols-2 gtc-90-10 w-100 js-row');
 
+    this.rows.push(rowId);
     this.appendStatusToRowWithId(rowId);
     StatusMatrixComponent.appendAttributeNameToRowWithId(rowId);
-
-    this.rows.push(rowId);
   }
 
   private appendStatusToRowWithId(rowId: string): void {

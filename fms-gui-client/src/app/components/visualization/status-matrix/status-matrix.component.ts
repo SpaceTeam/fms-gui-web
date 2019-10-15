@@ -96,6 +96,7 @@ export class StatusMatrixComponent implements OnInit, OnDestroy {
       .enter()
       .append('div')
       .attr('class', d => `cell w-100 js-${d.timestamp}`)
+      .attr('title', d => `Timestamp: ${d.timestamp}`)
       .classed('bg-success', d => d.value)
       .classed('bg-danger', d => !d.value)
       .html('&nbsp;')

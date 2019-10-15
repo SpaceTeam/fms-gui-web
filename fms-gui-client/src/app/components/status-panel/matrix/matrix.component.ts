@@ -53,12 +53,14 @@ export class MatrixComponent implements OnInit, OnDestroy {
     const icon = <HTMLElement>document.getElementById('toggle-icon');
     this.isConfigOpen = !this.isConfigOpen;
 
+    const visualizationName = 'status matrix';
+
     if (icon.innerText === 'keyboard_arrow_down') {
       icon.innerText = 'keyboard_arrow_right';
-      icon.title = 'Expand radar configuration';
+      icon.title = `Expand ${visualizationName} configuration`;
     } else {
       icon.innerText = 'keyboard_arrow_down';
-      icon.title = 'Collapse radar configuration';
+      icon.title = `Collapse ${visualizationName} configuration`;
     }
   }
 

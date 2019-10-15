@@ -19,6 +19,9 @@ export class AttributeService {
   // Observable string stream
   newAttribute$: Observable<string>;
 
+  private removeAttributeSource: Subject<string>;
+  removeAttribute$: Observable<string>;
+
   /**
    * A list containing the search terms the user selected for display
    */
@@ -27,6 +30,10 @@ export class AttributeService {
   constructor(private fmsDataService: FmsDataService) {
     this.newAttributeSource = new Subject<string>();
     this.newAttribute$ = this.newAttributeSource.asObservable();
+
+    this.removeAttributeSource = new Subject<string>();
+    this.removeAttribute$ = this.removeAttributeSource.asObservable();
+
     this.attributes = [];
   }
 
@@ -44,6 +51,7 @@ export class AttributeService {
    */
   removeAttribute(attribute: string): void {
     this.attributes = this.attributes.filter(value => value !== attribute);
+    this.removeAttributeSource.next(attribute);
   }
 
   /**
@@ -53,6 +61,9 @@ export class AttributeService {
     return [...this.attributes];
   }
 
+  /**
+   * Returns the attributes used for the drag and drop functionality
+   */
   dragDropAttributes(): Array<string> {
     return this.attributes;
   }

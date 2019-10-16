@@ -58,6 +58,9 @@ export class StatusMatrixComponent implements OnInit, OnDestroy {
       this.fmsDataService.dataPresent$.subscribe(isPresent => {
         if (isPresent && this.fmsDataService.getValue(this.flagsPath) !== null) {
           this.updateRows();
+          if (this.isBrushInit) {
+            this.brushService.update();
+          }
         }
       })
     );

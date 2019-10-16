@@ -24,31 +24,19 @@ export class BrushService {
   private svgWidth: number;
   private svgHeight: number;
 
-  private readonly domain: Array<number>;
+  private domain: Array<number>;
   private domainValues = 10;
+
+  private axisGroup;
+  private scale;
+  // The width of the brush handler (e and w) -> we need it for the correct padding of the text
+  private handleWidth = 3;
 
   constructor(private fmsDataService: FmsDataService) {
     this.brushSource = new Subject<{x0: number, x1: number}>();
     this.brush$ = this.brushSource.asObservable();
-    this.domain = [];
 
     this.timestampPath = environment.paths.timestamp;
-    this.subscribeToFMSChange();
-  }
-
-  private subscribeToFMSChange(): void {
-    this.fmsDataService.dataPresent$.subscribe(isPresent => {
-      if (isPresent) {
-        this.updateBrushRange();
-      }
-    });
-  }
-
-  private updateBrushRange(): void {
-    const data = this.fmsDataService.getAllData();
-    this.brushMax = NameValuePairUtils.getValueFromTree(this.timestampPath, data[data.length - 1]) as number;
-
-    this.brushRangeInterpolator = d3.interpolateNumber(0, this.brushMax);
   }
 
   initBrushIn(containerId: string): void {
@@ -57,44 +45,65 @@ export class BrushService {
     this.svgWidth = Number(container.style('width').slice(0, -2));
     this.svgHeight = 20;
 
-    // The width of the brush handler (e and w) -> we need it for the correct padding of the text
-    const handleWidth = 3;
-
     // The gtc-90-10 factor for the width of the slider
     const gridSizeFactor = 0.9;
 
-    const svg = container.append('svg')
-      .attr('width', this.svgWidth);
+    const svg = container.append('svg').attr('width', this.svgWidth);
     const brush = d3.brushX().on('start brush end', () => this.brushed());
 
-    this.brushWidth = this.svgWidth * gridSizeFactor - 2 * handleWidth;
+    this.brushWidth = this.svgWidth * gridSizeFactor - 2 * this.handleWidth;
 
     // brush
     svg.append('svg')
       .attr('width', this.brushWidth)
       .attr('height', this.svgHeight)
-      .attr('transform', `translate(${handleWidth}, 0)`)
+      .attr('transform', `translate(${this.handleWidth}, 0)`)
       .append('g')
       .attr('id', 'brush-group')
       .call(brush);
 
+    // axis
+    const axis = svg.append('svg')
+      .attr('width', this.svgWidth)
+      .attr('height', this.svgHeight)
+      .attr('transform', `translate(0, ${this.svgHeight})`);
+
+    this.axisGroup = axis.append('g').attr('id', 'brush-axis');
+
+    this.update();
+  }
+
+  update(): void {
+    this.updateBrushRange();
+    this.updateDomain();
+    this.updateScale();
+    this.updateAxis();
+
+    console.log('Current time: ' + this.brushMax);
+  }
+
+  private updateBrushRange(): void {
+    const data = this.fmsDataService.getAllData();
+    this.brushMax = NameValuePairUtils.getValueFromTree(this.timestampPath, data[data.length - 1]) as number;
+    this.brushRangeInterpolator = d3.interpolateNumber(0, this.brushMax);
+  }
+
+  private updateDomain(): void {
+    this.domain = [];
     const increment = 1 / this.domainValues;
     for (let i = 0; i <= this.domainValues; i++) {
       this.domain[i] = Math.round(this.brushMax * (i * increment));
     }
+  }
 
-    const scale = d3.scalePoint()
+  private updateScale(): void {
+    this.scale = d3.scalePoint()
       .domain(this.domain.map(i => i + ''))
-      .range([handleWidth, this.brushWidth]);
+      .range([this.handleWidth, this.brushWidth]);
+  }
 
-    // axis
-    svg.append('svg')
-      .attr('width', this.svgWidth)
-      .attr('height', this.svgHeight)
-      .attr('transform', `translate(0, ${this.svgHeight})`)
-      .append('g')
-      .attr('id', 'brush-axis')
-      .call(d3.axisBottom(scale));
+  private updateAxis(): void {
+    this.axisGroup.call(d3.axisBottom(this.scale));
   }
 
   private brushed(): void {
@@ -106,5 +115,4 @@ export class BrushService {
       this.brushSource.next({x0: x0, x1: x1});
     }
   }
-
 }

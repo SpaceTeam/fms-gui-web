@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {NameValuePairUtils} from '../../../shared/utils/NameValuePairUtils';
+import {NameValuePairUtils} from '../../../shared/utils/NameValuePair.util';
 import {FmsDataService} from '../../../shared/services/fms-data/fms-data.service';
 import {AttributeService} from '../../../shared/services/visualization/attribute/attribute.service';
 import {environment} from '../../../../environments/environment';

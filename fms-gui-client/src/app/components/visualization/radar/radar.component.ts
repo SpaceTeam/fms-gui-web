@@ -8,6 +8,7 @@ import {Point} from '../../../shared/model/point.model';
 
 import * as d3 from 'd3';
 import {Subscription} from 'rxjs';
+import {VisualizationUtil} from '../../../shared/utils/visualization/visualization.util';
 
 @Component({
   selector: 'app-radar',
@@ -114,11 +115,6 @@ export class RadarComponent implements OnInit, OnDestroy {
       .attr('y', 0)
       .attr('dx', 0)
       .attr('dy', 0);
-  }
-
-  private static roundNumberToFixedDecimalPlaces(num: number, decimal: number): number {
-    const power = Math.pow(10, decimal);
-    return Math.round(num * power) / power;
   }
 
   /**
@@ -374,7 +370,7 @@ export class RadarComponent implements OnInit, OnDestroy {
     const domain = [''];
 
     for (let i = 1; i <= numEquidistantCircles; i++) {
-      domain.push(`${RadarComponent.roundNumberToFixedDecimalPlaces(step * i, 2)}m`);
+      domain.push(`${VisualizationUtil.roundNumberToFixedDecimalPlaces(step * i, 2)}m`);
     }
 
     const scalePoint = d3.scalePoint()

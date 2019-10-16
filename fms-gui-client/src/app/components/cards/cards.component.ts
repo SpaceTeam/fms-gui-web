@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {CardsService} from '../../shared/services/cards/cards.service';
-import {NameValuePairUtils} from '../../shared/utils/NameValuePairUtils';
+import {NameValuePairUtils} from '../../shared/utils/NameValuePair.util';
 
 @Component({
   selector: 'app-cards',

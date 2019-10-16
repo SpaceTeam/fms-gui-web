@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {NameValuePair} from '../../model/name-value-pair/name-value-pair.model';
-import {NameValuePairUtils} from '../../utils/NameValuePairUtils';
+import {NameValuePairUtils} from '../../utils/NameValuePair.util';
 import {WebSocketService} from '../../model/service/web-socket.service.model';
 import {ServerProperties} from '../../properties/server.properties';
 import SERVER_FMS_PROPERTIES = ServerProperties.SERVER_FMS_PROPERTIES;

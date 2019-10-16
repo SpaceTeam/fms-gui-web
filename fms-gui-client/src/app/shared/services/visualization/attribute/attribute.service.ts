@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {Observable, Subject} from 'rxjs';
 import {NameValuePair} from '../../../model/name-value-pair/name-value-pair.model';
-import {NameValuePairUtils} from '../../../utils/NameValuePairUtils';
+import {NameValuePairUtils} from '../../../utils/NameValuePair.util';
 import {FmsDataService} from '../../fms-data/fms-data.service';
 import {environment} from '../../../../../environments/environment';
 
@@ -64,8 +64,9 @@ export class AttributeService {
   /**
    * Returns all received values for that given attribute
    * @param attribute the attribute which values and timestamp need to be returned
+   * @param range the time range from where we want to have the attributes
    */
-  getAllValuesForAttribute(attribute: string): Array<{value: boolean, timestamp: number}> {
+  getAllValuesForAttributeInRange(attribute: string, range: {x0: number, x1: number}): Array<{value: boolean, timestamp: number}> {
     const allData = this.fmsDataService.getAllData();
     const values = [];
 
@@ -74,12 +75,14 @@ export class AttributeService {
     let timestamp: number;
     const timestamps: Array<number> = [];
 
+    console.log(`range: [${range.x0}, ${range.x1}]`);
+
     for (const dataSet of allData) {
       tree = NameValuePairUtils.getValueFromTree(this.flagsPath, dataSet);
       attributePair = NameValuePairUtils.castToArray(tree).filter(data => data.name === attribute)[0];
 
       timestamp = NameValuePairUtils.getValueFromTree(this.timestampPath, dataSet) as number;
-      if (timestamps.indexOf(timestamp) < 0) {
+      if ((timestamps.indexOf(timestamp) < 0) && (timestamp >= range.x0 && timestamp <= range.x1)) {
         timestamps.push(timestamp);
         values.push({value: attributePair.value, timestamp: timestamp});
       }

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {NameValuePairUtils} from '../../../shared/utils/NameValuePairUtils';
+import {NameValuePairUtils} from '../../../shared/utils/NameValuePair.util';
 import {FmsDataService} from '../../../shared/services/fms-data/fms-data.service';
 
 @Component({

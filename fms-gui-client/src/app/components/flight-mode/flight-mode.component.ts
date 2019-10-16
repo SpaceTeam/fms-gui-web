@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FmsDataService} from '../../shared/services/fms-data/fms-data.service';
-import {NameValuePairUtils} from '../../shared/utils/NameValuePairUtils';
+import {NameValuePairUtils} from '../../shared/utils/NameValuePair.util';
 import {NameValuePair} from '../../shared/model/name-value-pair/name-value-pair.model';
 import {Subscription} from 'rxjs';
 

@@ -1,9 +1,5 @@
 @import "src/styles/colors";
 
-.brush-container {
-  background-color: $grey;
-}
-
 .cell {
   margin: 1px;
 }
@@ -12,6 +8,14 @@
   filter: brightness(90%);
 }
 
+.js-row {
+  min-height: 35px;
+}
+
 .padding-2px {
   padding: 2px;
+}
+
+.overlay {
+  fill: darken($grey, 10%);
 }

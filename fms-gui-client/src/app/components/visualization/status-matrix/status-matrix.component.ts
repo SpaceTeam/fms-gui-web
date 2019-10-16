@@ -21,6 +21,11 @@ export class StatusMatrixComponent implements OnInit, OnDestroy {
   private rows: Array<string>;
   private isBrushInit: boolean;
 
+  /**
+   * The selected range from the brush
+   */
+  private brushRange: {x0: number, x1: number};
+
   private static replaceWhitespaceWithDash(str: string): string {
     return str.replace(/\s+/g, '-');
   }
@@ -30,11 +35,13 @@ export class StatusMatrixComponent implements OnInit, OnDestroy {
     this.subscriptions = [];
     this.rows = [];
     this.isBrushInit = false;
+    this.brushRange = {x0: 0, x1: Infinity};
   }
 
   ngOnInit(): void {
     this.subscribeToAttributeChange();
     this.subscribeToFMSChange();
+    this.subscribeToBrushChange();
   }
 
   ngOnDestroy(): void {
@@ -54,6 +61,13 @@ export class StatusMatrixComponent implements OnInit, OnDestroy {
         }
       })
     );
+  }
+
+  private subscribeToBrushChange(): void {
+    this.subscriptions.push(this.brushService.brush$.subscribe(range => {
+      this.brushRange = range;
+      this.attributeService.reorderAttributes();
+    }));
   }
 
   private addAttribute(attribute: string): void {
@@ -91,7 +105,7 @@ export class StatusMatrixComponent implements OnInit, OnDestroy {
     const row = d3.select(`#${rowId}`);
     const attribute = row.attr('data-attribute');
 
-    const values = this.attributeService.getAllValuesForAttribute(attribute);
+    const values = this.attributeService.getAllValuesForAttributeInRange(attribute, this.brushRange);
 
     const statusRow = d3.select(`#${rowId}-status`);
     statusRow.selectAll(`.cell`)

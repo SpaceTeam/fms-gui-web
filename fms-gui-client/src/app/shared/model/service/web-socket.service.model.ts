@@ -2,7 +2,7 @@ import {Service} from './service.model';
 import {WebSocketSubject} from 'rxjs/webSocket';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {WebSocketUtil} from '../../utils/web-socket/web-socket.util';
-import {NameValuePairUtils} from '../../utils/NameValuePairUtils';
+import {NameValuePairUtils} from '../../utils/NameValuePair.util';
 
 export abstract class WebSocketService<T> implements Service {
 

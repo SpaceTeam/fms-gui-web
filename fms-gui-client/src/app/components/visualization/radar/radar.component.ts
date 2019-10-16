@@ -17,6 +17,15 @@ import {Subscription} from 'rxjs';
 })
 export class RadarComponent implements OnInit, OnDestroy {
 
+  constructor(private positionService: PositionService, private radarForm: RadarForm) {
+    // Initialize the local objects
+    this.positions = [];
+    this.maxAltitude = environment.visualization.radar.position.max.altitude;
+    this.isConfigOpen = true;
+    this.rotation = 0;
+    this.subscriptions = [];
+  }
+
   /**
    * The SVG element's id
    */
@@ -88,13 +97,59 @@ export class RadarComponent implements OnInit, OnDestroy {
    */
   private subscriptions: Array<Subscription>;
 
-  constructor(private positionService: PositionService, private radarForm: RadarForm) {
-    // Initialize the local objects
-    this.positions = [];
-    this.maxAltitude = environment.visualization.radar.position.max.altitude;
-    this.isConfigOpen = true;
-    this.rotation = 0;
-    this.subscriptions = [];
+  private static createAxisGroupAndSetToStartingPosition(container, id: string, point: Point): any {
+    return container.append('g')
+      .attr('id', id)
+      .attr('class', 'direction')
+      .attr('transform', `translate(${point.x}, ${point.y})`);
+  }
+
+  /**
+   * Sets the position of all texts inside the group to 0
+   * @param group the d3 group containing the text elements
+   */
+  private static setTextPositionToZero(group): void {
+    group.selectAll('text')
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('dx', 0)
+      .attr('dy', 0);
+  }
+
+  private static roundNumberToFixedDecimalPlaces(num: number, decimal: number): number {
+    const power = Math.pow(10, decimal);
+    return Math.round(num * power) / power;
+  }
+
+  /**
+   * Removes all circles and paths from the radar chart
+   */
+  private static clearChart(): void {
+    d3.selectAll('path.connection').remove();
+    d3.selectAll('circle.position').remove();
+  }
+
+  /**
+   * A method for handling the mouse enter a circle
+   * @param d the position of the circle
+   * @param i the index of the circle inside the positions array
+   * @param circles the array of circle, in which we can find the current circle
+   */
+  private static handleMouseEnterPositionCircle(d: Position, i: number, circles: SVGCircleElement[]): void {
+    const circle = circles[i];
+    d3.select(circle).attr('r', environment.visualization.radar.circle.radius * 1.5);
+  }
+
+  /**
+   * A method for handling the mouse exit of a circle
+   * @param d the position of the circle
+   * @param i the index of the circle inside the positions array
+   * @param circles the array of circle, in which we can find the current circle
+   */
+  private static handleMouseLeavePositionCircle(d: Position, i: number, circles: SVGCircleElement[]): void {
+    const circle = circles[i];
+    d3.select(circle).attr('r', environment.visualization.radar.circle.radius);
+    d3.select('#tooltip').classed('visible', false).classed('invisible', true);
   }
 
   ngOnInit() {
@@ -156,8 +211,8 @@ export class RadarComponent implements OnInit, OnDestroy {
       .extent([[0, 0], [this.size, this.size]])
       .scaleExtent([1, 50])
       .on('zoom', () => {
-        d3.select('#circles-container').attr("transform", d3.event.transform);
-        d3.select('#direction-container').attr("transform", d3.event.transform);
+        d3.select('#circles-container').attr('transform', d3.event.transform);
+        d3.select('#direction-container').attr('transform', d3.event.transform);
       });
     svg.call(this.zoom);
   }
@@ -264,7 +319,7 @@ export class RadarComponent implements OnInit, OnDestroy {
   private setDirectionAxis(): void {
     const width = Number(d3.select('#circles-container').attr('width'));
     const radius = width / 2;
-    const distance: number = 15;
+    const distance = 15;
 
     const domainVertical: Array<string> = ['N', '', 'S'];
     const domainHorizontal: Array<string> = ['W', '', 'E'];
@@ -306,25 +361,6 @@ export class RadarComponent implements OnInit, OnDestroy {
     RadarComponent.setTextPositionToZero(vertical);
   }
 
-  private static createAxisGroupAndSetToStartingPosition(container, id: string, point: Point): any {
-    return container.append('g')
-      .attr('id', id)
-      .attr('class', 'direction')
-      .attr('transform', `translate(${point.x}, ${point.y})`);
-  }
-
-  /**
-   * Sets the position of all texts inside the group to 0
-   * @param group the d3 group containing the text elements
-   */
-  private static setTextPositionToZero(group): void {
-    group.selectAll('text')
-      .attr('x', 0)
-      .attr('y', 0)
-      .attr('dx', 0)
-      .attr('dy', 0);
-  }
-
   /**
    * Adds the 'altitude' text elements to the radar
    */
@@ -349,19 +385,6 @@ export class RadarComponent implements OnInit, OnDestroy {
       .style('transform', `rotateZ(-45deg) translateY(${radius}px)`)
       .style('opacity', 0.8)
       .call(d3.axisBottom(scalePoint).tickSize(0));
-  }
-
-  private static roundNumberToFixedDecimalPlaces(num: number, decimal: number): number {
-    const power = Math.pow(10, decimal);
-    return Math.round(num * power) / power;
-  }
-
-  /**
-   * Removes all circles and paths from the radar chart
-   */
-  private static clearChart(): void {
-    d3.selectAll('path.connection').remove();
-    d3.selectAll('circle.position').remove();
   }
 
   /**
@@ -443,29 +466,6 @@ export class RadarComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * A method for handling the mouse enter a circle
-   * @param d the position of the circle
-   * @param i the index of the circle inside the positions array
-   * @param circles the array of circle, in which we can find the current circle
-   */
-  private static handleMouseEnterPositionCircle(d: Position, i: number, circles: SVGCircleElement[]): void {
-    const circle = circles[i];
-    d3.select(circle).attr('r', environment.visualization.radar.circle.radius * 1.5);
-  }
-
-  /**
-   * A method for handling the mouse exit of a circle
-   * @param d the position of the circle
-   * @param i the index of the circle inside the positions array
-   * @param circles the array of circle, in which we can find the current circle
-   */
-  private static handleMouseLeavePositionCircle(d: Position, i: number, circles: SVGCircleElement[]): void {
-    const circle = circles[i];
-    d3.select(circle).attr('r', environment.visualization.radar.circle.radius);
-    d3.select('#tooltip').classed('visible', false).classed('invisible', true);
-  }
-
-  /**
    * Calculates the step a point should take from the center
    * @param altitude the altitude of the current position
    */
@@ -490,7 +490,6 @@ export class RadarComponent implements OnInit, OnDestroy {
       icon.title = `Collapse ${visualizationName} configuration`;
     }
   }
-
 
   /**
    * Resets the zoom

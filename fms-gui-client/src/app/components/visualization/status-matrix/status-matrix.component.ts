@@ -4,6 +4,8 @@ import * as d3 from 'd3';
 import {Subscription} from 'rxjs';
 import {CellService} from '../../../shared/services/visualization/cell/cell.service';
 import {FmsDataService} from '../../../shared/services/fms-data/fms-data.service';
+import {environment} from '../../../../environments/environment';
+import {BrushService} from '../../../shared/services/visualization/brush/brush.service';
 
 @Component({
   selector: 'app-status-matrix',
@@ -13,16 +15,21 @@ import {FmsDataService} from '../../../shared/services/fms-data/fms-data.service
 })
 export class StatusMatrixComponent implements OnInit, OnDestroy {
 
-  private readonly matrixId: string;
+  private readonly matrixId: string = '#status-matrix-attributes';
   private readonly flagsPath: string;
   private subscriptions: Array<Subscription>;
   private rows: Array<string>;
+  private isBrushInit: boolean;
 
-  constructor(private attributeService: AttributeService, private fmsDataService: FmsDataService) {
-    this.matrixId = '#status-matrix-attributes';
-    this.flagsPath = 'status/flags1';
+  private static replaceWhitespaceWithDash(str: string): string {
+    return str.replace(/\s+/g, '-');
+  }
+
+  constructor(private attributeService: AttributeService, private fmsDataService: FmsDataService, private brushService: BrushService) {
+    this.flagsPath = environment.paths.flags;
     this.subscriptions = [];
     this.rows = [];
+    this.isBrushInit = false;
   }
 
   ngOnInit(): void {
@@ -50,6 +57,11 @@ export class StatusMatrixComponent implements OnInit, OnDestroy {
   }
 
   private addAttribute(attribute: string): void {
+    if (!this.isBrushInit) {
+      this.brushService.initBrushIn('#status-matrix-brush');
+      this.isBrushInit = true;
+    }
+
     const rowId = `${StatusMatrixComponent.replaceWhitespaceWithDash(attribute)}`;
     d3.select(this.matrixId)
       .append('div')
@@ -59,7 +71,7 @@ export class StatusMatrixComponent implements OnInit, OnDestroy {
 
     this.rows.push(rowId);
     this.appendStatusToRowWithId(rowId);
-    StatusMatrixComponent.appendAttributeNameToRowWithId(rowId);
+    this.appendAttributeNameToRowWithId(rowId);
   }
 
   private appendStatusToRowWithId(rowId: string): void {
@@ -69,15 +81,6 @@ export class StatusMatrixComponent implements OnInit, OnDestroy {
       .attr('class', 'd-flex align-items-center p-1 w-100');
 
     this.updateRows();
-  }
-
-  private static appendAttributeNameToRowWithId(rowId: string): void {
-    const row = d3.select(`#${rowId}`);
-
-    row.append('div')
-      .attr('id', `${rowId}-name`)
-      .attr('class', 'd-flex align-items-center')
-      .text(row.attr('data-attribute'));
   }
 
   private updateRows(): void {
@@ -104,12 +107,17 @@ export class StatusMatrixComponent implements OnInit, OnDestroy {
       .on('mouseleave', d => CellService.removeHoverFromCellsWithTimestamp(d.timestamp));
   }
 
+  private appendAttributeNameToRowWithId(rowId: string): void {
+    const row = d3.select(`#${rowId}`);
+
+    row.append('div')
+      .attr('id', `${rowId}-name`)
+      .attr('class', 'd-flex align-items-center')
+      .text(row.attr('data-attribute'));
+  }
+
   private removeAttribute(attribute: string): void {
     d3.select(`#${StatusMatrixComponent.replaceWhitespaceWithDash(attribute)}`).remove();
     this.rows = this.rows.filter(rowId => rowId !== StatusMatrixComponent.replaceWhitespaceWithDash(attribute));
-  }
-
-  private static replaceWhitespaceWithDash(str: string): string {
-    return str.replace(/\s+/g, '-');
   }
 }

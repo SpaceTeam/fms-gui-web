@@ -4,7 +4,8 @@
 
 export const environment = {
   paths: {
-    flags: 'status/flags1'
+    flags: 'status/flags1',
+    timestamp: 'status/FMSTimestamp'
   },
   production: false,
   server : {

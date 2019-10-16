@@ -11,7 +11,7 @@ import {environment} from '../../../../../environments/environment';
 export class AttributeService {
 
   flagsPath = environment.paths.flags;
-  timestampPath = 'status/FMSTimestamp';
+  timestampPath = environment.paths.timestamp;
 
   // Observable string source
   private newAttributeSource: Subject<string>;
@@ -72,9 +72,9 @@ export class AttributeService {
     let tree;
     let attributePair: NameValuePair;
     let timestamp: number;
-    let timestamps: Array<number> = [];
+    const timestamps: Array<number> = [];
 
-    for (let dataSet of allData) {
+    for (const dataSet of allData) {
       tree = NameValuePairUtils.getValueFromTree(this.flagsPath, dataSet);
       attributePair = NameValuePairUtils.castToArray(tree).filter(data => data.name === attribute)[0];
 

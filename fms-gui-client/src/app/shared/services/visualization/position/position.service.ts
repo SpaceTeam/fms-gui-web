@@ -24,7 +24,7 @@ export class PositionService {
     // Whenever we have new data, we publish a new position
     fmsDataService.dataPresent$.subscribe(isPresent => {
       if (isPresent && fmsDataService.getValue('GNSS') !== null) {
-        this.announcePosition(this.createNewPosition())
+        this.announcePosition(this.createNewPosition());
       }
     });
 
@@ -41,10 +41,10 @@ export class PositionService {
    * @return the current position of the FMS as a 'Position' object
    */
   private createNewPosition(): Position {
-    let longitude: number = <number>this.fmsDataService.getValue('GNSS/longitude');
-    let latitude: number = <number>this.fmsDataService.getValue('GNSS/latitude');
-    let altitude: number = <number>this.fmsDataService.getValue('GNSS/altitude');
-    let timestamp: number = <number>this.fmsDataService.getValue('Status/FMSTimestamp');
+    const longitude: number = <number>this.fmsDataService.getValue('GNSS/longitude');
+    const latitude: number = <number>this.fmsDataService.getValue('GNSS/latitude');
+    const altitude: number = <number>this.fmsDataService.getValue('GNSS/altitude');
+    const timestamp: number = <number>this.fmsDataService.getValue('Status/FMSTimestamp');
     return <Position>{longitude, latitude, altitude, timestamp};
   }
 }

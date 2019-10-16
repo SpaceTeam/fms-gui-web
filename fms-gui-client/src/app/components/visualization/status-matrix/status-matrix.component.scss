@@ -1,3 +1,9 @@
+@import "src/styles/colors";
+
+.brush-container {
+  background-color: $grey;
+}
+
 .cell {
   margin: 1px;
 }

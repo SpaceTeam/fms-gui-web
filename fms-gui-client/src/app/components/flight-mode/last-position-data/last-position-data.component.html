@@ -11,6 +11,16 @@
         </span>
       </div>
     </li>
+    <li>
+      <div class="grid-cols-2">
+        <span>
+          Timestamp
+        </span>
+        <span>
+          {{ fmsDataService.getValue(timestampPath)}}
+        </span>
+      </div>
+    </li>
   </ul>
 </div>
 <div *ngIf="this.gnss === null">

@@ -3,6 +3,7 @@ import {NameValuePairUtils} from '../../../shared/utils/NameValuePair.util';
 import {NameValuePair} from '../../../shared/model/name-value-pair/name-value-pair.model';
 import {Subscription} from 'rxjs';
 import {FmsDataService} from '../../../shared/services/fms-data/fms-data.service';
+import {environment} from '../../../../environments/environment';
 
 @Component({
   selector: 'app-last-position-data',
@@ -17,6 +18,8 @@ export class LastPositionDataComponent implements OnInit {
   gnssArray: Array<Array<NameValuePair>>;
 
   gnss;
+
+  timestampPath = environment.paths.timestamp;
 
   private fmsDataSubscription: Subscription;
 

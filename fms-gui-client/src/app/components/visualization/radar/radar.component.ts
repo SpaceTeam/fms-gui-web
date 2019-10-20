@@ -37,7 +37,7 @@ export class RadarComponent implements OnInit, OnDestroy {
   /**
    * The current and previous positions of the flight object
    */
-  private positions: Array<Position>;
+  private readonly positions: Array<Position>;
 
   /**
    * Custom position
@@ -85,6 +85,8 @@ export class RadarComponent implements OnInit, OnDestroy {
    */
   private zoom;
 
+  private brushRange: {x0: number, x1: number};
+
   /**
    * An array used for storing subscriptions and, when the component is destroyed, for unsubscribing from the subscriptions
    */
@@ -97,6 +99,7 @@ export class RadarComponent implements OnInit, OnDestroy {
     this.isConfigOpen = true;
     this.rotation = 0;
     this.subscriptions = [];
+    this.resetBrushRange();
   }
 
   private static createAxisGroupAndSetToStartingPosition(container, id: string, point: Point): any {
@@ -146,7 +149,9 @@ export class RadarComponent implements OnInit, OnDestroy {
   private static handleMouseLeavePositionCircle(d: Position, i: number, circles: SVGCircleElement[]): void {
     const circle = circles[i];
     d3.select(circle).attr('r', environment.visualization.radar.circle.radius);
-    d3.select('#tooltip').classed('visible', false).classed('invisible', true);
+    d3.select('#tooltip')
+      .classed('visible', false)
+      .classed('invisible', true);
   }
 
   ngOnInit() {
@@ -162,6 +167,9 @@ export class RadarComponent implements OnInit, OnDestroy {
 
     // Update the svg, whenever the rotation value was changed
     this.subscribeToRotationChange();
+
+    // Update the svg, whenever the brush has occurred
+    this.subscribeToBrushChange();
   }
 
   ngOnDestroy() {
@@ -194,7 +202,7 @@ export class RadarComponent implements OnInit, OnDestroy {
 
     // SVG elements
     // Circles
-    this.addCircles(svg);
+    this.addEquidistantCircles(svg);
 
     // Add direction texts to the group
     this.setDirectionAxis();
@@ -223,6 +231,7 @@ export class RadarComponent implements OnInit, OnDestroy {
     this.subscriptions.push(
       this.positionService.positionAnnounced$.subscribe((position: Position) => {
         // Only add the position, if really necessary
+        // We need to create a new instance of 'Position', since 'position' is somehow not recognized as a 'Position'
         if (this.positions.filter(pos => PositionUtil.newPosition(pos).equals(position)).length === 0) {
           this.positions.push(position);
           if (position.altitude > this.maxAltitude) {
@@ -231,6 +240,7 @@ export class RadarComponent implements OnInit, OnDestroy {
             this.setAltitudeAxis();
           }
           this.addPositionsToChart();
+          this.brushService.update();
         }
       })
     );
@@ -256,11 +266,19 @@ export class RadarComponent implements OnInit, OnDestroy {
     );
   }
 
+  private subscribeToBrushChange(): void {
+    this.subscriptions.push(this.brushService.brush$.subscribe(range => {
+      RadarComponent.clearChart();
+      this.brushRange = range;
+      this.addPositionsToChart();
+    }));
+  }
+
   /**
-   * Adds the 'circle' elements to the radar
+   * Adds the equidistant 'circle' elements to the radar (+ the center)
    * @param svg a d3 SVG element
    */
-  private addCircles(svg): void {
+  private addEquidistantCircles(svg): void {
     const equidistantCircles = environment.visualization.radar.equidistant.circles;
     const distance = this.radius / equidistantCircles;
     const radii = [];
@@ -390,21 +408,35 @@ export class RadarComponent implements OnInit, OnDestroy {
   private addPositionsToChart(): void {
     const g = d3.select('#circles');
 
+    const positions: Array<Position> =
+      this.positions.filter(position => position.timestamp >= this.brushRange.x0 && position.timestamp <= this.brushRange.x1);
+
     // Add lines to SVG
+    this.drawConnectionLines(g, [this.center, ...positions]);
+
+    // Add circles to SVG
+    this.drawDots(g, [...positions]);
+
+    // Re-insert (raise) the circle elements, so that they are always on top
+    g.selectAll('circle.position').raise();
+  }
+
+  private drawConnectionLines(g, connectionPoints: Array<Position>): void {
     g.selectAll('path.connection')
-      .data([this.center, ...this.positions])
+      .data(connectionPoints)
       .enter()
-      .datum([this.center, ...this.positions])
+      .datum(connectionPoints)
       .append('path')
       .attr('class', 'connection')
       .attr('d', d3.line<Position>()
         .x(pos => this.x(pos))
         .y(pos => this.y(pos))
       );
+  }
 
-    // Add circles to SVG
+  private drawDots(g, positions: Array<Position>): void {
     g.selectAll('circle.position')
-      .data([...this.positions])
+      .data(positions)
       .enter()
       .append('circle')
       .attr('cx', position => this.x(position))
@@ -415,10 +447,7 @@ export class RadarComponent implements OnInit, OnDestroy {
       .on('mouseenter', RadarComponent.handleMouseEnterPositionCircle)
       .on('mouseleave', RadarComponent.handleMouseLeavePositionCircle)
       .append('title')
-      .html(position => `(lat: ${position.latitude}, lon: ${position.longitude}, alt: ${position.altitude})`);
-
-    // Re-insert (raise) the circle elements, so that they are always on top
-    g.selectAll('circle.position').raise();
+      .html(position => PositionUtil.newPosition(position).toString());
   }
 
   /**
@@ -438,11 +467,14 @@ export class RadarComponent implements OnInit, OnDestroy {
     d3.select('#circles').style('transform', `rotateZ(${value}deg)`);
 
     // Transform text axis
+    const rotation = `rotateZ(${value}deg)`;
     d3.select('#direction-vertical')
-      .style('transform', `rotateZ(${value}deg) translateX(${this.verticalStartingPoint.x}px) translateY(${this.verticalStartingPoint.y}px)`)
+      .style('transform', rotation +
+        `translateX(${this.verticalStartingPoint.x}px) translateY(${this.verticalStartingPoint.y}px)`)
       .selectAll('text').style('transform', `rotateZ(-${value}deg)`);
     d3.select('#direction-horizontal')
-      .style('transform', `rotateZ(${value}deg) translateX(${this.horizontalStartingPoint.x}px) translateY(${this.horizontalStartingPoint.y}px)`)
+      .style('transform', rotation +
+        ` translateX(${this.horizontalStartingPoint.x}px) translateY(${this.horizontalStartingPoint.y}px)`)
       .selectAll('text').style('transform', `rotateZ(-${value}deg)`);
   }
 
@@ -491,7 +523,7 @@ export class RadarComponent implements OnInit, OnDestroy {
   /**
    * Resets the zoom
    */
-  private resetZoom() {
+  private resetZoom(): void {
     const svg = d3.select('#' + this.chartId);
     const node = <Element>svg.node();
     svg.transition().duration(750).call(
@@ -499,5 +531,9 @@ export class RadarComponent implements OnInit, OnDestroy {
       d3.zoomIdentity,
       d3.zoomTransform(node).invert([this.size / 2, this.size / 2])
     );
+  }
+
+  private resetBrushRange(): void {
+    this.brushRange = {x0: 0, x1: Infinity};
   }
 }

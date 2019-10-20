@@ -23,6 +23,6 @@ export class Position {
   }
 
   toString(): string {
-    return `[lon:${this.longitude},lat:${this.latitude},alt:${this.altitude},tim:${this.timestamp}]`;
+    return `[lon:${this.longitude},lat:${this.latitude},alt:${this.altitude},time:${this.timestamp}]`;
   }
 }

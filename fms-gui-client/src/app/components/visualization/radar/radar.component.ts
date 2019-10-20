@@ -9,6 +9,7 @@ import {Point} from '../../../shared/model/point.model';
 import * as d3 from 'd3';
 import {Subscription} from 'rxjs';
 import {VisualizationUtil} from '../../../shared/utils/visualization/visualization.util';
+import {BrushService} from '../../../shared/services/visualization/brush/brush.service';
 
 @Component({
   selector: 'app-radar',
@@ -26,7 +27,7 @@ export class RadarComponent implements OnInit, OnDestroy {
   /**
    * The SVG parent's id
    */
-  private chartContainerId = 'radar-chart-div';
+  private chartContainerId = 'radar-container';
 
   /**
    * The size of the container
@@ -89,7 +90,7 @@ export class RadarComponent implements OnInit, OnDestroy {
    */
   private subscriptions: Array<Subscription>;
 
-  constructor(private positionService: PositionService, public radarForm: RadarForm) {
+  constructor(private positionService: PositionService, public radarForm: RadarForm, private brushService: BrushService) {
     // Initialize the local objects
     this.positions = [];
     this.maxAltitude = environment.visualization.radar.position.max.altitude;
@@ -151,6 +152,8 @@ export class RadarComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.initChart();
 
+    this.brushService.initBrushIn('#radar-brush');
+
     // Save the current position
     this.subscribeToPositions();
 
@@ -166,16 +169,19 @@ export class RadarComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Initializes the chart, like giving it a size and basic configuration (equidistant circles, set the center)
+   * Initializes the chart, giving it a size and basic configuration (equidistant circles, set the center)
    */
   private initChart(): void {
     const elem = d3.select('#' + this.chartContainerId);
-    const svg = elem.insert('svg', ':first-child');
-
-    svg.attr('width', '100%');
+    const svg = elem.insert('svg');
 
     this.padding = environment.visualization.radar.style.padding;
-    this.size = Math.min(Number(svg.style('width').slice(0, -2)), Number(svg.style('height').slice(0, -2)));
+
+    const parent = d3.select('#radar-chart-div');
+
+    const containerWidth: number = Number(parent.style('width').slice(0, -2));
+    const containerHeight: number = Number(parent.style('height').slice(0, -2));
+    this.size = Math.min(containerWidth, containerHeight) - this.padding;
     this.radius = (this.size - 2 * this.padding) / 2;
 
     // We need to set the width and height, so that the rotation works properly
@@ -213,9 +219,6 @@ export class RadarComponent implements OnInit, OnDestroy {
     svg.call(this.zoom);
   }
 
-  /**
-   * Lets the radar listen to incoming positions
-   */
   private subscribeToPositions(): void {
     this.subscriptions.push(
       this.positionService.positionAnnounced$.subscribe((position: Position) => {
@@ -233,9 +236,6 @@ export class RadarComponent implements OnInit, OnDestroy {
     );
   }
 
-  /**
-   * Lets the radar listen to incoming center changes
-   */
   private subscribeToCenterChange(): void {
     this.subscriptions.push(
       this.radarForm.centerChanged$.subscribe((center: Position) => {
@@ -247,9 +247,6 @@ export class RadarComponent implements OnInit, OnDestroy {
     this.radarForm.initCenter();
   }
 
-  /**
-   * Lets the radar listen to incoming rotation changes
-   */
   private subscribeToRotationChange(): void {
     this.subscriptions.push(
       this.radarForm.rotationChanged$.subscribe((degree: number) => {

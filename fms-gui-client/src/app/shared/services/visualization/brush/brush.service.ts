@@ -20,6 +20,7 @@ export class BrushService {
   private brushRangeInterpolator;
   private brushMax: number;
   private brushWidth: number;
+  private brush;
 
   private svgWidth: number;
   private svgHeight: number;
@@ -35,6 +36,7 @@ export class BrushService {
   constructor(private fmsDataService: FmsDataService) {
     this.brushSource = new Subject<{x0: number, x1: number}>();
     this.brush$ = this.brushSource.asObservable();
+    this.brush = null;
 
     this.timestampPath = environment.paths.timestamp;
   }
@@ -48,29 +50,43 @@ export class BrushService {
     // The gtc-90-10 factor for the width of the slider
     const gridSizeFactor = 0.9;
 
-    const svg = container.append('svg').attr('width', this.svgWidth);
-    const brush = d3.brushX().on('start brush end', () => this.brushed());
+    const svg = container.append('svg')
+      .attr('id', 'brush-container')
+      .attr('width', this.svgWidth);
+
+    this.brush = d3.brushX()
+      .on('start brush', () => this.brushed())
+      .on('end', (d, i, n) => this.brushended(d, i, n));
 
     this.brushWidth = this.svgWidth * gridSizeFactor - 2 * this.handleWidth;
 
     // brush
+    this.addGroup(svg);
+
+    // axis
+    this.addAxis(svg);
+
+    this.update();
+  }
+
+  private addGroup(svg): void {
     svg.append('svg')
       .attr('width', this.brushWidth)
       .attr('height', this.svgHeight)
       .attr('transform', `translate(${this.handleWidth}, 0)`)
       .append('g')
       .attr('id', 'brush-group')
-      .call(brush);
+      .call(this.brush);
+  }
 
-    // axis
+  private addAxis(svg): void {
     const axis = svg.append('svg')
       .attr('width', this.svgWidth)
       .attr('height', this.svgHeight)
       .attr('transform', `translate(0, ${this.svgHeight})`);
 
-    this.axisGroup = axis.append('g').attr('id', 'brush-axis');
-
-    this.update();
+    this.axisGroup = axis.append('g')
+      .attr('id', 'brush-axis');
   }
 
   update(): void {
@@ -107,10 +123,19 @@ export class BrushService {
   private brushed(): void {
     const selection = d3.event.selection;
     if (selection) {
-      let [x0, x1] = selection;
-      x0 = this.brushRangeInterpolator(x0 / this.brushWidth);
-      x1 = this.brushRangeInterpolator(x1 / this.brushWidth);
+      const [x0, x1] = selection.map(d => Math.round(this.brushRangeInterpolator(d / this.brushWidth)));
       this.brushSource.next({x0: x0, x1: x1});
     }
+  }
+
+  private brushended(datum, index, nodes): void {
+    const selection = d3.event.selection;
+    if (!d3.event.sourceEvent || !selection) {
+      return;
+    }
+    const [x0, x1] = selection.map(d => Math.round(this.brushRangeInterpolator(d / this.brushWidth)));
+    d3.select(nodes[index])
+      .transition()
+      .call(this.brush.move, x1 > x0 ? [x0, x1].map(this.scale) : null);
   }
 }

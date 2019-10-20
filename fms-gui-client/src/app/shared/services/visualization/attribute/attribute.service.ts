@@ -75,8 +75,6 @@ export class AttributeService {
     let timestamp: number;
     const timestamps: Array<number> = [];
 
-    console.log(`range: [${range.x0}, ${range.x1}]`);
-
     for (const dataSet of allData) {
       tree = NameValuePairUtils.getValueFromTree(this.flagsPath, dataSet);
       attributePair = NameValuePairUtils.castToArray(tree).filter(data => data.name === attribute)[0];

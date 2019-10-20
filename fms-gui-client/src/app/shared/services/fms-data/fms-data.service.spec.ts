@@ -13,8 +13,8 @@ describe('FmsDataService', () => {
   });
 
   it('should be created', () => {
-    const service: FmsDataService = TestBed.get(FmsDataService);
-    expect(service).toBeTruthy();
+    const fmsDataService: FmsDataService = TestBed.get(FmsDataService);
+    expect(fmsDataService).toBeTruthy();
   });
 
   it('FMS JSON should be present', () => {
@@ -26,14 +26,14 @@ describe('FmsDataService', () => {
 
   it('should traverse FMS JSON tree successfully', () => {
     const tuples: Array<[string, number | boolean | string | Array<NameValuePair>]> = [
-      ["Power/Voltage", 0],
-      ["Power/Current", -0.002],
-      ["Status/Flags/Adc initialized", true],
-      ["status/flags/dac initialized", true],
-      ["status/flags/Sensor hig initialized", true],
-      ["status/flags/Gnss initialized", false],
-      ["status/flight substate", 0],
-      ["status/servo Pos/y", 0]
+      ['Power/Voltage', 0],
+      ['Power/Current', -0.002],
+      ['Status/Flags/Adc initialized', true],
+      ['status/flags/dac initialized', true],
+      ['status/flags/Sensor hig initialized', true],
+      ['status/flags/Gnss initialized', false],
+      ['status/flight substate', 0],
+      ['status/servo Pos/y', 0]
     ];
 
     tuples.forEach(tuple => {

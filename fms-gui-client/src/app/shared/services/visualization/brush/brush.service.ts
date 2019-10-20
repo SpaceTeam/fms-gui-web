@@ -78,8 +78,6 @@ export class BrushService {
     this.updateDomain();
     this.updateScale();
     this.updateAxis();
-
-    console.log('Current time: ' + this.brushMax);
   }
 
   private updateBrushRange(): void {

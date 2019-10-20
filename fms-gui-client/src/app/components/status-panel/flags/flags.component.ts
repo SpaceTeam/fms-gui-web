@@ -16,7 +16,7 @@ export class FlagsComponent implements OnInit {
 
   Utils = NameValuePairUtils;
 
-  constructor(private fmsDataService: FmsDataService) {
+  constructor(public fmsDataService: FmsDataService) {
   }
 
   ngOnInit(): void {

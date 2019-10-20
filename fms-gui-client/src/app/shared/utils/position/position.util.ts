@@ -16,7 +16,12 @@ export namespace PositionUtil {
    * @param positions the positions to be taken in account when calculating the interpolated value
    * @return the interpolated position in the window
    */
-  export function interpolatedPositionInSquare(position: Position, type: PositionType, size: number, center: Position, positions: Array<Position>): number {
+  export function interpolatedPositionInSquare(
+    position: Position,
+    type: PositionType,
+    size: number,
+    center: Position,
+    positions: Array<Position>): number {
     const x_0 = size / 2;
     const x_1 = size;
 
@@ -56,17 +61,14 @@ export namespace PositionUtil {
     // Check whether there is any range
     if (x_0 === x_1) {
       value = 0;
-    }
-    // Check if the lower border is 0 (a DivideByZeroException would then occur)
-    else if (x_0 === 0) {
+    } else if (x_0 === 0) {
+      // Check if the lower border is 0 (a DivideByZeroException would then occur)
       value = x / x_1;
-    }
-    // Check, if the upper border is 0
-    else if (x_1 === 0) {
+    } else if (x_1 === 0) {
+      // Check, if the upper border is 0
       value = 1 - x / x_0;
-    }
-    // Calculate the simple interpolation value
-    else {
+    } else {
+      // Calculate the simple interpolation value
       value = (x - x_0) / (x_1 - x_0);
     }
     return roundNumber(value);
@@ -80,8 +82,8 @@ export namespace PositionUtil {
    * d = |p_max[type]| - |p_0[type]|
    *
    * @param type a property name of 'Position', e.g. 'longitude' or 'latitude'
-   * @param center
-   * @param positions
+   * @param center (redundant)
+   * @param positions (redundant)
    * @return the maximum property distance from the center to the border of the SVG
    */
   export function longestDistance(type: PositionType, center: Position, positions: Array<Position>): number {
@@ -107,7 +109,7 @@ export namespace PositionUtil {
     const direction = getDirection(target, origin);
     const length = Math.sqrt(Math.pow(direction.longitude, 2) + Math.pow(direction.latitude, 2));
     if (length === 0) {
-      return new Position(0,0);
+      return new Position(0, 0);
     }
     return new Position(roundNumber(direction.longitude / length), roundNumber(direction.latitude / length));
   }

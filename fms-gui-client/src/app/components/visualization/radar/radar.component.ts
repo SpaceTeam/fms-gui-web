@@ -18,15 +18,6 @@ import {VisualizationUtil} from '../../../shared/utils/visualization/visualizati
 })
 export class RadarComponent implements OnInit, OnDestroy {
 
-  constructor(private positionService: PositionService, private radarForm: RadarForm) {
-    // Initialize the local objects
-    this.positions = [];
-    this.maxAltitude = environment.visualization.radar.position.max.altitude;
-    this.isConfigOpen = true;
-    this.rotation = 0;
-    this.subscriptions = [];
-  }
-
   /**
    * The SVG element's id
    */
@@ -65,7 +56,7 @@ export class RadarComponent implements OnInit, OnDestroy {
   /**
    * A flag for telling, if the radar configuration window is open
    */
-  private isConfigOpen;
+  public isConfigOpen;
 
   /**
    * The 'rotation' value used for the rotation transformation
@@ -97,6 +88,15 @@ export class RadarComponent implements OnInit, OnDestroy {
    * An array used for storing subscriptions and, when the component is destroyed, for unsubscribing from the subscriptions
    */
   private subscriptions: Array<Subscription>;
+
+  constructor(private positionService: PositionService, public radarForm: RadarForm) {
+    // Initialize the local objects
+    this.positions = [];
+    this.maxAltitude = environment.visualization.radar.position.max.altitude;
+    this.isConfigOpen = true;
+    this.rotation = 0;
+    this.subscriptions = [];
+  }
 
   private static createAxisGroupAndSetToStartingPosition(container, id: string, point: Point): any {
     return container.append('g')
@@ -337,7 +337,11 @@ export class RadarComponent implements OnInit, OnDestroy {
       .attr('id', 'direction-container');
 
     // Add a group for the 'horizontal' directions 'W' and 'E'
-    const horizontal = RadarComponent.createAxisGroupAndSetToStartingPosition(container, 'direction-horizontal', this.horizontalStartingPoint);
+    const horizontal = RadarComponent.createAxisGroupAndSetToStartingPosition(
+      container,
+      'direction-horizontal',
+      this.horizontalStartingPoint
+    );
     horizontal.call(d3.axisBottom(scalePointHorizontal).tickSize(0));
 
     horizontal.selectAll('g')
@@ -472,7 +476,7 @@ export class RadarComponent implements OnInit, OnDestroy {
   /**
    * Expands or collapses the configuration window in the radar component
    */
-  private toggleConfiguration(): void {
+  toggleConfiguration(): void {
     const icon = <HTMLElement>document.getElementById('toggle-icon');
     this.isConfigOpen = !this.isConfigOpen;
 

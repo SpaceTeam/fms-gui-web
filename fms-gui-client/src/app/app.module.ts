@@ -23,6 +23,7 @@ import {SharedModule} from './shared/shared.module';
 import {MatrixComponent} from './components/status-panel/matrix/matrix.component';
 import {FlagsComponent} from './components/status-panel/flags/flags.component';
 import {AttributesListComponent} from './components/status-panel/matrix/attributes-list/attributes-list.component';
+import { LastPositionDataComponent } from './components/flight-mode/last-position-data/last-position-data.component';
 
 @NgModule({
   imports: [
@@ -51,7 +52,8 @@ import {AttributesListComponent} from './components/status-panel/matrix/attribut
     StatusMatrixComponent,
     MatrixComponent,
     FlagsComponent,
-    AttributesListComponent
+    AttributesListComponent,
+    LastPositionDataComponent
   ],
   bootstrap: [AppComponent]
 })

@@ -13,7 +13,7 @@ export class CardsComponent implements OnInit {
 
   Utils = NameValuePairUtils;
 
-  constructor(private cardsService: CardsService) {
+  constructor(public cardsService: CardsService) {
   }
 
   ngOnInit() {

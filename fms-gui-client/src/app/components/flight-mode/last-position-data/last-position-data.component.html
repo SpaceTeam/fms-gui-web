@@ -1,0 +1,18 @@
+<div *ngIf="this.gnss !== null">
+  <h3 class="mat-h3 padding-left-20px">Last position</h3>
+  <ul id="flight-mode-information">
+    <li *ngFor="let item of gnssArray[0]">
+      <div class="grid-cols-2">
+        <span>
+          {{item.name}}
+        </span>
+        <span>
+          {{item.value}}
+        </span>
+      </div>
+    </li>
+  </ul>
+</div>
+<div *ngIf="this.gnss === null">
+  No GNSS available
+</div>

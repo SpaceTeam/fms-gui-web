@@ -11,7 +11,7 @@ export class ControlsComponent implements OnInit {
 
   title = 'Controls';
 
-  constructor(private controlService: ControlService) {
+  constructor(public controlService: ControlService) {
   }
 
   ngOnInit() {

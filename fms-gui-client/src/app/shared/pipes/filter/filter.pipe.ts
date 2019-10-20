@@ -6,6 +6,10 @@ import {NameValuePair} from '../../model/name-value-pair/name-value-pair.model';
 })
 export class FilterPipe implements PipeTransform {
 
+  static isNameValuePairArray(items: any[]): boolean {
+    return (items as NameValuePair[])[0].name !== undefined;
+  }
+
   transform(items: string[] | NameValuePair[], searchText: string): string[] {
     if (!items || !searchText) {
       return [];
@@ -20,9 +24,5 @@ export class FilterPipe implements PipeTransform {
 
     // Check, if the given searchText is included in the name of one of the attributes
     return items.filter(item => item.toLocaleLowerCase().includes(searchText.toLocaleLowerCase()));
-  }
-
-  static isNameValuePairArray(items: any[]): boolean {
-    return (items as NameValuePair[])[0].name !== undefined;
   }
 }

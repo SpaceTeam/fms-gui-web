@@ -8,6 +8,9 @@ import {AlertTypeEnum} from '../../shared/enums/alert-type.enum';
 })
 export class AlertComponent implements OnInit, OnChanges {
 
+  constructor() {
+  }
+
   @Input()
   activeAlert: AlertTypeEnum;
 
@@ -23,20 +26,6 @@ export class AlertComponent implements OnInit, OnChanges {
   @Input()
   warningMessage: string;
 
-  constructor() {
-  }
-
-  ngOnInit() {
-    AlertComponent.hideAllAlerts();
-    AlertComponent.showCurrentActiveAlert(this.activeAlert);
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    AlertComponent.hideAllAlerts();
-    // We first need to check, if the current active value type changed or not and then we can use the current active type
-    AlertComponent.showCurrentActiveAlert((changes.activeAlert) ? changes.activeAlert.currentValue : this.activeAlert);
-  }
-
   /**
    * Shows the alert with the given type
    * @param activeAlert the current alert type
@@ -49,7 +38,18 @@ export class AlertComponent implements OnInit, OnChanges {
    * Hides all alerts
    */
   private static hideAllAlerts(): void {
-    document.querySelectorAll(".alert").forEach(alert => alert.classList.add('d-none'));
+    document.querySelectorAll('.alert').forEach(alert => alert.classList.add('d-none'));
+  }
+
+  ngOnInit() {
+    AlertComponent.hideAllAlerts();
+    AlertComponent.showCurrentActiveAlert(this.activeAlert);
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    AlertComponent.hideAllAlerts();
+    // We first need to check, if the current active value type changed or not and then we can use the current active type
+    AlertComponent.showCurrentActiveAlert((changes.activeAlert) ? changes.activeAlert.currentValue : this.activeAlert);
   }
 
   /**

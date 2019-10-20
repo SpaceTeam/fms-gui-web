@@ -9,7 +9,7 @@ import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 })
 export class AttributesListComponent implements OnInit {
 
-  constructor(private attributeService: AttributeService) {
+  constructor(public attributeService: AttributeService) {
   }
 
   ngOnInit() {

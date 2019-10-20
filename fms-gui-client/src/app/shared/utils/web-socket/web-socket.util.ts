@@ -78,7 +78,7 @@ export class WebSocketUtil {
     socketProperties: WebSocketProperties
   ): WebSocketSubject<Array<T>> {
 
-    let openObserver = new Subject();
+    const openObserver = new Subject();
 
     // Create the WebSocket object
     // The first parameter is the url to the web socket

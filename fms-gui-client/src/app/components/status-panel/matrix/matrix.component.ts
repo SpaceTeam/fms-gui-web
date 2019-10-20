@@ -14,7 +14,7 @@ export class MatrixComponent implements OnInit, OnDestroy {
   /**
    * A flag for telling, if the status-matrix configuration window is open
    */
-  private isConfigOpen: boolean;
+  isConfigOpen: boolean;
 
   /**
    * The text inside the input
@@ -49,7 +49,7 @@ export class MatrixComponent implements OnInit, OnDestroy {
   /**
    * Expands or collapses the configuration window in the radar component
    */
-  private toggleConfiguration(): void {
+  toggleConfiguration(): void {
     const icon = <HTMLElement>document.getElementById('toggle-icon');
     this.isConfigOpen = !this.isConfigOpen;
 

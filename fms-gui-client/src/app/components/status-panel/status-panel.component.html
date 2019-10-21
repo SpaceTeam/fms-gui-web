@@ -4,10 +4,14 @@
   <div class="margin-side-1em d-flex flex-grow-1" *ngIf="fmsDataService.isDataPresent">
     <mat-tab-group class="w-100">
       <mat-tab label="Flags">
-        <app-flags></app-flags>
+        <ng-template matTabContent>
+          <app-flags></app-flags>
+        </ng-template>
       </mat-tab>
       <mat-tab label="Status Matrix">
-        <app-matrix></app-matrix>
+        <ng-template matTabContent>
+          <app-matrix></app-matrix>
+        </ng-template>
       </mat-tab>
     </mat-tab-group>
   </div>

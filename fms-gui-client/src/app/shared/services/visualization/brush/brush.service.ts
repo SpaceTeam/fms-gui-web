@@ -25,13 +25,6 @@ export class BrushService {
   private svgWidth: number;
   readonly svgHeight: number;
 
-  /**
-   * The domain for the brush axis
-   */
-  private domain: Array<number>;
-
-  private maxTicksAmount = 11;
-
   private axisGroup;
   private scale;
 
@@ -41,83 +34,29 @@ export class BrushService {
   constructor(private fmsDataService: FmsDataService) {
     this.brushSource = new Subject<{x0: number, x1: number}>();
     this.brush$ = this.brushSource.asObservable();
+
     this.svgHeight = 20;
+    this.svgWidth = 1;
 
     this.lastRange = {x0: 0, x1: Infinity};
     this.lastElem = null;
   }
 
-  initBrushIn(containerId: string): void {
-    const container = d3.select(containerId);
-
-    this.svgWidth = Number(container.style('width').slice(0, -2));
-
-    const svg = container.append('svg')
-      .attr('id', 'brush-container')
+  appendBrush(): void {
+    d3.select('#brush').append('svg')
+      .attr('id', 'brush-svg')
       .attr('class', 'w-100 h-100');
 
+    this.initBrush();
+
+    this.updateContainerSize();
+    this.updateAxisAndBrushGroup();
+  }
+
+  private initBrush(): void {
     this.brush = d3.brushX()
       .on('start brush', () => this.brushed())
       .on('end', (d, i, n) => this.brushEnded(d, i, n));
-
-    // brush
-    this.addGroup(svg);
-
-    // axis
-    this.addAxis(svg);
-
-    this.update();
-  }
-
-  private addGroup(svg): void {
-    svg.append('svg')
-      .attr('width', this.svgWidth)
-      .attr('height', this.svgHeight)
-      .append('g')
-      .attr('id', 'brush-group')
-      .call(this.brush);
-  }
-
-  private addAxis(svg): void {
-    const axis = svg.append('svg')
-      .attr('class', 'w-100')
-      .attr('height', this.svgHeight)
-      .attr('transform', `translate(0, ${this.svgHeight})`);
-
-    this.axisGroup = axis.append('g')
-      .attr('id', 'brush-axis');
-  }
-
-  update(): void {
-    this.updateBrushRange();
-    this.updateDomain();
-    this.updateScale();
-    this.updateAxis();
-    this.moveBrush();
-  }
-
-  private updateBrushRange(): void {
-    const data = this.fmsDataService.getAllData();
-    this.brushMax = NameValuePairUtils.getValueFromTree(BrushService.timestampPath, data[data.length - 1]) as number;
-    this.brushRangeInterpolator = d3.interpolateNumber(0, this.brushMax);
-  }
-
-  private updateDomain(): void {
-    this.domain = [];
-    const increment = 1 / this.maxTicksAmount;
-    for (let i = 0; i < this.maxTicksAmount; i++) {
-      this.domain[i] = Math.round(this.brushMax * (i * increment));
-    }
-  }
-
-  private updateScale(): void {
-    this.scale = d3.scalePoint()
-      .domain(this.domain.map(i => i + ''))
-      .range([0, this.svgWidth]);
-  }
-
-  private updateAxis(): void {
-    this.axisGroup.call(d3.axisBottom(this.scale));
   }
 
   private brushed(): void {
@@ -141,16 +80,80 @@ export class BrushService {
     this.moveBrush();
   }
 
+  private updateContainerSize(): void {
+    const container = d3.select('#brush');
+    this.svgWidth = Number(container.style('width').slice(0, -2));
+  }
+
+  private updateAxisAndBrushGroup(): void {
+    const svg = d3.select('#brush-svg')
+      .attr('class', 'brush-container');
+    this.removeAllChildren(<HTMLElement>svg.node());
+
+    // brush
+    this.addGroup(svg);
+
+    // axis
+    this.addAxis(svg);
+
+    this.update();
+  }
+
+  private addGroup(svg): void {
+    svg.append('svg')
+      .attr('class', 'w-100')
+      .attr('height', this.svgHeight)
+      .append('g')
+      .attr('id', 'brush-group')
+      .call(this.brush);
+  }
+
+  private addAxis(svg): void {
+    const axis = svg.append('svg')
+      .attr('class', 'w-100')
+      .attr('height', this.svgHeight)
+      .attr('transform', `translate(0, ${this.svgHeight})`);
+
+    this.axisGroup = axis.append('g')
+      .attr('id', 'brush-axis');
+  }
+
+  update(): void {
+    this.updateBrushRange();
+    this.updateScale();
+    this.updateAxis();
+    this.moveBrush();
+  }
+
+  private updateBrushRange(): void {
+    const data = this.fmsDataService.getAllData();
+    this.brushMax = NameValuePairUtils.getValueFromTree(BrushService.timestampPath, data[data.length - 1]) as number;
+    this.brushRangeInterpolator = d3.interpolateNumber(0, this.brushMax);
+  }
+
+  private updateScale(): void {
+    this.scale = d3.scaleLinear()
+      .domain([0, this.brushMax])
+      .range([0, this.svgWidth]);
+  }
+
+  private updateAxis(): void {
+    this.axisGroup.call(d3.axisBottom(this.scale));
+  }
+
   private moveBrush(): void {
-    const x0 = this.getClosestNumberInDomainFor(this.lastRange.x0);
-    const x1 = this.getClosestNumberInDomainFor(this.lastRange.x1);
+    const x0 = Math.round(this.lastRange.x0);
+    const x1 = Math.round(this.lastRange.x1);
 
     d3.select(this.lastElem)
       .transition()
-      .call(this.brush.move, x1 > x0 ? [x0, x1].map(this.scale) : null);
+      .call(this.brush.move, x0 < x1 ? [x0, x1].map(this.scale) : null);
   }
 
-  private getClosestNumberInDomainFor(num: number): number {
-    return this.domain.reduce((prev: number, curr: number) => Math.abs(curr - num) < Math.abs(prev - num) ? curr : prev);
+  // TODO: Move me to a DOM helper class
+  removeAllChildren(elem: HTMLElement): void {
+    while (elem.firstChild) {
+      elem.removeChild(elem.firstChild);
+    }
   }
 }

@@ -19,7 +19,6 @@ export class StatusMatrixComponent implements OnInit, OnDestroy {
   private readonly flagsPath: string;
   private subscriptions: Array<Subscription>;
   private rows: Array<string>;
-  private isBrushInit: boolean;
 
   /**
    * The selected range from the brush
@@ -34,13 +33,16 @@ export class StatusMatrixComponent implements OnInit, OnDestroy {
     this.flagsPath = environment.paths.flags;
     this.subscriptions = [];
     this.rows = [];
-    this.isBrushInit = false;
     this.brushRange = {x0: 0, x1: Infinity};
   }
 
   ngOnInit(): void {
+    this.brushService.appendBrush();
+
     this.subscribeToAttributeChange();
+
     this.subscribeToFMSChange();
+
     this.subscribeToBrushChange();
   }
 
@@ -58,9 +60,7 @@ export class StatusMatrixComponent implements OnInit, OnDestroy {
       this.fmsDataService.dataPresent$.subscribe(isPresent => {
         if (isPresent && this.fmsDataService.getValue(this.flagsPath) !== null) {
           this.updateRows();
-          if (this.isBrushInit) {
-            this.brushService.update();
-          }
+          this.brushService.update();
         }
       })
     );
@@ -74,10 +74,6 @@ export class StatusMatrixComponent implements OnInit, OnDestroy {
   }
 
   private addAttribute(attribute: string): void {
-    if (!this.isBrushInit) {
-      this.brushService.initBrushIn('#status-matrix-brush');
-      this.isBrushInit = true;
-    }
 
     const rowId = `${StatusMatrixComponent.replaceWhitespaceWithDash(attribute)}`;
     d3.select(this.matrixId)

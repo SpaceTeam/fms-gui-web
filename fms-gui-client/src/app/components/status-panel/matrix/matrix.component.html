@@ -1,11 +1,11 @@
-<div class="d-flex h-100">
-  <app-status-matrix class="w-100"></app-status-matrix>
+<div class="grid-cols-2 gtc-80-20 h-100">
+  <app-status-matrix class="h-100 d-flex flex-column"></app-status-matrix>
+
   <div id="status-matrix-configuration">
     <mat-icon id="toggle-icon" class="pointer" (click)="toggleConfiguration()"
               title="Collapse status matrix configuration">
       keyboard_arrow_down
     </mat-icon>
-
     <div id="status-matrix-config-container" *ngIf="isConfigOpen">
       <mat-form-field class="w-100">
         <mat-label>Status</mat-label>

@@ -155,9 +155,9 @@ export class RadarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.initChart();
+    this.brushService.appendBrush();
 
-    this.brushService.initBrushIn('#radar-brush');
+    this.initChart();
 
     // Save the current position
     this.subscribeToPositions();
@@ -219,7 +219,7 @@ export class RadarComponent implements OnInit, OnDestroy {
     // Zoom
     this.zoom = d3.zoom()
       .extent([[0, 0], [this.size, this.size]])
-      .scaleExtent([1, 50])
+      .scaleExtent([1, 100])
       .on('zoom', () => {
         d3.select('#circles-container').attr('transform', d3.event.transform);
         d3.select('#direction-container').attr('transform', d3.event.transform);

@@ -7,15 +7,15 @@
         "value": [
           {
             "name": "Adc initialized",
-            "value": true
+            "value": false
           },
           {
             "name": "Dac initialized",
-            "value": true
+            "value": false
           },
           {
             "name": "Dma initialized",
-            "value": true
+            "value": false
           },
           {
             "name": "Flash ssp initialized",
@@ -23,11 +23,11 @@
           },
           {
             "name": "I2c0 initialized",
-            "value": true
+            "value": false
           },
           {
             "name": "I2c1 initialized",
-            "value": true
+            "value": false
           },
           {
             "name": "I2c2 initialized",
@@ -55,7 +55,7 @@
           },
           {
             "name": "Ssp1 initialized",
-            "value": true
+            "value": false
           },
           {
             "name": "Structs initialized",
@@ -275,7 +275,7 @@
           },
           {
             "name": "Liftoff detected",
-            "value": true
+            "value": false
           },
           {
             "name": "Gnss fix",
@@ -291,7 +291,7 @@
           },
           {
             "name": "Eagle landed",
-            "value": false
+            "value": true
           },
           {
             "name": "Rocket is stable",
@@ -521,7 +521,7 @@
       },
       {
         "name": "FMSTimestamp",
-        "value": 15
+        "value": 100
       },
       {
         "name": "Rocket state",
@@ -627,15 +627,15 @@
     "value": [
       {
         "name": "Latitude",
-        "value": 50
+        "value": 52
       },
       {
         "name": "Longitude",
-        "value": 62
+        "value": 65.8
       },
       {
         "name": "Altitude",
-        "value": 90
+        "value": 168
       },
       {
         "name": "Satellites",

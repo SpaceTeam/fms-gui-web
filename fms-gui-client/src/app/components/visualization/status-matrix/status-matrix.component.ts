@@ -91,7 +91,7 @@ export class StatusMatrixComponent implements OnInit, OnDestroy {
     d3.select(`#${rowId}`)
       .append('div')
       .attr('id', `${rowId}-status`)
-      .attr('class', 'd-flex align-items-center p-1 w-100');
+      .attr('class', 'd-flex align-items-center w-100');
 
     this.updateRows();
   }

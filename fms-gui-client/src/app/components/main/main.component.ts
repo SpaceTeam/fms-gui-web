@@ -4,6 +4,7 @@ import {WebSocketUtil} from '../../shared/utils/web-socket/web-socket.util';
 import {FmsDataService} from '../../shared/services/fms-data/fms-data.service';
 import {AlertTypeEnum} from '../../shared/enums/alert-type.enum';
 import {Subscription} from 'rxjs';
+import {AlertMessage} from '../../shared/model/alert/alert-message';
 
 @Component({
   selector: 'app-main',
@@ -32,6 +33,12 @@ export class MainComponent implements OnInit, OnDestroy {
    */
   activeAlert: AlertTypeEnum;
 
+  private isPropertiesAvailableSubscription: Subscription;
+  isPropertiesAvailable: boolean;
+
+  private isConnectedSubscription: Subscription;
+  isConnected: boolean;
+
   private errorSubscription: Subscription;
 
   // TODO: Store the messages in some properties file
@@ -50,11 +57,15 @@ export class MainComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.clicked = false;
-    this.setActiveAlert(false);
+    this.isPropertiesAvailable = false;
+    this.isConnected = false;
 
+    this.setActiveAlert(false);
     this.setAlertMessages();
 
     this.addErrorListener();
+    this.addWebSocketInfoAvailableListener();
+    this.addConnectionListener();
   }
 
   /**
@@ -65,8 +76,19 @@ export class MainComponent implements OnInit, OnDestroy {
     this.errorSubscription = this.fmsDataService.errorPresent$.subscribe(hasErrorOccurred => this.setActiveAlert(hasErrorOccurred));
   }
 
+  private addWebSocketInfoAvailableListener(): void {
+    this.isPropertiesAvailableSubscription =
+      WebSocketUtil.webSocketProperties$.subscribe(propertiesAvailable => this.isPropertiesAvailable = propertiesAvailable);
+  }
+
+  private addConnectionListener(): void {
+    this.isConnectedSubscription = this.fmsDataService.dataPresent$.subscribe(isConnected => this.isConnected = isConnected);
+  }
+
   ngOnDestroy() {
     this.errorSubscription.unsubscribe();
+    this.isPropertiesAvailableSubscription.unsubscribe();
+    this.isConnectedSubscription.unsubscribe();
   }
 
   /**
@@ -101,8 +123,7 @@ export class MainComponent implements OnInit, OnDestroy {
       port: this.addressForm.controls['port'].value
     });
 
-    this.informationMessage = `Connecting to ${WebSocketUtil.webSocketProperties.host}:${WebSocketUtil.webSocketProperties.port}...`;
-    this.activeAlert = AlertTypeEnum.INFORMATION;
+    this.displayConnectMessage();
   }
 
   /**
@@ -121,8 +142,30 @@ export class MainComponent implements OnInit, OnDestroy {
    */
   public disconnect(): void {
     const properties = WebSocketUtil.webSocketProperties;
-    this.informationMessage = `Disconnected from ${properties.host}:${properties.port}`;
+    if (properties.host && properties.port) {
+      this.informationMessage = `Disconnected from ${properties.host}:${properties.port}`;
+      this.activeAlert = AlertTypeEnum.INFORMATION;
+      WebSocketUtil.disconnectAll();
+    }
+  }
+
+  connectToPrevious(): void {
+    const properties = WebSocketUtil.webSocketProperties;
+    if (properties.host && properties.port) {
+      this.displayConnectMessage();
+      WebSocketUtil.newConnection(properties);
+    }
+  }
+
+  displayConnectMessage(): void {
+    this.informationMessage = `Connecting to ${WebSocketUtil.webSocketProperties.host}:${WebSocketUtil.webSocketProperties.port}...`;
     this.activeAlert = AlertTypeEnum.INFORMATION;
-    WebSocketUtil.disconnectAll();
+  }
+
+  get isAlreadyConnectedToProperties(): boolean {
+    const properties = WebSocketUtil.webSocketProperties;
+    return this.addressForm.controls['host'].value === properties.host
+      && this.addressForm.controls['port'].value === properties.port
+      && this.isConnected;
   }
 }

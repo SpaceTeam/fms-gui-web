@@ -63,9 +63,6 @@ main {
 }
 
 mat-card {
-  min-width: 150px;
-  max-width: 240px;
-
   @media all and (max-width: $medium) {
     margin: 0 !important;
     margin-bottom: 1rem !important;
@@ -85,3 +82,15 @@ ul, ol {
   color: rgba(0, 0, 0, 0.26);
 }
 
+// Remove arrows from input type="number" from all browsers
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}

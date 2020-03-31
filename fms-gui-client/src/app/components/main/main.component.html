@@ -8,37 +8,45 @@
                [warningMessage]="warningMessage"
                [activeAlert]="activeAlert">
     </app-alert>
-    <mat-card id="connection">
+    <mat-card class="d-flex flex-column">
       <mat-card-header>
         <mat-card-title>Connection</mat-card-title>
       </mat-card-header>
-      <mat-card-content class="flex-column">
+      <mat-card-content>
         <form [formGroup]="addressForm" (ngSubmit)="submit()">
+          <div class="d-flex flex-column">
+            <!-- Host -->
+            <mat-form-field>
+              <mat-label>Host</mat-label>
+              <label>
+                <input type="text" formControlName="host" matInput placeholder="localhost" required>
+              </label>
+              <mat-error *ngIf="addressForm.controls['host'].invalid">{{ errorMessageInput }}</mat-error>
+            </mat-form-field>
 
-          <!-- Host -->
-          <mat-form-field>
-            <mat-label>Host</mat-label>
-            <label>
-              <input type="text" formControlName="host" matInput placeholder="localhost" required>
-            </label>
-            <mat-error *ngIf="addressForm.controls['host'].invalid">{{ errorMessageInput }}</mat-error>
-          </mat-form-field>
+            <!-- Port -->
+            <mat-form-field>
+              <mat-label>Port</mat-label>
+              <label>
+                <input type="number" formControlName="port" matInput placeholder="9000" min="0" step="1" required>
+              </label>
+              <mat-error *ngIf="addressForm.controls['port'].invalid">{{ errorMessageInput }}</mat-error>
+            </mat-form-field>
+          </div>
 
-          <!-- Port -->
-          <mat-form-field>
-            <mat-label>Port</mat-label>
-            <label>
-              <input type="number" formControlName="port" matInput placeholder="9000" min="0" step="1" required>
-            </label>
-            <mat-error *ngIf="addressForm.controls['port'].invalid">{{ errorMessageInput }}</mat-error>
-          </mat-form-field>
+          <div class="d-flex">
+            <!-- Connect to previous -->
+            <button mat-button type="button" [disabled]="!isPropertiesAvailable" (click)="connectToPrevious()">
+              Connect to previous
+            </button>
 
-          <div class="grid-cols-2">
             <!-- Disconnect -->
-            <button mat-button type="button" (click)="disconnect()">Disconnect</button>
+            <button mat-button type="button" [disabled]="!isConnected" (click)="disconnect()">Disconnect</button>
 
             <!-- Connect -->
-            <button mat-button type="submit" [disabled]="!addressForm.valid">Connect</button>
+            <button mat-button type="submit" [disabled]="!addressForm.valid || this.isAlreadyConnectedToProperties">
+              Connect
+            </button>
           </div>
         </form>
       </mat-card-content>

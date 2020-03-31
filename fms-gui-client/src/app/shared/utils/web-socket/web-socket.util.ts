@@ -3,7 +3,7 @@ import {Logger} from '../../logger/logger';
 import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
 import {WebSocketProperties} from '../../model/web-socket/web-socket.properties.model';
 import {WebSocketService} from '../../model/service/web-socket.service.model';
-import {Subject} from 'rxjs';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +22,12 @@ export class WebSocketUtil {
   private static currentWebSocketProperties: WebSocketProperties = {};
 
   /**
+   * The subject for indicating, if webSocket properties exist
+   */
+  private static webSocketPropertiesSource: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public static webSocketProperties$: Observable<boolean> = WebSocketUtil.webSocketPropertiesSource.asObservable();
+
+  /**
    * Creates a new connection to a server with the given properties and overrides the current one
    * (only one connection at the same time possible)
    * @param webSocketProperties the properties containing the necessary data for connecting to the server
@@ -30,6 +36,7 @@ export class WebSocketUtil {
 
     // Set the current connection properties
     this.currentWebSocketProperties = webSocketProperties;
+    WebSocketUtil.webSocketPropertiesSource.next(true);
 
     // Connect all services to the server
     this.webSocketServiceArray.forEach(service => {
@@ -109,14 +116,14 @@ export class WebSocketUtil {
    * @param properties contains the information for connecting to the server
    */
   public static createUrl(properties: WebSocketProperties): string {
-    // Define a default port, if the port is not given
+    // Define a default port, if there is no port
     if (!properties.port) {
       properties.port = 80;
     }
 
     let protocol = 'wss';
 
-    // If security is not given, assume simple TCP connection
+    // If there is no security, assume simple TCP connection
     if (!properties.secure) {
       protocol = 'ws';
     }

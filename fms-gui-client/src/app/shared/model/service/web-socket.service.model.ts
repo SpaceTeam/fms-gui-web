@@ -19,7 +19,7 @@ export abstract class WebSocketService<T> implements Service {
   dataPresent$: Observable<boolean>;
 
   /**
-   * The global indicator for telling, if the cards data is present
+   * The global indicator for telling, if the "cards" data is present
    */
   isDataPresent: boolean;
 

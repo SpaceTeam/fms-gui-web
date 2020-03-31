@@ -521,7 +521,7 @@
       },
       {
         "name": "FMSTimestamp",
-        "value": 100
+        "value": 1030
       },
       {
         "name": "Rocket state",
@@ -627,7 +627,7 @@
     "value": [
       {
         "name": "Latitude",
-        "value": 52
+        "value": 55
       },
       {
         "name": "Longitude",
@@ -635,7 +635,7 @@
       },
       {
         "name": "Altitude",
-        "value": 168
+        "value": 2800
       },
       {
         "name": "Satellites",

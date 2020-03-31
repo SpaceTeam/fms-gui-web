@@ -145,5 +145,8 @@
       }
     }
   },
-  "defaultProject": "fms-gui-web"
+  "defaultProject": "fms-gui-web",
+  "cli": {
+    "analytics": "fadcb884-ec73-4bc5-be38-1d1a5a341069"
+  }
 }

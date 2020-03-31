@@ -1,4 +1,5 @@
 # FMS GUI Web
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-green.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 This project is a web based tool for the visualization and analysis of the FMS data.
 
@@ -98,7 +99,9 @@ For example:
 
 ## License
 
-This project is licensed under the terms of the GNU GPLv3 license.
+Copyright © 2020 [SpaceTeam](https://github.com/SpaceTeam).
+
+This project is [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.de.html) licensed.
 
 ## Acknowledgments
 

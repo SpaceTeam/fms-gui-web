@@ -1,27 +1,21 @@
 <div *ngIf="this.gnss !== null">
-  <h3 class="mat-h3 padding-left-20px">Last position</h3>
-  <ul id="flight-mode-information">
-    <li *ngFor="let item of gnssArray[0]">
-      <div class="grid-cols-2">
-        <span>
-          {{item.name}}
-        </span>
-        <span>
-          {{item.value}}
-        </span>
+  <h3 class="mat-h3">Last position</h3>
+  <div class="w-100 grid-cols-2">
+    <ng-container *ngFor="let item of gnssArray[0]">
+      <div class="text-left">
+        {{item.name}}
       </div>
-    </li>
-    <li>
-      <div class="grid-cols-2">
-        <span>
-          Timestamp
-        </span>
-        <span>
-          {{ fmsDataService.getValue(timestampPath)}}
-        </span>
+      <div class="text-right">
+        {{item.value}}
       </div>
-    </li>
-  </ul>
+    </ng-container>
+    <div class="text-left">
+      Timestamp
+    </div>
+    <div class="text-right">
+      {{ fmsDataService.getValue(timestampPath)}}
+    </div>
+  </div>
 </div>
 <div *ngIf="this.gnss === null">
   No GNSS available

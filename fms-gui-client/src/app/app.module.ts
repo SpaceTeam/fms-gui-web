@@ -24,6 +24,8 @@ import {MatrixComponent} from './components/status-panel/matrix/matrix.component
 import {FlagsComponent} from './components/status-panel/flags/flags.component';
 import {AttributesListComponent} from './components/status-panel/matrix/attributes-list/attributes-list.component';
 import { LastPositionDataComponent } from './components/flight-mode/last-position-data/last-position-data.component';
+import { FlightDirectionComponent } from './components/flight-mode/flight-direction/flight-direction.component';
+import { FlightPositionComponent } from './components/flight-mode/flight-position/flight-position.component';
 
 @NgModule({
   imports: [
@@ -53,7 +55,9 @@ import { LastPositionDataComponent } from './components/flight-mode/last-positio
     MatrixComponent,
     FlagsComponent,
     AttributesListComponent,
-    LastPositionDataComponent
+    LastPositionDataComponent,
+    FlightDirectionComponent,
+    FlightPositionComponent
   ],
   bootstrap: [AppComponent]
 })

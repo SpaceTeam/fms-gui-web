@@ -19,6 +19,8 @@ import {BrushService} from '../../../shared/services/visualization/brush/brush.s
 })
 export class RadarComponent implements OnInit, OnDestroy {
 
+  // TODO: Create a generic radar with its functionality
+  // TODO: Extract the positioning behaviour of the dots into the "flight-direction" and "flight-position" components
   /**
    * The SVG element's id
    */
@@ -53,11 +55,6 @@ export class RadarComponent implements OnInit, OnDestroy {
    * The radar's padding
    */
   private padding: number;
-
-  /**
-   * A flag for telling, if the radar configuration window is open
-   */
-  public isConfigOpen;
 
   /**
    * The 'rotation' value used for the rotation transformation
@@ -96,9 +93,10 @@ export class RadarComponent implements OnInit, OnDestroy {
     // Initialize the local objects
     this.positions = [];
     this.maxAltitude = environment.visualization.radar.position.max.altitude;
-    this.isConfigOpen = true;
     this.rotation = 0;
     this.subscriptions = [];
+
+    // TODO: Move the brushing functionality to a separate class
     this.resetBrushRange();
   }
 
@@ -178,8 +176,13 @@ export class RadarComponent implements OnInit, OnDestroy {
 
   /**
    * Initializes the chart, giving it a size and basic configuration (equidistant circles, set the center)
+   * TODO: Make this method smaller
    */
   private initChart(): void {
+
+    this.createChart();
+
+    /**
     const elem = d3.select('#' + this.chartContainerId);
     const svg = elem.insert('svg');
 
@@ -225,57 +228,69 @@ export class RadarComponent implements OnInit, OnDestroy {
         d3.select('#direction-container').attr('transform', d3.event.transform);
       });
     svg.call(this.zoom);
+     */
+  }
+
+  /**
+   * This method creates a chart and appends it to the radar-component
+   */
+  private createChart(): void {
+    const radarChartId = 'radar-chart-div';
+    d3.select(`#${radarChartId}`)
+      .append('svg')
+      .attr('id', this.chartId)
+      .attr('class', 'w-100 h-100');
   }
 
   private subscribeToPositions(): void {
-    this.subscriptions.push(
-      this.positionService.positionAnnounced$.subscribe((position: Position) => {
-        // Only add the position, if really necessary
-        // We need to create a new instance of 'Position', since 'position' is somehow not recognized as a 'Position'
-        if (this.positions.filter(pos => PositionUtil.newPosition(pos).equals(position)).length === 0) {
-          this.positions.push(position);
-          if (position.altitude > this.maxAltitude) {
-            this.maxAltitude = position.altitude;
-            RadarComponent.clearChart();
-            this.setAltitudeAxis();
-          }
-          this.addPositionsToChart();
-          this.brushService.update();
+    const subscription = this.positionService.positionAnnounced$.subscribe((position: Position) => {
+      // Only add the position, if really necessary
+      // We need to create a new instance of 'Position', since 'position' is somehow not recognized as a 'Position'
+      if (this.positions.filter(pos => PositionUtil.newPosition(pos).equals(position)).length === 0) {
+        this.positions.push(position);
+        if (position.altitude > this.maxAltitude) {
+          this.maxAltitude = position.altitude;
+          RadarComponent.clearChart();
+          this.setAltitudeAxis();
         }
-      })
-    );
+        this.addPositionsToChart();
+        this.brushService.update();
+      }
+    });
+    this.subscriptions.push(subscription);
   }
 
   private subscribeToCenterChange(): void {
-    this.subscriptions.push(
-      this.radarForm.centerChanged$.subscribe((center: Position) => {
-        this.center = center;
-        RadarComponent.clearChart();
-        this.addPositionsToChart();
-      })
-    );
+    const subscription = this.radarForm.centerChanged$.subscribe((center: Position) => {
+      this.center = center;
+      RadarComponent.clearChart();
+      this.addPositionsToChart();
+    });
+    this.subscriptions.push(subscription);
+    // TODO: Move me out of this method
     this.radarForm.initCenter();
   }
 
   private subscribeToRotationChange(): void {
-    this.subscriptions.push(
-      this.radarForm.rotationChanged$.subscribe((degree: number) => {
-        this.rotation = degree;
-        this.rotateElements();
-      })
-    );
+    const subscription = this.radarForm.rotationChanged$.subscribe((degree: number) => {
+      this.rotation = degree;
+      this.rotateElements();
+    });
+    this.subscriptions.push(subscription);
   }
 
   private subscribeToBrushChange(): void {
-    this.subscriptions.push(this.brushService.brush$.subscribe(range => {
+    const subscription = this.brushService.brush$.subscribe(range => {
       RadarComponent.clearChart();
       this.brushRange = range;
       this.addPositionsToChart();
-    }));
+    });
+    this.subscriptions.push(subscription);
   }
 
   /**
    * Adds the equidistant 'circle' elements to the radar (+ the center)
+   * TODO: Make this method smaller
    * @param svg a d3 SVG element
    */
   private addEquidistantCircles(svg): void {
@@ -326,6 +341,7 @@ export class RadarComponent implements OnInit, OnDestroy {
 
   /**
    * Adds the 'direction' lines, connecting the center with the directions inside the radar
+   * TODO: Make this method smaller
    */
   private setDirectionAxis(): void {
     const width = Number(d3.select('#circles-container').attr('width'));
@@ -378,6 +394,7 @@ export class RadarComponent implements OnInit, OnDestroy {
 
   /**
    * Adds the 'altitude' text elements to the radar
+   * TODO: Make this method smaller
    */
   private setAltitudeAxis(): void {
     const container = d3.select('#circles-container');
@@ -500,24 +517,6 @@ export class RadarComponent implements OnInit, OnDestroy {
    */
   private altitudeStep(altitude: number): number {
     return (altitude / this.maxAltitude) * this.radius;
-  }
-
-  /**
-   * Expands or collapses the configuration window in the radar component
-   */
-  toggleConfiguration(): void {
-    const icon = <HTMLElement>document.getElementById('toggle-icon');
-    this.isConfigOpen = !this.isConfigOpen;
-
-    const visualizationName = 'radar';
-
-    if (icon.innerText === 'keyboard_arrow_down') {
-      icon.innerText = 'keyboard_arrow_right';
-      icon.title = `Expand ${visualizationName} configuration`;
-    } else {
-      icon.innerText = 'keyboard_arrow_down';
-      icon.title = `Collapse ${visualizationName} configuration`;
-    }
   }
 
   /**

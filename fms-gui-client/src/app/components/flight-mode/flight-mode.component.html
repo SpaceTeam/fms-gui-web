@@ -1,20 +1,20 @@
 <!-- Displays the current flight with the data from the FMS JSON -->
 <main class="d-flex flex-column">
   <mat-toolbar>{{ title }}</mat-toolbar>
-  <div class="margin-side-1em d-flex flex-grow-1 h-100" *ngIf="fmsDataService.isDataPresent">
-      <mat-tab-group class="w-100">
-        <mat-tab label="Position">
-          <ng-template matTabContent>
-            <app-flight-position></app-flight-position>
-          </ng-template>
-        </mat-tab>
-        <mat-tab label="Direction">
-          <ng-template matTabContent>
-            <app-flight-direction></app-flight-direction>
-          </ng-template>
-        </mat-tab>
-      </mat-tab-group>
-      <app-last-position-data class="h-100 margin-side-1em"></app-last-position-data>
-    </div>
+  <div id="flight-mode" class="margin-side-1em" *ngIf="fmsDataService.isDataPresent">
+    <mat-tab-group class="main" animationDuration="0ms">
+      <mat-tab label="Position">
+        <ng-template matTabContent>
+          <app-flight-position></app-flight-position>
+        </ng-template>
+      </mat-tab>
+      <mat-tab label="Direction">
+        <ng-template matTabContent>
+          <app-flight-direction></app-flight-direction>
+        </ng-template>
+      </mat-tab>
+    </mat-tab-group>
+    <app-last-position-data class="h-100 margin-side-1em aside"></app-last-position-data>
+  </div>
   <app-loading *ngIf="!fmsDataService.isDataPresent"></app-loading>
 </main>

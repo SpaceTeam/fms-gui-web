@@ -26,6 +26,7 @@ import {AttributesListComponent} from './components/status-panel/matrix/attribut
 import { LastPositionDataComponent } from './components/flight-mode/last-position-data/last-position-data.component';
 import { FlightDirectionComponent } from './components/flight-mode/flight-direction/flight-direction.component';
 import { FlightPositionComponent } from './components/flight-mode/flight-position/flight-position.component';
+import { RadarConfigComponent } from './components/radar-config/radar-config.component';
 
 @NgModule({
   imports: [
@@ -57,7 +58,8 @@ import { FlightPositionComponent } from './components/flight-mode/flight-positio
     AttributesListComponent,
     LastPositionDataComponent,
     FlightDirectionComponent,
-    FlightPositionComponent
+    FlightPositionComponent,
+    RadarConfigComponent
   ],
   bootstrap: [AppComponent]
 })

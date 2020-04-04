@@ -33,8 +33,8 @@
   }
 }
 
-.w-fit-content {
-  width: max-content;
+.w-min-content {
+  width: min-content;
 }
 
 
@@ -93,4 +93,26 @@ input::-webkit-inner-spin-button {
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
+}
+
+// Medium screens
+@media all and (min-width: 800px) {
+  .flight-mode-grid {
+    display: grid;
+    grid-gap: 0;
+    grid-template-columns: auto 180px;
+    grid-template-areas:
+      "content side"
+      "footer side";
+
+    .main {
+      grid-area: content;
+    }
+    .aside {
+      grid-area: side;
+    }
+    .footer {
+      grid-area: footer;
+    }
+  }
 }

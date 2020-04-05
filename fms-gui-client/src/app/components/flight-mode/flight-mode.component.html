@@ -1,7 +1,7 @@
 <!-- Displays the current flight with the data from the FMS JSON -->
 <main class="d-flex flex-column">
   <mat-toolbar>{{ title }}</mat-toolbar>
-  <div id="flight-mode" class="margin-side-1em" *ngIf="fmsDataService.isDataPresent">
+  <div id="flight-mode" class="margin-side-1em h-100" *ngIf="fmsDataService.isDataPresent">
     <mat-tab-group class="main" animationDuration="0ms">
       <mat-tab label="Position">
         <ng-template matTabContent>

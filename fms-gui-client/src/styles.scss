@@ -101,6 +101,7 @@ input[type=number] {
     display: grid;
     grid-gap: 0;
     grid-template-columns: auto 180px;
+    grid-template-rows: auto 30px;
     grid-template-areas:
       "content side"
       "footer side";
@@ -116,3 +117,18 @@ input[type=number] {
     }
   }
 }
+
+.axis--grid .domain {
+  fill: #ddd;
+  stroke: none;
+}
+
+.axis--x .domain,
+.axis--grid .tick line {
+  stroke: #fff;
+}
+
+.axis--grid .tick--minor line {
+  stroke-opacity: .5;
+}
+

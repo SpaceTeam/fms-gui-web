@@ -17,5 +17,11 @@ main {
     .aside {
       grid-area: aside;
     }
+
+    .flight-mode-tab {
+      display: block;
+      height: 100%;
+      padding-bottom: 1em;
+    }
   }
 }

@@ -32,7 +32,7 @@ export class PositionService {
   }
 
   // Message command
-  announcePosition(position: Position) {
+  private announcePosition(position: Position) {
     this.positionAnnounceSource.next(position);
   }
 

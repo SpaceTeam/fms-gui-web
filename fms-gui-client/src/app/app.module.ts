@@ -27,6 +27,7 @@ import { LastPositionDataComponent } from './components/flight-mode/last-positio
 import { FlightDirectionComponent } from './components/flight-mode/flight-direction/flight-direction.component';
 import { FlightPositionComponent } from './components/flight-mode/flight-position/flight-position.component';
 import { RadarConfigComponent } from './components/radar-config/radar-config.component';
+import { TimestampBrushComponent } from './components/timestamp-brush/timestamp-brush.component';
 
 @NgModule({
   imports: [
@@ -59,7 +60,8 @@ import { RadarConfigComponent } from './components/radar-config/radar-config.com
     LastPositionDataComponent,
     FlightDirectionComponent,
     FlightPositionComponent,
-    RadarConfigComponent
+    RadarConfigComponent,
+    TimestampBrushComponent
   ],
   bootstrap: [AppComponent]
 })

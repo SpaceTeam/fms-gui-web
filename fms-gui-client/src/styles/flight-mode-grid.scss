@@ -1,0 +1,25 @@
+// Medium screens
+@media all and (min-width: 800px) {
+  .flight-mode-grid {
+    display: grid;
+
+    height: 100%;
+    grid-gap: 0;
+    grid-template-columns: auto 180px;
+    grid-template-rows: auto 30px;
+    grid-template-areas:
+      "content side"
+      "footer side";
+
+    .main {
+      grid-area: content;
+    }
+    .aside {
+      grid-area: side;
+    }
+    .footer {
+      grid-area: footer;
+    }
+  }
+}
+

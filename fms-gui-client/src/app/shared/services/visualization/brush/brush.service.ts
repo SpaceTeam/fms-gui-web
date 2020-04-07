@@ -3,7 +3,9 @@ import {FmsDataService} from '../../fms-data/fms-data.service';
 import {NameValuePairUtils} from '../../../utils/NameValuePair.util';
 import * as d3 from 'd3';
 import {environment} from '../../../../../environments/environment';
-import {Observable, Subject} from 'rxjs';
+import {Observable, Subject, Subscription} from 'rxjs';
+import {PositionService} from '../position/position.service';
+import {Position} from '../../../model/flight/position';
 
 @Injectable({
   providedIn: 'root'

@@ -6,11 +6,6 @@
   line-height: 1.5em;
 }
 
-.brush-container {
-  height: 50px;
-  width: 100%;
-}
-
 // Classes
 .margin-1em {
   margin: 1em;
@@ -95,40 +90,10 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 
-// Medium screens
-@media all and (min-width: 800px) {
-  .flight-mode-grid {
-    display: grid;
-    grid-gap: 0;
-    grid-template-columns: auto 180px;
-    grid-template-rows: auto 30px;
-    grid-template-areas:
-      "content side"
-      "footer side";
-
-    .main {
-      grid-area: content;
-    }
-    .aside {
-      grid-area: side;
-    }
-    .footer {
-      grid-area: footer;
-    }
-  }
+.mat-tab-body-wrapper{
+  flex-grow: 1;
 }
 
-.axis--grid .domain {
-  fill: #ddd;
-  stroke: none;
+app-timestamp-brush {
+  background-color: #eee;
 }
-
-.axis--x .domain,
-.axis--grid .tick line {
-  stroke: #fff;
-}
-
-.axis--grid .tick--minor line {
-  stroke-opacity: .5;
-}
-

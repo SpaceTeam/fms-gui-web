@@ -17,9 +17,10 @@ export class TimestampBrushComponent implements OnInit, OnDestroy {
   private positionSubscription: Subscription;
   private timestamps: Array<number>;
   private brush: d3.BrushBehavior<any>;
-  private brushRange: {x0: number, x1: number};
   private scale: d3.ScaleLinear<number, number>;
   private axis: d3.Axis<any>;
+
+  private margin = 10;
 
   constructor(private positionService: PositionService) {
     this.timestamps = [];
@@ -32,6 +33,7 @@ export class TimestampBrushComponent implements OnInit, OnDestroy {
 
     this.adjustBrushScale();
     this.createAxis();
+
     this.addTimestampListener();
   }
 
@@ -43,11 +45,17 @@ export class TimestampBrushComponent implements OnInit, OnDestroy {
    * Creates the interactive brush SVG
    */
   private createBrushSVG(): void {
-    d3.select(`#${this.id}`)
-      .append('svg')
+    const parent = d3.select(`#${this.id}`);
+
+    const width = Number(parent.style('width').slice(0, -2));
+
+    // TODO: The height should not be static, but change with the screen size
+    parent.append('svg')
       .attr('id', `${this.id}-svg`)
-      .attr('width', '100%')
-      .attr('height', '100%');
+      .classed('brush', true)
+      .attr('width', `${width -  2 * this.margin}px`)
+      .attr('height', '30px')
+      .style('margin-left', `${this.margin}px`);
   }
 
   /**
@@ -78,15 +86,29 @@ export class TimestampBrushComponent implements OnInit, OnDestroy {
   }
 
   private adjustBrushScale() {
-    const svg = d3.select(`#${this.id}-svg`);
-    const svgWidth = Number(svg.attr('width').slice(0, -2));
+    const parent = d3.select(`#${this.id}`);
+    const parentWidth = Number(parent.style('width').slice(0, -2));
 
-    // TODO: This number should change whenever the SVG is resized
-    this.scale.range([0, svgWidth]);
+    // TODO: The range should change whenever the SVG is resized
+    this.scale
+      .range([this.margin, parentWidth - this.margin]) // in px
+      .domain([0, 1]);
   }
 
+  /**
+   * Creates a new SVG and adds the axis to it
+   */
   private createAxis() {
-    // TODO: The ticks should be discrete and therefore only contain timestamps that really occurred. No "real" interpolation
+    this.axis = d3.axisBottom(this.scale);
+
+    // TODO: The height should not be in px, but rather dynamic
+    d3.select(`#${this.id}`)
+      .append('svg')
+      .attr('id', `${this.id}-axis`)
+      .attr('width', '100%')
+      .attr('height', '20px')
+      .append('g')
+      .call(this.axis);
   }
 
   /**

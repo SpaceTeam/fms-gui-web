@@ -95,5 +95,7 @@ input[type=number] {
 }
 
 app-timestamp-brush {
-  background-color: #eee;
+  svg.brush {
+    background-color: #eee;
+  }
 }

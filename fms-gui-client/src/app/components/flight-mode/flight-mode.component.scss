@@ -8,10 +8,17 @@ main {
     display: grid;
     grid-gap: 0;
     grid-template-columns: auto 180px;
-    grid-template-areas: "content aside";
+    grid-template-rows: auto 55px;
+    grid-template-areas:
+      "content aside"
+      "footer aside";
 
     .main {
       grid-area: content;
+    }
+
+    .footer {
+      grid-area: footer;
     }
 
     .aside {

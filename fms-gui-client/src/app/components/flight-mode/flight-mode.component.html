@@ -14,6 +14,7 @@
         </ng-template>
       </mat-tab>
     </mat-tab-group>
+    <app-timestamp-brush id="flight-mode-brush" class="footer"></app-timestamp-brush>
     <app-last-position-data class="h-100 margin-side-1em aside"></app-last-position-data>
   </div>
   <app-loading *ngIf="!fmsDataService.isDataPresent"></app-loading>

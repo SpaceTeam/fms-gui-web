@@ -18,23 +18,27 @@ export class TimestampBrushComponent implements OnInit, OnDestroy {
   private timestamps: Array<number>;
   private brush: d3.BrushBehavior<any>;
   private scale: d3.ScaleLinear<number, number>;
-  private axis: d3.Axis<any>;
 
   private margin = 10;
+  // TODO: The height should not be static, but change with the screen size
+  private height = 50;
+  private axisHeight = (1 / 3) * this.height;
 
   constructor(private positionService: PositionService) {
-    this.timestamps = [];
+    this.timestamps = [0];
     this.scale = d3.scaleLinear();
+    this.brush = d3.brushX();
   }
 
   ngOnInit(): void {
-    this.createBrushSVG();
-    this.createBrush();
-
-    this.adjustBrushScale();
-    this.createAxis();
-
     this.addTimestampListener();
+
+    // Append the SVG object to the body of the page
+    this.createBrushSVG();
+
+    this.addScale();
+    this.addAxis();
+    this.addBrush();
   }
 
   ngOnDestroy(): void {
@@ -42,73 +46,63 @@ export class TimestampBrushComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Creates the interactive brush SVG
+   * Creates the SVG, which is added to the component, and creates the container for the brush and axis
    */
   private createBrushSVG(): void {
-    const parent = d3.select(`#${this.id}`);
+    d3.select(`#${this.id}`)
+      .append('svg')
+      .attr('width', '100%')
+      .attr('height', `${this.height}`)
+      .append('g')
+      .attr('id', `${this.id}-g`)
+      .attr('transform', `translate(${this.margin}, 0)`);
+  }
 
-    const width = Number(parent.style('width').slice(0, -2));
+  // TODO: The range should change whenever the SVG is resized
+  private addScale(): void {
+    this.scale = d3.scaleLinear()
+      .domain([0, 0])
+      .range([0, this.getComponentWidth()]);
+  }
 
-    // TODO: The height should not be static, but change with the screen size
-    parent.append('svg')
-      .attr('id', `${this.id}-svg`)
-      .classed('brush', true)
-      .attr('width', `${width -  2 * this.margin}px`)
-      .attr('height', '30px')
-      .style('margin-left', `${this.margin}px`);
+  private addAxis(): void {
+    d3.select(`#${this.id}-g`)
+      .append('g')
+      .attr('id', `${this.id}-axis`)
+      .attr('transform', `translate(0, ${this.height - this.axisHeight})`)
+      .call(d3.axisBottom(this.scale));
+  }
+
+  private addBrush(): void {
+    this.brush = d3.brushX()
+      .extent([[0, 0], [this.getComponentWidth(), this.height - this.axisHeight - 1]]) // -1 for a gap between brush and axis
+      .on('end', (d, i, n) => this.updateBrush(d, i, n));
+
+    d3.select(`#${this.id}-g`).call(this.brush);
   }
 
   /**
-   * Creates the 2D brush with the timestamps on the 'x' axis
+   * Updates the position of the brush as soon as something gets selected
+   * For this we need the 'index' and 'nodes' param, which tells us on what element we need to perform the 'brush.move' method
    */
-  private createBrush(): void {
-    const brushSvg = d3.select(`#${this.id}-svg`);
-
-    // Determine the width and height of the SVG, which we need for the brush extent
-    const width = Number(brushSvg.style('width').slice(0, -2));
-    const height = Number(brushSvg.style('height').slice(0, -2));
-
-    this.brush = d3.brushX()
-      .extent([[0, 0], [width, height]])
-      .on('start end', () => this.updateChart());
-
-    brushSvg.call(this.brush);
-  }
-
-  private updateChart(): void {
-    // Get the selection coordinates
+  private updateBrush(datum, index: number, nodes): void {
     const selection = d3.event.selection;
     if (!d3.event.sourceEvent || !selection) {
       return;
     }
-
-    // TODO: Whenever the user selects a given interval, notify the component what interval was changed
-  }
-
-  private adjustBrushScale() {
-    const parent = d3.select(`#${this.id}`);
-    const parentWidth = Number(parent.style('width').slice(0, -2));
-
-    // TODO: The range should change whenever the SVG is resized
-    this.scale
-      .range([this.margin, parentWidth - this.margin]) // in px
-      .domain([0, 1]);
+    const elem = nodes[index];
+    const [x0, x1] = selection.map(d => this.findClosestTimestamp(this.scale.invert(d)));
+    d3.select(elem)
+      .transition()
+      .call(this.brush.move, x1 > x0 ? [x0, x1].map(this.scale) : null);
   }
 
   /**
-   * Creates a new SVG and adds the axis to it
+   * Finds the timestamp in the 'timestamps' array which is closest to the given parameter
+   * @param d the number which is used for comparing
    */
-  private createAxis() {
-    this.axis = d3.axisBottom(this.scale);
-
-    // TODO: The height should not be in px, but rather dynamic
-    d3.select(`#${this.id}`)
-      .append('svg')
-      .attr('id', `${this.id}-axis`)
-      .attr('width', '100%')
-      .attr('height', '20px')
-      .append('g')
-      .call(this.axis);
+  private findClosestTimestamp(d: number): number {
+    return this.timestamps.reduce((prev, curr) => (Math.abs(curr - d) < Math.abs(prev - d) ? curr : prev));
   }
 
   /**
@@ -120,7 +114,17 @@ export class TimestampBrushComponent implements OnInit, OnDestroy {
       if (!this.timestamps.includes(position.timestamp)) {
         this.timestamps.push(position.timestamp);
         this.scale.domain([0, position.timestamp]);
+        // Update axis
+        d3.select(`#${this.id}-axis`).call(d3.axisBottom(this.scale));
       }
     });
+  }
+
+  /**
+   * Returns the width we use for the brush (not the actual svg width!)
+   */
+  private getComponentWidth(): number {
+    const parent = d3.select(`#${this.id}`);
+    return Number(parent.style('width').slice(0, -2)) - 2 * this.margin;
   }
 }

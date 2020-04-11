@@ -97,7 +97,7 @@ export class RadarComponent implements OnInit, OnDestroy {
     this.subscriptions = [];
 
     // TODO: Move the brushing functionality to a separate class
-    this.resetBrushRange();
+    // this.resetBrushRange();
   }
 
   private static createAxisGroupAndSetToStartingPosition(container, id: string, point: Point): any {
@@ -153,25 +153,25 @@ export class RadarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.brushService.appendBrush();
+    // this.brushService.appendBrush();
 
-    this.initChart();
+    // this.initChart();
 
     // Save the current position
-    this.subscribeToPositions();
+    // this.subscribeToPositions();
 
     // Update the center, whenever the center was changed
-    this.subscribeToCenterChange();
+    // this.subscribeToCenterChange();
 
     // Update the svg, whenever the rotation value was changed
-    this.subscribeToRotationChange();
+    // this.subscribeToRotationChange();
 
     // Update the svg, whenever the brush has occurred
-    this.subscribeToBrushChange();
+    // this.subscribeToBrushChange();
   }
 
   ngOnDestroy() {
-    this.subscriptions.forEach(subscription => subscription.unsubscribe());
+    // this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
   /**

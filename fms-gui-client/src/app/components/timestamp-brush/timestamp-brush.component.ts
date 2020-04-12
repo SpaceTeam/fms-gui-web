@@ -3,6 +3,7 @@ import {Subscription} from 'rxjs';
 import * as d3 from 'd3';
 import {PositionService} from '../../shared/services/visualization/position/position.service';
 import {Position} from '../../shared/model/flight/position';
+import {BrushService} from '../../shared/services/visualization/brush/brush.service';
 
 @Component({
   selector: 'app-timestamp-brush',
@@ -21,10 +22,10 @@ export class TimestampBrushComponent implements OnInit, OnDestroy {
 
   private margin = 10;
   // TODO: The height should not be static, but change with the screen size
-  private height = 50;
-  private axisHeight = (1 / 3) * this.height;
+  private height = 40;
+  private axisHeight = 0.4 * this.height;
 
-  constructor(private positionService: PositionService) {
+  constructor(private positionService: PositionService, private brushService: BrushService) {
     this.timestamps = [0];
     this.scale = d3.scaleLinear();
     this.brush = d3.brushX();
@@ -76,7 +77,10 @@ export class TimestampBrushComponent implements OnInit, OnDestroy {
   private addBrush(): void {
     this.brush = d3.brushX()
       .extent([[0, 0], [this.getComponentWidth(), this.height - this.axisHeight - 1]]) // -1 for a gap between brush and axis
-      .on('end', (d, i, n) => this.updateBrush(d, i, n));
+      .on('end', (d, i, n) => {
+        this.updateBrush(d, i, n);
+        this.publishSelectedRange();
+      });
 
     d3.select(`#${this.id}-g`).call(this.brush);
   }
@@ -95,6 +99,18 @@ export class TimestampBrushComponent implements OnInit, OnDestroy {
     d3.select(elem)
       .transition()
       .call(this.brush.move, x1 > x0 ? [x0, x1].map(this.scale) : null);
+  }
+
+  /**
+   * Publishes the selected timestamp range to all subscribers of the BrushService
+   */
+  private publishSelectedRange(): void {
+    const selection = d3.event.selection;
+    if (!d3.event.sourceEvent || !selection) {
+      return;
+    }
+    const [x0, x1] = selection.map(d => this.findClosestTimestamp(this.scale.invert(d)));
+    this.brushService.publishSelectedRange(x0, x1);
   }
 
   /**

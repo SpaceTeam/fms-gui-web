@@ -1,46 +1,5 @@
-.circles, .domain {
-  opacity: 0.5;
-}
-
-.circles, .position {
-  stroke: black;
-  stroke-width: 1
-}
-
-.center {
-  fill: black;
-}
-
-.connection {
+.equidistant-circle {
+  fill: none;
   stroke: black;
   stroke-width: 1;
-  fill: none;
-}
-
-.direction text {
-  font-size: 1.4em;
-  text-anchor: middle;
-}
-
-label {
-  margin-bottom: 0;
-}
-
-g {
-  transform-origin: center;
-}
-
-#altitudes {
-  .domain {
-    stroke: none;
-  }
-}
-
-.pointer {
-  cursor: pointer;
-
-  &:hover {
-    background: #f8f8f8;
-    filter: brightness(90%);
-  }
 }

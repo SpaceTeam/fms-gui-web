@@ -21,12 +21,8 @@ export const environment = {
   },
   visualization: {
     radar: {
-      circle: {
-        radius: 4
-      },
       equidistant: {
-        circles: 5,
-        padding: 50
+        circles: 5
       },
       position: {
         center: {
@@ -36,9 +32,6 @@ export const environment = {
         max: {
           altitude: 100
         }
-      },
-      style: {
-        padding: 40
       }
     }
   }

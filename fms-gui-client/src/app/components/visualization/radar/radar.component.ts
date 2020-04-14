@@ -18,10 +18,9 @@ export class RadarComponent implements OnInit {
   private id: string;
 
   private numOfCircles: number;
+  private margin = 10;
 
   // TODO: Use the positioning behaviour of the dots from the "flight-direction" and "flight-position" components
-
-  private margin = 15;
 
   // TODO: Move the radarform to the flight configuration component
   constructor(private positionService: PositionService, public radarForm: RadarForm, private brushService: BrushService) {
@@ -32,8 +31,8 @@ export class RadarComponent implements OnInit {
     // Append the SVG object to the body of the page
     this.createRadarSVG();
 
-    this.addDirections();
     this.addEquidistantCircles();
+    this.addDirections();
   }
 
   /**
@@ -42,18 +41,16 @@ export class RadarComponent implements OnInit {
   private createRadarSVG(): void {
     d3.select(`#${this.id}`)
       .append('svg')
-      .attr('width', '100%')
-      .attr('height', '100%')
+      .attr('width', () => this.getRadarSize())
+      .attr('height', () => this.getRadarSize())
       .append('g')
-      .attr('id', `${this.id}-g`)
-      .attr('transform', `translate(${this.margin}, ${this.margin})`);
+      .attr('id', `${this.id}-g`);
   }
 
   /**
    * Adds the equidistant circles
    */
   private addEquidistantCircles(): void {
-
     d3.select(`#${this.id}-g`)
       .append('g')
       .attr('id', `${this.id}-equidistant-circles`)
@@ -61,8 +58,8 @@ export class RadarComponent implements OnInit {
       .data(this.calculateEquidistantCircleRadii().reverse())
       .enter()
       .append('circle')
-      .attr('cx', () => this.getComponentWidth() / 2)
-      .attr('cy', () => this.getComponentHeight() / 2)
+      .attr('cx', () => this.getCenter())
+      .attr('cy', () => this.getCenter())
       .attr('r', d => d)
       .style('fill', (d, i) => this.calculateCircleFill(i))
       .style('opacity', '50%')
@@ -74,11 +71,9 @@ export class RadarComponent implements OnInit {
    */
   private calculateEquidistantCircleRadii(): Array<number> {
     const circleRadii = [];
-    const width = this.getComponentWidth();
-    const height = this.getComponentHeight();
-    const center = width < height ? width / 2 : height / 2;
+    const center = this.getCenter() - 2 * this.margin;
 
-    const r = center / this.numOfCircles;
+    const r = Math.floor(center / this.numOfCircles);
     for (let i = 1; i <= this.numOfCircles; i++) {
       circleRadii[i] = r * i;
     }
@@ -98,79 +93,54 @@ export class RadarComponent implements OnInit {
    * Adds the north, west, south, east directions to the radar
    */
   private addDirections(): void {
-    d3.select(`#${this.id}-g`)
+    const xAxisLabels = ['W', 'E'];
+    const yAxisLabels = ['N', 'S'];
+    const axisWidth = this.getRadarSize() - 2 * this.margin;
+
+    const scaleX = d3.scalePoint()
+      .domain(xAxisLabels)
+      .range([0, axisWidth]);
+
+    const scaleY = d3.scalePoint()
+      .domain(yAxisLabels)
+      .range([0, axisWidth]);
+
+    const directions = d3.select(`#${this.id}-g`)
       .append('g')
       .attr('id', `${this.id}-directions`)
-      .selectAll('text')
-      .data(this.getDirections())
-      .enter()
-      .append('text')
-      .style('text-anchor', 'middle')
-      .attr('x', d => d.x)
-      .attr('y', d => d.y)
-      .text(d => d.direction);
+      .classed('directions', true);
+
+    // x axis
+    directions.append('g')
+      .attr('transform', `translate(${this.margin}, ${this.getCenter()})`)
+      .call(d3.axisBottom(scaleX).tickSize(0))
+      .select('.domain')
+      .remove();
+
+    // y axis
+    directions.append('g')
+      .attr('transform', `translate(${this.getCenter()}, ${this.margin})`)
+      .call(d3.axisLeft(scaleY).tickSize(0))
+      .select('.domain')
+      .remove();
   }
 
   /**
-   * Returns the positions of the direction text elements
+   * Returns the center of the radar SVG
    */
-  private getDirections(): Array<{direction: string, x: number, y: number}> {
-    const radarSize = this.getRadarSize();
-    const halfRadarSize = Math.floor(radarSize / 2);
-    let marginLeft = 0;
-
-    // If we have a wider screen than we need, we want to center the group and therefore we need to adjust the positions
-    const widthDifference = this.getComponentWidth() - radarSize;
-    if (widthDifference > 0) {
-      marginLeft = Math.floor(widthDifference / 2);
-    }
-
-    return [
-      {
-        direction: 'N',
-        x: halfRadarSize + marginLeft,
-        y: 0
-      },
-      {
-        direction: 'E',
-        x: radarSize + marginLeft,
-        y: halfRadarSize
-      },
-      {
-        direction: 'S',
-        x: halfRadarSize + marginLeft,
-        y: radarSize
-      },
-      {
-        direction: 'W',
-        x: marginLeft,
-        y: halfRadarSize
-      }
-    ];
-  }
-
-  /**
-   * Returns the width we use for the radar (not the actual svg width!)
-   */
-  private getComponentWidth(): number {
-    const parent = d3.select(`#${this.id}`);
-    return Math.floor(Number(parent.style('width').slice(0, -2)) - 2 * this.margin);
-  }
-
-  /**
-   * Returns the height we use for the radar (not the actual svg height!)
-   */
-  private getComponentHeight(): number {
-    const parent = d3.select(`#${this.id}`);
-    return Math.floor(Number(parent.style('height').slice(0, -2)) - 2 * this.margin);
+  private getCenter(): number {
+    return Math.floor(this.getRadarSize() / 2);
   }
 
   /**
    * Returns the window size for the actual radar
    */
   private getRadarSize(): number {
-    const width = this.getComponentWidth();
-    const height = this.getComponentHeight();
-    return width < height ? width : height;
+    const parent = d3.select(`#${this.id}`);
+
+    const width = Number(parent.style('width').slice(0, -2));
+    const height = Number(parent.style('height').slice(0, -2));
+
+    return Math.floor(width < height ? width : height);
   }
 }

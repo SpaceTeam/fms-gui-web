@@ -94,6 +94,11 @@ input[type=number] {
   flex-grow: 1;
 }
 
+mat-toolbar {
+  height: 50px;
+  min-height: 50px;
+}
+
 app-timestamp-brush {
   svg.brush {
     background-color: #eee;

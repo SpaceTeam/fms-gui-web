@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { FlightModeComponent } from './flight-mode.component';
-import {TestModule} from '../test.module';
+import {TestModule} from '../../test.module';
 
 describe('FlightModeComponent', () => {
   let component: FlightModeComponent;

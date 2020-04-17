@@ -2,6 +2,34 @@ main {
   height: 100%;
 }
 
+#flight-mode {
+  display: grid;
+  grid-gap: 0;
+  grid-template-columns: auto;
+  grid-template-rows: auto 50px auto;
+  grid-template-areas:
+    "content"
+    "footer"
+    "aside";
+
+  .main {
+    grid-area: content;
+  }
+
+  .footer {
+    grid-area: footer;
+  }
+
+  .aside {
+    grid-area: aside;
+  }
+
+  .flight-mode-tab {
+    display: block;
+    height: 100%;
+  }
+}
+
 // Medium screens
 @media all and (min-width: 800px) {
   #flight-mode {
@@ -12,23 +40,5 @@ main {
     grid-template-areas:
       "content aside"
       "footer aside";
-
-    .main {
-      grid-area: content;
-    }
-
-    .footer {
-      grid-area: footer;
-    }
-
-    .aside {
-      grid-area: aside;
-    }
-
-    .flight-mode-tab {
-      display: block;
-      height: 100%;
-      padding-bottom: 1em;
-    }
   }
 }

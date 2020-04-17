@@ -1,10 +1,14 @@
 .equidistant-circle {
-  fill: none;
   stroke: black;
-  stroke-width: 1;
+  stroke-width: 0.1;
+  opacity: 50%;
 }
 
 .directions text {
   font-size: 1rem;
   text-anchor: middle;
+}
+
+.circle-group {
+  transform: scale(0.9) translateX(5%) translateY(5%);
 }

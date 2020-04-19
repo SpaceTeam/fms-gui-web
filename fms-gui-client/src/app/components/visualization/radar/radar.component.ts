@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core';
 import {PositionService} from '../../../shared/services/visualization/position/position.service';
 import {RadarForm} from '../../../shared/forms/radar.form';
 
@@ -14,15 +14,14 @@ import {ResizeObserver} from 'resize-observer';
   styleUrls: ['./radar.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class RadarComponent implements OnInit {
+export class RadarComponent implements OnInit, OnDestroy {
 
   @Input()
   private id: string;
 
   private numOfCircles: number;
   private margin = 10;
-
-  // TODO: Use the positioning behaviour of the dots from the "flight-direction" and "flight-position" components
+  private resizeObserver: ResizeObserver;
 
   // TODO: Move the radarform to the flight configuration component
   constructor(private positionService: PositionService, public radarForm: RadarForm, private brushService: BrushService) {
@@ -31,13 +30,13 @@ export class RadarComponent implements OnInit {
 
   ngOnInit() {
     this.createRadar();
+    this.listenToResize();
+  }
 
-    const resizeObserver = new ResizeObserver(() => {
-      // TODO: Find a better solution than removing all elements and then readding them in the correct size
-      d3.select(`#${this.id}`).selectAll('*').remove();
-      this.createRadar();
-    });
-    resizeObserver.observe(document.querySelector('body'));
+  ngOnDestroy(): void {
+    if (this.resizeObserver) {
+      this.resizeObserver.unobserve(document.querySelector('body'));
+    }
   }
 
   private createRadar(): void {
@@ -48,6 +47,16 @@ export class RadarComponent implements OnInit {
 
     this.addEquidistantCircles();
     // this.addDirections();
+  }
+
+  private listenToResize(): void {
+    const resizeObserver = new ResizeObserver(() => {
+      d3.select(`#${this.id}-container`)
+        .style('width', 0)
+        .style('height', 0);
+      RadarUtil.scaleToSquare(`#${this.id}-container`, RadarUtil.getRadarSize(`#${this.id}`));
+    });
+    resizeObserver.observe(document.querySelector('body'));
   }
 
   /**

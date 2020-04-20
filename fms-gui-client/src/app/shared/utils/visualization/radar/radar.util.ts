@@ -46,14 +46,14 @@ export namespace RadarUtil {
   }
 
   /**
-   * Returns the minimum of the width or height of the element with the given id
+   * Returns the minimum side length of the element (minimum of the width or height of the element with the given selector)
    * @param cssSelector the selector for selecting the element (e.g. '#elem')
    */
-  export function getRadarSize(cssSelector: string): number {
+  export function getMinimumSideLength(cssSelector: string): number {
     const container = d3.select(cssSelector);
     const width = Number(container.style('width').slice(0, -2));
     const height = Number(container.style('height').slice(0, -2));
 
-    return width < height ? width : height;
+    return Math.min(width, height);
   }
 }

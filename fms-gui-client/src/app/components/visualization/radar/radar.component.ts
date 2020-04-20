@@ -20,10 +20,10 @@ export class RadarComponent implements OnInit, OnDestroy {
   private id: string;
 
   private numOfCircles: number;
-  private margin = 10;
   private resizeObserver: ResizeObserver;
 
   // TODO: Move the radarform to the flight configuration component
+  // TODO: Move the positionService to the components including the radar
   constructor(private positionService: PositionService, public radarForm: RadarForm, private brushService: BrushService) {
     this.numOfCircles = environment.visualization.radar.equidistant.circles;
   }
@@ -39,6 +39,9 @@ export class RadarComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Creates the radar and all its components (e.g. the equidistant circles and directions)
+   */
   private createRadar(): void {
     this.createRadarContainer();
 
@@ -46,15 +49,19 @@ export class RadarComponent implements OnInit, OnDestroy {
     this.createRadarSVG();
 
     this.addEquidistantCircles();
-    // this.addDirections();
+    this.addDirections();
+    this.addAxis();
   }
 
+  /**
+   * Checks if the browser gets resized and adjusts the container size according to the new available width and height
+   */
   private listenToResize(): void {
     const resizeObserver = new ResizeObserver(() => {
       d3.select(`#${this.id}-container`)
         .style('width', 0)
         .style('height', 0);
-      RadarUtil.scaleToSquare(`#${this.id}-container`, RadarUtil.getRadarSize(`#${this.id}`));
+      RadarUtil.scaleToSquare(`#${this.id}-container`, RadarUtil.getMinimumSideLength(`#${this.id}`));
     });
     resizeObserver.observe(document.querySelector('body'));
   }
@@ -67,7 +74,7 @@ export class RadarComponent implements OnInit, OnDestroy {
       .append('div')
       .attr('id', `${this.id}-container`);
 
-    RadarUtil.scaleToSquare(`#${this.id}-container`, RadarUtil.getRadarSize(`#${this.id}`));
+    RadarUtil.scaleToSquare(`#${this.id}-container`, RadarUtil.getMinimumSideLength(`#${this.id}`));
   }
 
   /**
@@ -76,8 +83,10 @@ export class RadarComponent implements OnInit, OnDestroy {
   private createRadarSVG(): void {
     d3.select(`#${this.id}-container`)
       .append('svg')
+      .attr('viewBox', '0 0 100 100')
+      .append('g')
       .attr('id', `${this.id}-g`)
-      .attr('viewBox', '0 0 100 100');
+      .classed('radar-group', true);
   }
 
   /**
@@ -103,35 +112,54 @@ export class RadarComponent implements OnInit, OnDestroy {
    * Adds the north, west, south, east directions to the radar
    */
   private addDirections(): void {
-    const xAxisLabels = ['W', 'E'];
-    const yAxisLabels = ['N', 'S'];
-    const axisWidth = 100;
-
-    const scaleX = d3.scalePoint()
-      .domain(xAxisLabels)
-      .range([0, axisWidth]);
-
-    const scaleY = d3.scalePoint()
-      .domain(yAxisLabels)
-      .range([0, axisWidth]);
-
-    const directions = d3.select(`#${this.id}-g`)
+    d3.select(`#${this.id}-g`)
       .append('g')
       .attr('id', `${this.id}-directions`)
-      .classed('directions', true);
-
-    // x axis
-    directions.append('g')
-      .attr('transform', `translate(${this.margin}, ${50})`)
-      .call(d3.axisBottom(scaleX).tickSize(0))
-      .select('.domain')
-      .remove();
-
-    // y axis
-    directions.append('g')
-      .attr('transform', `translate(${50}, ${this.margin})`)
-      .call(d3.axisLeft(scaleY).tickSize(0))
-      .select('.domain')
-      .remove();
+      .classed('direction-group', true)
+      .selectAll('text')
+      .data(environment.visualization.radar.directions)
+      .enter()
+      .append('text')
+      .attr('x', d => d.x)
+      .attr('y', d => d.y)
+      .text(d => d.direction);
   }
+
+  /**
+   * Adds the x- and y-axis, as well as a diagonal, which might get labeled by the components, which include the radar
+   */
+  private addAxis(): void {
+    const axisGroup = d3.select(`#${this.id}-g`)
+      .append('g');
+
+    // We need to create an intermediate scale, so that the axis can be created
+    const scale = d3.scaleLinear();
+
+    // Create the x-axis
+    axisGroup
+      .append('g')
+      .attr('id', `${this.id}-axis-x`)
+      .classed('axis', true)
+      .classed('x-axis', true)
+      .call(d3.axisBottom(scale).tickSize(0).tickValues([]));
+
+    // Create the y-axis
+    axisGroup
+      .append('g')
+      .attr('id', `${this.id}-axis-y`)
+      .classed('axis', true)
+      .classed('y-axis', true)
+      .call(d3.axisLeft(scale).tickSize(0).tickValues([]));
+
+    // Create the diagonal axis
+    axisGroup
+      .append('g')
+      .attr('id', `${this.id}-axis-diagonal`)
+      .classed('axis', true)
+      .classed('diagonal-axis', true)
+      .call(d3.axisBottom(scale).tickSize(0).tickValues([]))
+      .select('.domain').remove();
+  }
+
+  // TODO: Create setter for the x-axis, y-axis and diagonal axis
 }

@@ -160,7 +160,7 @@ describe('RadarUtil', () => {
         .style('height', `${height}px`);
 
       // Execute
-      const result = RadarUtil.getRadarSize(selector);
+      const result = RadarUtil.getMinimumSideLength(selector);
 
       // Verify
       expect(result).toEqual(expected);
@@ -176,7 +176,7 @@ describe('RadarUtil', () => {
         .style('height', `${height}px`);
 
       // Execute
-      const result = RadarUtil.getRadarSize(selector);
+      const result = RadarUtil.getMinimumSideLength(selector);
 
       // Verify
       expect(result).toEqual(expected);
@@ -190,7 +190,7 @@ describe('RadarUtil', () => {
         .style('height', `${expected}px`);
 
       // Execute
-      const result = RadarUtil.getRadarSize(selector);
+      const result = RadarUtil.getMinimumSideLength(selector);
 
       // Verify
       expect(result).toEqual(expected);

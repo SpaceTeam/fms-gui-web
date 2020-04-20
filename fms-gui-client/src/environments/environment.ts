@@ -8,7 +8,7 @@ export const environment = {
     timestamp: 'status/FMSTimestamp'
   },
   production: false,
-  server : {
+  server: {
     secure: false,
     host: 'localhost',
     port: 9000,
@@ -24,6 +24,28 @@ export const environment = {
       equidistant: {
         circles: 5
       },
+      directions: [
+        {
+          direction: 'N',
+          x: 50,
+          y: 0
+        },
+        {
+          direction: 'S',
+          x: 50,
+          y: 100
+        },
+        {
+          direction: 'W',
+          x: 0,
+          y: 50
+        },
+        {
+          direction: 'E',
+          x: 100,
+          y: 50
+        }
+      ],
       position: {
         center: {
           longitude: 50,

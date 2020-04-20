@@ -1,14 +1,33 @@
-.equidistant-circle {
+.radar-group {
+  transform: scale(0.9) translateX(5%) translateY(5%);
+}
+
+.equidistant-circle, .axis {
   stroke: black;
   stroke-width: 0.1;
   opacity: 50%;
 }
 
-.directions text {
-  font-size: 1rem;
-  text-anchor: middle;
+.direction-group {
+  text {
+    font-size: 0.5em;
+    text-anchor: middle;
+    dominant-baseline: central;
+  }
 }
 
-.circle-group {
-  transform: scale(0.9) translateX(5%) translateY(5%);
+.axis {
+  font-size: 0.2em;
+}
+
+.x-axis {
+  transform: translateY(50%);
+}
+
+.y-axis {
+  transform: translateX(50%);
+}
+
+.diagonal-axis {
+  transform: translateY(50%) translateX(50%) rotateZ(-45deg);
 }

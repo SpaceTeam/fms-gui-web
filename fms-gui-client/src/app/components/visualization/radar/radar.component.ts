@@ -1,5 +1,4 @@
 import {Component, Input, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core';
-import {PositionService} from '../../../shared/services/visualization/position/position.service';
 import {RadarForm} from '../../../shared/forms/radar.form';
 
 import * as d3 from 'd3';
@@ -7,6 +6,7 @@ import {BrushService} from '../../../shared/services/visualization/brush/brush.s
 import {environment} from '../../../../environments/environment';
 import {RadarUtil} from '../../../shared/utils/visualization/radar/radar.util';
 import {ResizeObserver} from 'resize-observer';
+import {AxisEnum} from '../../../shared/enums/axis.enum';
 
 @Component({
   selector: 'app-radar',
@@ -23,8 +23,7 @@ export class RadarComponent implements OnInit, OnDestroy {
   private resizeObserver: ResizeObserver;
 
   // TODO: Move the radarform to the flight configuration component
-  // TODO: Move the positionService to the components including the radar
-  constructor(private positionService: PositionService, public radarForm: RadarForm, private brushService: BrushService) {
+  constructor(public radarForm: RadarForm, private brushService: BrushService) {
     this.numOfCircles = environment.visualization.radar.equidistant.circles;
   }
 
@@ -50,7 +49,7 @@ export class RadarComponent implements OnInit, OnDestroy {
 
     this.addEquidistantCircles();
     this.addDirections();
-    this.addAxis();
+    this.addAxisGroups();
   }
 
   /**
@@ -126,40 +125,43 @@ export class RadarComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Adds the x- and y-axis, as well as a diagonal, which might get labeled by the components, which include the radar
+   * Adds the x- and y-, and diagonal axis groups
+   * The components, which use the radar, can then add their own axis
    */
-  private addAxis(): void {
+  private addAxisGroups(): void {
     const axisGroup = d3.select(`#${this.id}-g`)
-      .append('g');
+      .append('g')
+      .attr('id', `${this.id}-axis-group`);
 
-    // We need to create an intermediate scale, so that the axis can be created
-    const scale = d3.scaleLinear();
-
-    // Create the x-axis
+    // Create the x-axis group
     axisGroup
       .append('g')
-      .attr('id', `${this.id}-axis-x`)
+      .attr('id', `${this.id}-${AxisEnum.X_AXIS}`)
       .classed('axis', true)
-      .classed('x-axis', true)
-      .call(d3.axisBottom(scale).tickSize(0).tickValues([]));
+      .classed('x-axis', true);
 
-    // Create the y-axis
+    // Create the y-axis group
     axisGroup
       .append('g')
-      .attr('id', `${this.id}-axis-y`)
+      .attr('id', `${this.id}-${AxisEnum.Y_AXIS}`)
       .classed('axis', true)
-      .classed('y-axis', true)
-      .call(d3.axisLeft(scale).tickSize(0).tickValues([]));
+      .classed('y-axis', true);
 
-    // Create the diagonal axis
+    // Create the diagonal axis group
     axisGroup
       .append('g')
-      .attr('id', `${this.id}-axis-diagonal`)
+      .attr('id', `${this.id}-${AxisEnum.DIAGONAL_AXIS}`)
       .classed('axis', true)
-      .classed('diagonal-axis', true)
-      .call(d3.axisBottom(scale).tickSize(0).tickValues([]))
-      .select('.domain').remove();
+      .classed('diagonal-axis', true);
   }
 
-  // TODO: Create setter for the x-axis, y-axis and diagonal axis
+  /**
+   * Calls the given axis on the axis group with the given id
+   *
+   * @param axis the axis to be called on the axis-group
+   * @param axisEnum the selector of the axis group
+   */
+  setAxis(axis: d3.Axis<any>, axisEnum: AxisEnum): void {
+    d3.select(`#${this.id}-${axisEnum}`).call(axis);
+  }
 }

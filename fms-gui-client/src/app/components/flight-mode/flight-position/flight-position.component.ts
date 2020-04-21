@@ -35,7 +35,7 @@ export class FlightPositionComponent implements AfterViewInit {
     const numOfTicks = environment.visualization.radar.equidistant.circles * 2;
 
     this.latitudeScale = d3.scaleLinear()
-      .domain([-90, 90])
+      .domain([90, -90])
       .range([0, 100]);
 
     this.longitudeScale = d3.scaleLinear()

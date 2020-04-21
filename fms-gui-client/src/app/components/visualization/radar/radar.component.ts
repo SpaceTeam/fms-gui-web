@@ -102,7 +102,7 @@ export class RadarComponent implements OnInit, OnDestroy {
       .append('circle')
       .attr('cx', '50%')
       .attr('cy', '50%')
-      .attr('r', d => d)
+      .attr('r', d => d - 0.05) // We need to subtract half of the stroke-width so that it fits the svg perfectly
       .style('fill', (d, i) => RadarUtil.calculateCircleFill(i, this.numOfCircles))
       .classed('equidistant-circle', true);
   }
@@ -134,18 +134,32 @@ export class RadarComponent implements OnInit, OnDestroy {
       .attr('id', `${this.id}-axis-group`);
 
     // Create the x-axis group
-    axisGroup
+    const xAxis = axisGroup
       .append('g')
       .attr('id', `${this.id}-${AxisEnum.X_AXIS}`)
       .classed('axis', true)
       .classed('x-axis', true);
 
+    // Append the correct domain line
+    xAxis.append('line')
+      .attr('x1', 0)
+      .attr('x2', 100)
+      .attr('y1', 0)
+      .attr('y2', 0);
+
     // Create the y-axis group
-    axisGroup
+    const yAxis = axisGroup
       .append('g')
       .attr('id', `${this.id}-${AxisEnum.Y_AXIS}`)
       .classed('axis', true)
       .classed('y-axis', true);
+
+    // Append the correct domain line
+    yAxis.append('line')
+      .attr('x1', 0)
+      .attr('x2', 0)
+      .attr('y1', 0)
+      .attr('y2', 100);
 
     // Create the diagonal axis group
     axisGroup
@@ -162,6 +176,8 @@ export class RadarComponent implements OnInit, OnDestroy {
    * @param axisEnum the selector of the axis group
    */
   setAxis(axis: d3.Axis<any>, axisEnum: AxisEnum): void {
-    d3.select(`#${this.id}-${axisEnum}`).call(axis);
+    d3.select(`#${this.id}-${axisEnum}`)
+      .call(axis)
+      .select('.domain').remove();
   }
 }

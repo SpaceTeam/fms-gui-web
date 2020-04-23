@@ -56,4 +56,27 @@ export namespace RadarUtil {
 
     return Math.min(width, height);
   }
+
+  /**
+   * Adjusts the range of the radar
+   * @param radius the radius of a new position
+   * @param range the current range of the radar
+   * @param numOfCircles the number of equidistant circles displayed in the radar
+   * @param rangeMultiplier the multiplier used for adjusting the range
+   */
+  export function adjustRange(radius: number, range: number, numOfCircles: number, rangeMultiplier: number): number {
+    // If the radius is too close to the center, we want to adjust the radar make the distances between the circles smaller
+    let adjustRadarThreshold = (range / numOfCircles) * 0.5;
+    while (radius < adjustRadarThreshold) {
+      range /= rangeMultiplier;
+      adjustRadarThreshold = (range / numOfCircles) * 0.5;
+    }
+
+    // If the radius is outside the range, we need to increase the radar range and make the distances between the circles larger
+    while (radius > range) {
+      range *= rangeMultiplier;
+    }
+
+    return range;
+  }
 }

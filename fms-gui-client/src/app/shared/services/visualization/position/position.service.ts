@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {Position} from '../../../model/flight/position';
 import {FmsDataService} from '../../fms-data/fms-data.service';
 
@@ -12,10 +12,10 @@ import {FmsDataService} from '../../fms-data/fms-data.service';
 export class PositionService {
 
   // Observable Position resource
-  private positionAnnounceSource;
+  private positionAnnounceSource: Subject<Position>;
 
   // Observable Position stream
-  positionAnnounced$;
+  positionAnnounced$: Observable<Position>;
 
   constructor(private fmsDataService: FmsDataService) {
     this.positionAnnounceSource = new Subject<Position>();

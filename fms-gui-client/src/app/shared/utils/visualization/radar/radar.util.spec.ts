@@ -196,4 +196,76 @@ describe('RadarUtil', () => {
       expect(result).toEqual(expected);
     });
   });
+  describe('.adjustRange', () => {
+    it('should do nothing, if the new position is inside the range', () => {
+      // Setup
+      const radius = 50;
+      const range = 100;
+      const numOfCircles = 5;
+      const multiplier = 10;
+      const expected = range;
+
+      // Execute
+      const result = RadarUtil.adjustRange(radius, range, numOfCircles, multiplier);
+
+      // Verify
+      expect(result).toEqual(expected);
+    });
+    it('should adjust the range, if the new position is too close to the center', () => {
+      // Setup
+      const radius = 8;
+      const range = 100;
+      const numOfCircles = 5;
+      const multiplier = 10;
+      const expected = range / multiplier; // in this case simply 10
+
+      // Execute
+      const result = RadarUtil.adjustRange(radius, range, numOfCircles, multiplier);
+
+      // Verify
+      expect(result).toEqual(expected);
+    });
+    it('should adjust the range, if the new position is outside of the range', () => {
+      // Setup
+      const radius = 110;
+      const range = 100;
+      const numOfCircles = 5;
+      const multiplier = 10;
+      const expected = range * multiplier;  // In this case simply 1000
+
+      // Execute
+      const result = RadarUtil.adjustRange(radius, range, numOfCircles, multiplier);
+
+      // Verify
+      expect(result).toEqual(expected);
+    });
+    it('should adjust the range as long as the new position is too close to the center', () => {
+      // Setup
+      const radius = 8;
+      const range = 1000;
+      const numOfCircles = 5;
+      const multiplier = 10;
+      const expected = range / Math.pow(multiplier, 2); // in this case simply 10 (first scale down to 100, then to 10)
+
+      // Execute
+      const result = RadarUtil.adjustRange(radius, range, numOfCircles, multiplier);
+
+      // Verify
+      expect(result).toEqual(expected);
+    });
+    it('should adjust the range as long as the new position is too close to the center', () => {
+      // Setup
+      const radius = 20000;
+      const range = 100;
+      const numOfCircles = 5;
+      const multiplier = 10;
+      const expected = range * Math.pow(multiplier, 3); // in this case simply 100000 (first scale up to 1000, then 10000, and 10000)
+
+      // Execute
+      const result = RadarUtil.adjustRange(radius, range, numOfCircles, multiplier);
+
+      // Verify
+      expect(result).toEqual(expected);
+    });
+  });
 });

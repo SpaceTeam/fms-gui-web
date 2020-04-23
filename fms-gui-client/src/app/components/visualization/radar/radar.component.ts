@@ -1,12 +1,11 @@
 import {Component, Input, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core';
-import {RadarForm} from '../../../shared/forms/radar.form';
 
 import * as d3 from 'd3';
-import {BrushService} from '../../../shared/services/visualization/brush/brush.service';
 import {environment} from '../../../../environments/environment';
 import {RadarUtil} from '../../../shared/utils/visualization/radar/radar.util';
 import {ResizeObserver} from 'resize-observer';
 import {AxisEnum} from '../../../shared/enums/axis.enum';
+import {Position} from '../../../shared/model/flight/position';
 
 @Component({
   selector: 'app-radar',
@@ -18,13 +17,9 @@ export class RadarComponent implements OnInit, OnDestroy {
 
   @Input()
   private id: string;
-
-  private numOfCircles: number;
   private resizeObserver: ResizeObserver;
 
-  // TODO: Move the radarform to the flight configuration component
-  constructor(public radarForm: RadarForm, private brushService: BrushService) {
-    this.numOfCircles = environment.visualization.radar.equidistant.circles;
+  constructor() {
   }
 
   ngOnInit() {
@@ -47,9 +42,13 @@ export class RadarComponent implements OnInit, OnDestroy {
     // Append the SVG object to the body of the page
     this.createRadarSVG();
 
-    this.addEquidistantCircles();
+    // Add the default number of equidistant circles to the radar
+    this.addEquidistantCircleGroup();
+    this.updateNumberOfEquidistantCircles(environment.visualization.radar.equidistant.circles);
+
     this.addDirections();
     this.addAxisGroups();
+    this.addCircleGroup();
   }
 
   /**
@@ -91,20 +90,11 @@ export class RadarComponent implements OnInit, OnDestroy {
   /**
    * Adds the equidistant circles
    */
-  private addEquidistantCircles(): void {
+  private addEquidistantCircleGroup(): void {
     d3.select(`#${this.id}-g`)
       .append('g')
       .attr('id', `${this.id}-equidistant-circles`)
-      .classed('circle-group', true)
-      .selectAll('circle')
-      .data(RadarUtil.calculateEquidistantCircleRadii(this.numOfCircles).reverse())
-      .enter()
-      .append('circle')
-      .attr('cx', '50%')
-      .attr('cy', '50%')
-      .attr('r', d => d - 0.05) // We need to subtract half of the stroke-width so that it fits the svg perfectly
-      .style('fill', (d, i) => RadarUtil.calculateCircleFill(i, this.numOfCircles))
-      .classed('equidistant-circle', true);
+      .classed('circle-group', true);
   }
 
   /**
@@ -170,6 +160,15 @@ export class RadarComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Adds the group for the position circles and their links
+   */
+  private addCircleGroup(): void {
+    d3.select(`#${this.id}-g`)
+      .append('g')
+      .attr('id', `${this.id}-circles`);
+  }
+
+  /**
    * Calls the given axis on the axis group with the given id
    *
    * @param axis the axis to be called on the axis-group
@@ -179,5 +178,82 @@ export class RadarComponent implements OnInit, OnDestroy {
     d3.select(`#${this.id}-${axisEnum}`)
       .call(axis)
       .select('.domain').remove();
+  }
+
+  /**
+   * Toggles the display of the given axis
+   * @param axisEnum the selector of the axis group
+   */
+  toggleAxisDisplay(axisEnum: AxisEnum): void {
+    const axis = d3.select(`#${this.id}-${axisEnum}`);
+    axis.classed('d-none', !axis.classed('d-none'));
+  }
+
+  /**
+   * Draws the given positions and their links on the radar
+   * @param positions an array of positions
+   */
+  drawPositions(positions: Array<Position>): void {
+    this.drawDots(positions);
+    this.drawLinks(positions);
+  }
+
+  /**
+   * Draws the position dots on the radar
+   * @param positions an array of positions
+   */
+  private drawDots(positions: Array<Position>): void {
+    // TODO: Implement the correct positioning and color fill for the dots
+    d3.select(`#${this.id}-circles`)
+      .selectAll('circle')
+      .data(positions)
+      .enter()
+      .append('circle')
+      .attr('r', 1)
+      .attr('cx', 60)
+      .attr('cy', 60)
+      .attr('fill', 'black');
+  }
+
+  /**
+   * Draws the connecting lines between the dots on the radar
+   * @param positions an array of positions
+   */
+  private drawLinks(positions: Array<Position>): void {
+    // TODO: Implement me
+  }
+
+  /**
+   * Adjusts the number of displayed equidistant circles
+   * This method does not update any axis
+   * @param numOfCircles the number of equidistant circles to be displayed
+   */
+  updateNumberOfEquidistantCircles(numOfCircles: number): void {
+    const arr = RadarUtil.calculateEquidistantCircleRadii(numOfCircles).reverse();
+    const selector = `#${this.id}-equidistant-circles`;
+
+    // Append circles, if needed
+    d3.select(selector)
+      .selectAll('circle')
+      .data(arr)
+      .enter()
+      .append('circle');
+
+    // Remove unnecessary circles
+    d3.select(selector)
+      .selectAll('circle')
+      .data(arr)
+      .exit()
+      .remove();
+
+    // Adjust values
+    d3.select(selector)
+      .selectAll('circle')
+      .data(arr)
+      .attr('cx', '50%')
+      .attr('cy', '50%')
+      .attr('r', d => d - 0.05) // We need to subtract half of the stroke-width so that it fits the svg perfectly
+      .style('fill', (d, i) => RadarUtil.calculateCircleFill(i, numOfCircles))
+      .classed('equidistant-circle', true);
   }
 }

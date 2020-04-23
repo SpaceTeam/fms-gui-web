@@ -1,8 +1,9 @@
-import {AfterViewInit, Component, ViewChild} from '@angular/core';
-import * as d3 from 'd3';
+import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {PositionService} from '../../../shared/services/visualization/position/position.service';
 import {RadarComponent} from '../../visualization/radar/radar.component';
-import {AxisEnum} from '../../../shared/enums/axis.enum';
+import {Subscription} from 'rxjs';
+import {BrushService} from '../../../shared/services/visualization/brush/brush.service';
+import {Position} from '../../../shared/model/flight/position';
 import {environment} from '../../../../environments/environment';
 
 @Component({
@@ -10,52 +11,48 @@ import {environment} from '../../../../environments/environment';
   templateUrl: './flight-position.component.html',
   styleUrls: ['./flight-position.component.scss']
 })
-export class FlightPositionComponent implements AfterViewInit {
+export class FlightPositionComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChild(RadarComponent)
   private radar: RadarComponent;
 
-  private latitudeScale: d3.ScaleLinear<number, number>;
-  private longitudeScale: d3.ScaleLinear<number, number>;
-  private xAxis: d3.Axis<any>;
-  private yAxis: d3.Axis<any>;
+  private subscriptions: Array<Subscription>;
+  private center: Position;
+  private range: number;
+  private rangeMultiplier: number;
+  private minimumRange: number;
+  private numOfCircles: number;
 
-  constructor(private positionService: PositionService) {
+  constructor(private positionService: PositionService, private brushService: BrushService) {
+    this.subscriptions = [];
+    this.subscribeToPositionChange();
+
+    const center = environment.visualization.radar.position.center;
+    this.center = new Position(center.longitude, center.latitude);
+
+    this.range = environment.visualization.radar.position.range.defaultValue;
+    this.rangeMultiplier = environment.visualization.radar.position.range.multiplier;
+    this.minimumRange = environment.visualization.radar.position.range.min;
+    this.numOfCircles = environment.visualization.radar.equidistant.circles;
+  }
+
+  ngOnInit(): void {
   }
 
   ngAfterViewInit(): void {
-    this.initScalesAndAxis();
-    this.setAxis();
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
   /**
-   * Initializes the scales, which are used for the positioning of the dots
+   * Subscribes to a change of the position, sent by the FMS
+   * As soon as the position changes, we want to recalculate the position on the radar
    */
-  private initScalesAndAxis(): void {
-    const numOfTicks = environment.visualization.radar.equidistant.circles * 2;
-
-    this.latitudeScale = d3.scaleLinear()
-      .domain([90, -90])
-      .range([0, 100]);
-
-    this.longitudeScale = d3.scaleLinear()
-      .domain([-180, 180])
-      .range([0, 100]);
-
-    this.xAxis = d3.axisBottom(this.longitudeScale)
-      .tickSize(0)
-      .ticks(numOfTicks);
-
-    this.yAxis = d3.axisLeft(this.latitudeScale)
-      .tickSize(0)
-      .ticks(numOfTicks);
-  }
-
-  /**
-   * Sets the axis for the flight-position component
-   */
-  private setAxis(): void {
-    this.radar.setAxis(this.xAxis, AxisEnum.X_AXIS);
-    this.radar.setAxis(this.yAxis, AxisEnum.Y_AXIS);
+  private subscribeToPositionChange(): void {
+    const lastPositionSubscription = this.positionService.positionAnnounced$
+      .subscribe(position => this.radar.drawPositions([position]));
+    this.subscriptions.push(lastPositionSubscription);
   }
 }

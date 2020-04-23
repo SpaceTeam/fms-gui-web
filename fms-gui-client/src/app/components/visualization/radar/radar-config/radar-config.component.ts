@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import {RadarForm} from '../../shared/forms/radar.form';
+import {RadarForm} from '../../../../shared/forms/radar.form';
 
-// TODO: Create a RadarUtil, which handles the interaction between the config, brush and radar
+// TODO: Create a RadarService, which handles the interaction between the config, brush and radar
 @Component({
   selector: 'app-radar-config',
   templateUrl: './radar-config.component.html',

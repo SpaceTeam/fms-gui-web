@@ -31,10 +31,35 @@ export namespace PositionUtil {
 
   /**
    * Returns a point which provides the normalized direction from the start to the end position
+   * Max. number of decimal places: 3
+   *
    * @param start the start position
    * @param end the end position
    */
   export function getNormalizedDirection(start: Position, end: Position): Point {
-    return null;
+    const diff = new Point(end.longitude - start.longitude, end.latitude - start.latitude);
+    const length = Math.sqrt(Math.pow(diff.x, 2) + Math.pow(diff.y, 2));
+
+    diff.x = length !== 0 ? diff.x / length : 0;
+    diff.y = length !== 0 ? diff.y / length : 0;
+
+    // Round coordinates to 3 decimal places
+    const decimalPlaces = 3;
+    diff.x = roundToDecimalPlaces(diff.x, decimalPlaces);
+    diff.y = roundToDecimalPlaces(diff.y, decimalPlaces);
+
+    return diff;
+  }
+
+  /**
+   * Returns a number with maximum 'decimalPlaces' decimal places
+   * E.g. 0.44444 should be 'rounded' to 0.444, if 'decimalPlaces' is 3
+   *
+   * @param num the number to be rounded
+   * @param decimalPlaces the maximum number of decimal places allowed
+   */
+  export function roundToDecimalPlaces(num: number, decimalPlaces: number): number {
+    const precision = Math.pow(10, decimalPlaces);
+    return Math.round(num * precision) / precision;
   }
 }

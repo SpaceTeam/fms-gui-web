@@ -5,7 +5,7 @@ import {environment} from '../../../../environments/environment';
 import {RadarUtil} from '../../../shared/utils/visualization/radar/radar.util';
 import {ResizeObserver} from 'resize-observer';
 import {AxisEnum} from '../../../shared/enums/axis.enum';
-import {Position} from '../../../shared/model/flight/position';
+import {Point} from '../../../shared/model/point.model';
 
 @Component({
   selector: 'app-radar',
@@ -19,7 +19,16 @@ export class RadarComponent implements OnInit, OnDestroy {
   private id: string;
   private resizeObserver: ResizeObserver;
 
+  private readonly containerId: string;
+  private readonly svgId: string;
+  private readonly equidistantCirclesId: string;
+  private readonly axisId: string;
+
   constructor() {
+    this.containerId = `${this.id}-container`;
+    this.svgId = `${this.id}-g`;
+    this.equidistantCirclesId = `${this.id}-equidistant-circles`;
+    this.axisId = `${this.id}-axis`;
   }
 
   ngOnInit() {
@@ -56,10 +65,10 @@ export class RadarComponent implements OnInit, OnDestroy {
    */
   private listenToResize(): void {
     const resizeObserver = new ResizeObserver(() => {
-      d3.select(`#${this.id}-container`)
+      d3.select(`#${this.containerId}`)
         .style('width', 0)
         .style('height', 0);
-      RadarUtil.scaleToSquare(`#${this.id}-container`, RadarUtil.getMinimumSideLength(`#${this.id}`));
+      RadarUtil.scaleToSquare(`#${this.containerId}`, RadarUtil.getMinimumSideLength(`#${this.id}`));
     });
     resizeObserver.observe(document.querySelector('body'));
   }
@@ -70,20 +79,20 @@ export class RadarComponent implements OnInit, OnDestroy {
   private createRadarContainer(): void {
     d3.select(`#${this.id}`)
       .append('div')
-      .attr('id', `${this.id}-container`);
+      .attr('id', `${this.containerId}`);
 
-    RadarUtil.scaleToSquare(`#${this.id}-container`, RadarUtil.getMinimumSideLength(`#${this.id}`));
+    RadarUtil.scaleToSquare(`#${this.containerId}`, RadarUtil.getMinimumSideLength(`#${this.id}`));
   }
 
   /**
    * Creates the SVG, which is added to the component, and creates the container for the radar
    */
   private createRadarSVG(): void {
-    d3.select(`#${this.id}-container`)
+    d3.select(`#${this.containerId}`)
       .append('svg')
       .attr('viewBox', '0 0 100 100')
       .append('g')
-      .attr('id', `${this.id}-g`)
+      .attr('id', `${this.svgId}`)
       .classed('radar-group', true);
   }
 
@@ -91,9 +100,9 @@ export class RadarComponent implements OnInit, OnDestroy {
    * Adds the equidistant circles
    */
   private addEquidistantCircleGroup(): void {
-    d3.select(`#${this.id}-g`)
+    d3.select(`#${this.svgId}`)
       .append('g')
-      .attr('id', `${this.id}-equidistant-circles`)
+      .attr('id', `${this.equidistantCirclesId}`)
       .classed('circle-group', true);
   }
 
@@ -101,7 +110,7 @@ export class RadarComponent implements OnInit, OnDestroy {
    * Adds the north, west, south, east directions to the radar
    */
   private addDirections(): void {
-    d3.select(`#${this.id}-g`)
+    d3.select(`#${this.svgId}`)
       .append('g')
       .attr('id', `${this.id}-directions`)
       .classed('direction-group', true)
@@ -119,51 +128,35 @@ export class RadarComponent implements OnInit, OnDestroy {
    * The components, which use the radar, can then add their own axis
    */
   private addAxisGroups(): void {
-    const axisGroup = d3.select(`#${this.id}-g`)
+    d3.select(`#${this.svgId}`)
       .append('g')
-      .attr('id', `${this.id}-axis-group`);
+      .attr('id', `${this.axisId}`);
 
-    // Create the x-axis group
-    const xAxis = axisGroup
+    this.createAxisGroup(AxisEnum.X_AXIS, {x1: 0, x2: 100, y1: 0, y2: 0});
+    this.createAxisGroup(AxisEnum.Y_AXIS, {x1: 0, x2: 0, y1: 0, y2: 100});
+    this.createAxisGroup(AxisEnum.DIAGONAL_AXIS, {x1: 0, x2: 0, y1: 0, y2: 0});
+  }
+
+  private createAxisGroup(axisEnum: AxisEnum, linePositions: {x1: number, x2: number, y1: number, y2: number}): void {
+    const axis = d3.select(`#${this.axisId}`)
       .append('g')
-      .attr('id', `${this.id}-${AxisEnum.X_AXIS}`)
+      .attr('id', `${this.id}-${axisEnum}`)
       .classed('axis', true)
-      .classed('x-axis', true);
+      .classed(axisEnum, true);
 
     // Append the correct domain line
-    xAxis.append('line')
-      .attr('x1', 0)
-      .attr('x2', 100)
-      .attr('y1', 0)
-      .attr('y2', 0);
-
-    // Create the y-axis group
-    const yAxis = axisGroup
-      .append('g')
-      .attr('id', `${this.id}-${AxisEnum.Y_AXIS}`)
-      .classed('axis', true)
-      .classed('y-axis', true);
-
-    // Append the correct domain line
-    yAxis.append('line')
-      .attr('x1', 0)
-      .attr('x2', 0)
-      .attr('y1', 0)
-      .attr('y2', 100);
-
-    // Create the diagonal axis group
-    axisGroup
-      .append('g')
-      .attr('id', `${this.id}-${AxisEnum.DIAGONAL_AXIS}`)
-      .classed('axis', true)
-      .classed('diagonal-axis', true);
+    axis.append('line')
+      .attr('x1', linePositions.x1)
+      .attr('x2', linePositions.x2)
+      .attr('y1', linePositions.y1)
+      .attr('y2', linePositions.y2);
   }
 
   /**
    * Adds the group for the position circles and their links
    */
   private addCircleGroup(): void {
-    d3.select(`#${this.id}-g`)
+    d3.select(`#${this.svgId}`)
       .append('g')
       .attr('id', `${this.id}-circles`);
   }
@@ -171,13 +164,29 @@ export class RadarComponent implements OnInit, OnDestroy {
   /**
    * Calls the given axis on the axis group with the given id
    *
-   * @param axis the axis to be called on the axis-group
    * @param axisEnum the selector of the axis group
+   * @param scale a d3 scale to be used for the given axis
+   * @param ticks the number of ticks to be displayed on the axis
    */
-  setAxis(axis: d3.Axis<any>, axisEnum: AxisEnum): void {
+  setAxis(axisEnum: AxisEnum, scale: d3.AxisScale<d3.AxisDomain>, ticks: number): void {
     d3.select(`#${this.id}-${axisEnum}`)
-      .call(axis)
+      .call(this.createAxis(axisEnum, scale, ticks))
       .select('.domain').remove();
+  }
+
+  private createAxis(axisEnum: AxisEnum, scale: d3.AxisScale<d3.AxisDomain>, ticks: number): d3.Axis<any> {
+    let axis;
+    switch (axisEnum) {
+      case AxisEnum.X_AXIS:
+        axis = d3.axisBottom(scale);
+        break;
+      case AxisEnum.Y_AXIS:
+        axis = d3.axisLeft(scale);
+        break;
+    }
+    axis.tickSize(0);
+    axis.ticks(ticks);
+    return axis;
   }
 
   /**
@@ -193,33 +202,40 @@ export class RadarComponent implements OnInit, OnDestroy {
    * Draws the given positions and their links on the radar
    * @param positions an array of positions
    */
-  drawPositions(positions: Array<Position>): void {
+  drawPositions(positions: Array<Point>): void {
     this.drawDots(positions);
     this.drawLinks(positions);
   }
 
   /**
    * Draws the position dots on the radar
-   * @param positions an array of positions
+   * @param points an array of points
    */
-  private drawDots(positions: Array<Position>): void {
-    // TODO: Implement the correct positioning and color fill for the dots
-    d3.select(`#${this.id}-circles`)
+  private drawDots(points: Array<Point>): void {
+    const selector = `#${this.id}-circles`;
+
+    // Append circles, if needed
+    d3.select(selector)
       .selectAll('circle')
-      .data(positions)
+      .data(points)
       .enter()
-      .append('circle')
+      .append('circle');
+
+    // Update the dots
+    d3.select(selector)
+      .selectAll('circle')
+      .data(points)
       .attr('r', 1)
-      .attr('cx', 60)
-      .attr('cy', 60)
+      .attr('cx', d => d.x)
+      .attr('cy', d => d.y)
       .attr('fill', 'black');
   }
 
   /**
    * Draws the connecting lines between the dots on the radar
-   * @param positions an array of positions
+   * @param points an array of points
    */
-  private drawLinks(positions: Array<Position>): void {
+  private drawLinks(points: Array<Point>): void {
     // TODO: Implement me
   }
 
@@ -230,7 +246,7 @@ export class RadarComponent implements OnInit, OnDestroy {
    */
   updateNumberOfEquidistantCircles(numOfCircles: number): void {
     const arr = RadarUtil.calculateEquidistantCircleRadii(numOfCircles).reverse();
-    const selector = `#${this.id}-equidistant-circles`;
+    const selector = `#${this.equidistantCirclesId}`;
 
     // Append circles, if needed
     d3.select(selector)

@@ -51,8 +51,8 @@ export const environment = {
           longitude: 50,
           latitude: 15
         },
-        range: {
-          defaultValue: 100,
+        domain: {
+          max: 100,
           multiplier: 2,
           min: 10
         }

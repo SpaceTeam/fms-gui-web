@@ -1,5 +1,6 @@
 import * as d3 from 'd3';
 import {NegativeNumberException} from '../../../exceptions/negative-number.exception';
+import {Point} from '../../../model/point.model';
 
 export namespace RadarUtil {
 
@@ -58,25 +59,44 @@ export namespace RadarUtil {
   }
 
   /**
-   * Adjusts the range of the radar
+   * Returns the new maximum for the radar domain
    * @param radius the radius of a new position
-   * @param range the current range of the radar
+   * @param max the current maximum domain value of the radar
    * @param numOfCircles the number of equidistant circles displayed in the radar
-   * @param rangeMultiplier the multiplier used for adjusting the range
+   * @param domainMultiplier the multiplier used for adjusting the range
    */
-  export function adjustRange(radius: number, range: number, numOfCircles: number, rangeMultiplier: number): number {
+  export function getNewDomainMax(radius: number, max: number, numOfCircles: number, domainMultiplier: number): number {
+    if (numOfCircles <= 0) {
+      throw new Error(`Number of circles cannot be ${numOfCircles}`);
+    }
+
     // If the radius is too close to the center, we want to adjust the radar make the distances between the circles smaller
-    let adjustRadarThreshold = (range / numOfCircles) * 0.5;
+    let adjustRadarThreshold = (max / numOfCircles) * 0.5;
     while (radius < adjustRadarThreshold) {
-      range /= rangeMultiplier;
-      adjustRadarThreshold = (range / numOfCircles) * 0.5;
+      max /= domainMultiplier;
+      adjustRadarThreshold = (max / numOfCircles) * 0.5;
     }
 
     // If the radius is outside the range, we need to increase the radar range and make the distances between the circles larger
-    while (radius > range) {
-      range *= rangeMultiplier;
+    while (radius > max) {
+      max *= domainMultiplier;
     }
 
-    return range;
+    return max;
+  }
+
+  /**
+   * Returns the position on the radar
+   * @param direction the unit vector, showing in the direction where the point should be displayed
+   * @param factor determines the distance of the direction. Is in the range between 0 and 1
+   */
+  export function getPositionOnRadar(direction: Point, factor: number): Point {
+    if (factor < 0 || factor > 1) {
+      throw new Error(`Invalid factor ${factor}`);
+    }
+    const angle = Math.atan2(direction.y, direction.x);
+    const x = 50 * (1 + Math.cos(angle) * factor);
+    const y = 50 * (1 - Math.sin(angle) * factor);
+    return new Point(x, y);
   }
 }

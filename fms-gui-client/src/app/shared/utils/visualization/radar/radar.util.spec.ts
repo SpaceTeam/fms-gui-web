@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { RadarUtil } from './radar.util';
 import * as d3 from 'd3';
 import {NegativeNumberException} from '../../../exceptions/negative-number.exception';
+import {Point} from '../../../model/point.model';
 
 describe('RadarUtil', () => {
 
@@ -10,7 +11,7 @@ describe('RadarUtil', () => {
     TestBed.configureTestingModule({});
   });
 
-  describe('.calculateEquidistantCircleRadii', () => {
+  describe('calculateEquidistantCircleRadii', () => {
     it('should return the correct radii for any given number of circles', () => {
       // Setup
       let numOfCircles = 5;
@@ -61,7 +62,7 @@ describe('RadarUtil', () => {
         .toThrow(new NegativeNumberException('No negative numbers allowed'));
     });
   });
-  describe('.scaleToSquare', () => {
+  describe('scaleToSquare', () => {
     const id = 'div';
     const selector = `#${id}`;
 
@@ -135,7 +136,7 @@ describe('RadarUtil', () => {
       expect(height).toEqual(expected);
     });
   });
-  describe('.getRadarSize', () => {
+  describe('getRadarSize', () => {
     const id = 'div';
     const selector = `#${id}`;
 
@@ -196,76 +197,203 @@ describe('RadarUtil', () => {
       expect(result).toEqual(expected);
     });
   });
-  describe('.adjustRange', () => {
-    it('should do nothing, if the new position is inside the range', () => {
+  describe('adjustDomain', () => {
+    it('should do nothing, if the new position is inside the domain', () => {
       // Setup
       const radius = 50;
-      const range = 100;
+      const max = 100;
       const numOfCircles = 5;
       const multiplier = 10;
-      const expected = range;
+      const expected = max;
 
       // Execute
-      const result = RadarUtil.adjustRange(radius, range, numOfCircles, multiplier);
+      const result = RadarUtil.getNewDomainMax(radius, max, numOfCircles, multiplier);
 
       // Verify
       expect(result).toEqual(expected);
     });
-    it('should adjust the range, if the new position is too close to the center', () => {
+    it('should adjust the domain, if the new position is too close to the center', () => {
       // Setup
       const radius = 8;
-      const range = 100;
+      const max = 100;
       const numOfCircles = 5;
       const multiplier = 10;
-      const expected = range / multiplier; // in this case simply 10
+      const expected = max / multiplier; // in this case simply 10
 
       // Execute
-      const result = RadarUtil.adjustRange(radius, range, numOfCircles, multiplier);
+      const result = RadarUtil.getNewDomainMax(radius, max, numOfCircles, multiplier);
 
       // Verify
       expect(result).toEqual(expected);
     });
-    it('should adjust the range, if the new position is outside of the range', () => {
+    it('should adjust the domain, if the new position is outside of the range', () => {
       // Setup
       const radius = 110;
-      const range = 100;
+      const max = 100;
       const numOfCircles = 5;
       const multiplier = 10;
-      const expected = range * multiplier;  // In this case simply 1000
+      const expected = max * multiplier;  // In this case simply 1000
 
       // Execute
-      const result = RadarUtil.adjustRange(radius, range, numOfCircles, multiplier);
+      const result = RadarUtil.getNewDomainMax(radius, max, numOfCircles, multiplier);
 
       // Verify
       expect(result).toEqual(expected);
     });
-    it('should adjust the range as long as the new position is too close to the center', () => {
+    it('should adjust the domain as long as the new position is too close to the center', () => {
       // Setup
       const radius = 8;
-      const range = 1000;
+      const max = 1000;
       const numOfCircles = 5;
       const multiplier = 10;
-      const expected = range / Math.pow(multiplier, 2); // in this case simply 10 (first scale down to 100, then to 10)
+      const expected = max / Math.pow(multiplier, 2); // in this case simply 10 (first scale down to 100, then to 10)
 
       // Execute
-      const result = RadarUtil.adjustRange(radius, range, numOfCircles, multiplier);
+      const result = RadarUtil.getNewDomainMax(radius, max, numOfCircles, multiplier);
 
       // Verify
       expect(result).toEqual(expected);
     });
-    it('should adjust the range as long as the new position is too close to the center', () => {
+    it('should adjust the domain as long as the new position is too close to the center', () => {
       // Setup
       const radius = 20000;
-      const range = 100;
+      const max = 100;
       const numOfCircles = 5;
       const multiplier = 10;
-      const expected = range * Math.pow(multiplier, 3); // in this case simply 100000 (first scale up to 1000, then 10000, and 10000)
+      const expected = max * Math.pow(multiplier, 3); // in this case simply 100000 (first scale up to 1000, then 10000, and 10000)
 
       // Execute
-      const result = RadarUtil.adjustRange(radius, range, numOfCircles, multiplier);
+      const result = RadarUtil.getNewDomainMax(radius, max, numOfCircles, multiplier);
 
       // Verify
       expect(result).toEqual(expected);
+    });
+  });
+  describe('getPositionOnRadar', () => {
+    // We need this epsilon because some results are very close and this is enough for us (e.g. 49.99999 and 50)
+    const epsilon = 0.00001;
+
+    it('returns the correct position for a vector with only one positive x value', () => {
+      // Setup
+      const direction = new Point(1, 0);
+      let factor = 1;
+      let expected = new Point(100, 50);
+
+      // Execute
+      let result = RadarUtil.getPositionOnRadar(direction, factor);
+
+      // Verify
+      expect(result.x).toBeCloseTo(expected.x, epsilon);
+      expect(result.y).toBeCloseTo(expected.y, epsilon);
+
+      // Setup
+      factor = 0.5;
+      expected = new Point(75, 50);
+
+      // Execute
+      result = RadarUtil.getPositionOnRadar(direction, factor);
+
+      // Verify
+      expect(result.x).toBeCloseTo(expected.x, epsilon);
+      expect(result.y).toBeCloseTo(expected.y, epsilon);
+    });
+    it('returns the correct position for a vector with only one positive y value', () => {
+      // Setup
+      const direction = new Point(0, 1);
+      let factor = 1;
+      let expected = new Point(50, 0);
+
+      // Execute
+      let result = RadarUtil.getPositionOnRadar(direction, factor);
+
+      // Verify
+      expect(result.x).toBeCloseTo(expected.x, epsilon);
+      expect(result.y).toBeCloseTo(expected.y, epsilon);
+
+      // Setup
+      factor = 0.2;
+      expected = new Point(50, 40);
+
+      // Execute
+      result = RadarUtil.getPositionOnRadar(direction, factor);
+
+      // Verify
+      expect(result.x).toBeCloseTo(expected.x, epsilon);
+      expect(result.y).toBeCloseTo(expected.y, epsilon);
+    });
+    it('returns the correct position for a vector with only one negative x value', () => {
+      // Setup
+      const direction = new Point(-1, 0);
+      let factor = 1;
+      let expected = new Point(0, 50);
+
+      // Execute
+      let result = RadarUtil.getPositionOnRadar(direction, factor);
+
+      // Verify
+      expect(result.x).toBeCloseTo(expected.x, epsilon);
+      expect(result.y).toBeCloseTo(expected.y, epsilon);
+
+      // Setup
+      factor = 0.3;
+      expected = new Point(35, 50);
+
+      // Execute
+      result = RadarUtil.getPositionOnRadar(direction, factor);
+
+      // Verify
+      expect(result.x).toBeCloseTo(expected.x, epsilon);
+      expect(result.y).toBeCloseTo(expected.y, epsilon);
+    });
+    it('returns the correct position for a vector with only one negative y value', () => {
+      // Setup
+      const direction = new Point(0, -1);
+      let factor = 1;
+      let expected = new Point(50, 100);
+
+      // Execute
+      let result = RadarUtil.getPositionOnRadar(direction, factor);
+
+      // Verify
+      expect(result.x).toBeCloseTo(expected.x, epsilon);
+      expect(result.y).toBeCloseTo(expected.y, epsilon);
+
+      // Setup
+      factor = 0.4;
+      expected = new Point(50, 70);
+
+      // Execute
+      result = RadarUtil.getPositionOnRadar(direction, factor);
+
+      // Verify
+      expect(result.x).toBeCloseTo(expected.x, epsilon);
+      expect(result.y).toBeCloseTo(expected.y, epsilon);
+    });
+    it('returns the correct position for a vector with arbitrary values', () => {
+      // Setup
+      const direction = new Point(0.5, 0.5);
+      const dx = Math.cos(Math.PI * 0.25);
+      const dy = Math.sin(Math.PI * 0.25);
+      let factor = 1;
+      let expected = new Point(50 * (1 + dx * factor), 50 * (1 - dy * factor));
+
+      // Execute
+      let result = RadarUtil.getPositionOnRadar(direction, factor);
+
+      // Verify
+      expect(result.x).toBeCloseTo(expected.x, epsilon);
+      expect(result.y).toBeCloseTo(expected.y, epsilon);
+
+      // Setup
+      factor = 0.4;
+      expected = new Point(50 * (1 + dx * factor), 50 * (1 - dy * factor));
+
+      // Execute
+      result = RadarUtil.getPositionOnRadar(direction, factor);
+
+      // Verify
+      expect(result.x).toBeCloseTo(expected.x, epsilon);
+      expect(result.y).toBeCloseTo(expected.y, epsilon);
     });
   });
 });

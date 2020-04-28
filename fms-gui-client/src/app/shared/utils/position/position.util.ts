@@ -38,7 +38,7 @@ export namespace PositionUtil {
    */
   export function getNormalizedDirection(start: Position, end: Position): Point {
     const diff = new Point(end.longitude - start.longitude, end.latitude - start.latitude);
-    const length = Math.sqrt(Math.pow(diff.x, 2) + Math.pow(diff.y, 2));
+    const length = getDistance(start, end);
 
     diff.x = length !== 0 ? diff.x / length : 0;
     diff.y = length !== 0 ? diff.y / length : 0;
@@ -49,6 +49,15 @@ export namespace PositionUtil {
     diff.y = roundToDecimalPlaces(diff.y, decimalPlaces);
 
     return diff;
+  }
+
+  /**
+   * Returns the distance between two points
+   * @param start the start position
+   * @param end the end position
+   */
+  export function getDistance(start: Position, end: Position): number {
+    return Math.sqrt(Math.pow(end.longitude - start.longitude, 2) + Math.pow(end.latitude - start.latitude, 2));
   }
 
   /**

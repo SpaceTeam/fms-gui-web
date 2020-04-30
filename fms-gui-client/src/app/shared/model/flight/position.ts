@@ -4,11 +4,11 @@ export class Position {
   altitude: number;
   timestamp: number;
 
-  constructor(longitude: number, latitude: number, altitude?: number, timestamp?: number) {
+  constructor(longitude: number, latitude: number, altitude: number = 0, timestamp: number = 0) {
     this.longitude = longitude;
     this.latitude = latitude;
-    this.altitude = altitude ? altitude : 0;
-    this.timestamp = timestamp ? timestamp : 0;
+    this.altitude = altitude;
+    this.timestamp = timestamp;
   }
 
   /**

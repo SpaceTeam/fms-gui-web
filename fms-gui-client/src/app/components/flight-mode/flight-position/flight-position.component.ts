@@ -8,7 +8,8 @@ import {environment} from '../../../../environments/environment';
 import {RadarUtil} from '../../../shared/utils/visualization/radar/radar.util';
 import {PositionUtil} from '../../../shared/utils/position/position.util';
 import {AxisEnum} from '../../../shared/enums/axis.enum';
-import d3 = require('d3');
+import {Point} from '../../../shared/model/point.model';
+import {FlightConfigService} from '../../../shared/services/visualization/flight-config/flight-config.service';
 
 @Component({
   selector: 'app-flight-position',
@@ -27,7 +28,11 @@ export class FlightPositionComponent implements OnInit, OnDestroy, AfterViewInit
   private minimumDomain: number;
   private numOfCircles: number;
 
-  constructor(private positionService: PositionService, private brushService: BrushService) {
+  constructor(
+    private positionService: PositionService,
+    private brushService: BrushService,
+    private flightConfigService: FlightConfigService
+  ) {
     const center = environment.visualization.radar.position.center;
     this.center = new Position(center.longitude, center.latitude);
 
@@ -38,6 +43,8 @@ export class FlightPositionComponent implements OnInit, OnDestroy, AfterViewInit
 
     this.subscriptions = [];
     this.subscribeToPositionChange();
+    this.subscribeToCenterChange();
+    this.subscribeToRotationChange();
   }
 
   ngOnInit(): void {
@@ -61,7 +68,24 @@ export class FlightPositionComponent implements OnInit, OnDestroy, AfterViewInit
     this.subscriptions.push(lastPositionSubscription);
   }
 
-  // TODO: Clean up this method
+  /**
+   * Subscribes to a change of the center, put in by the user
+   * As soon as the center changes, we want to recalculate the positions on the radar
+   */
+  private subscribeToCenterChange(): void {
+    const centerSubscription = this.flightConfigService.centerAnnounced$.subscribe(position => this.onNewCenter(position));
+    this.subscriptions.push(centerSubscription);
+  }
+
+  /**
+   * Subscribes to a change of the rotation, put in by the user
+   * As soon as the rotation value changes, we want to rotate the positions on the radar
+   */
+  private subscribeToRotationChange(): void {
+    const rotationSubscription = this.flightConfigService.rotationAnnounced$.subscribe(rotation => this.onRotation(rotation));
+    this.subscriptions.push(rotationSubscription);
+  }
+
   private onNewPosition(position: Position): void {
     // Whenever a new position is received, it is possible, that we need to adjust the range
     const radius = PositionUtil.calculateDistanceInMeters(this.center, position);
@@ -72,23 +96,31 @@ export class FlightPositionComponent implements OnInit, OnDestroy, AfterViewInit
       // Update radar range
       this.domainMax = newDomainMax;
       this.redrawAxis(AxisEnum.X_AXIS);
-      console.log(`New domain max: ${newDomainMax}`);
-      console.log(`Radius: ${radius}`);
     }
-
-    // We need the factor to adjust the actual distance from the center
-    const factor = radius / this.domainMax;
-
-    const point = PositionUtil.getNormalizedDirection(this.center, position);
-    const positionOnRadar = RadarUtil.getPositionOnRadar(point, factor);
-
-    this.radar.drawPositions([positionOnRadar]);
+    this.radar.drawPositions(this.getPoints(position));
   }
 
   private redrawAxis(axisEnum: AxisEnum): void {
-    const scale = d3.scaleLinear()
-      .domain([0, this.domainMax])
-      .range([50, 100]);
-    this.radar.setAxis(axisEnum, scale, this.numOfCircles);
+    this.radar.clearAxis();
+    this.radar.setAxis(axisEnum, this.domainMax, this.numOfCircles);
+  }
+
+  private getPoints(position: Position): Array<Point> {
+    // Get the distance from the center to the new position
+    const radius = PositionUtil.calculateDistanceInMeters(this.center, position);
+    const normalizedDirection = PositionUtil.getNormalizedDirection(this.center, position);
+
+    // We need the factor to adjust the radar distance from the center
+    const factor = radius / this.domainMax;
+
+    return [RadarUtil.getPositionOnRadar(normalizedDirection, factor)];
+  }
+
+  private onNewCenter(position: Position): void {
+    // TODO: Implement me
+  }
+
+  private onRotation(rotation: number): void {
+    // TODO: Implement me
   }
 }

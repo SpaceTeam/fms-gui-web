@@ -162,31 +162,27 @@ export class RadarComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Removes all d3 axis ticks from the radar
+   */
+  clearAxis(): void {
+    Object.values(AxisEnum).forEach(axisEnum =>
+      d3.select(`#${this.id}-${axisEnum}`)
+        .selectAll('.tick')
+        .remove()
+    );
+  }
+
+  /**
    * Calls the given axis on the axis group with the given id
    *
    * @param axisEnum the selector of the axis group
-   * @param scale a d3 scale to be used for the given axis
+   * @param scaleMax a number describing the maximum value of the axis scale
    * @param ticks the number of ticks to be displayed on the axis
    */
-  setAxis(axisEnum: AxisEnum, scale: d3.AxisScale<d3.AxisDomain>, ticks: number): void {
+  setAxis(axisEnum: AxisEnum, scaleMax: number, ticks: number): void {
     d3.select(`#${this.id}-${axisEnum}`)
-      .call(this.createAxis(axisEnum, scale, ticks))
+      .call(RadarUtil.createAxis(axisEnum, scaleMax, ticks))
       .select('.domain').remove();
-  }
-
-  private createAxis(axisEnum: AxisEnum, scale: d3.AxisScale<d3.AxisDomain>, ticks: number): d3.Axis<any> {
-    let axis;
-    switch (axisEnum) {
-      case AxisEnum.X_AXIS:
-        axis = d3.axisBottom(scale);
-        break;
-      case AxisEnum.Y_AXIS:
-        axis = d3.axisLeft(scale);
-        break;
-    }
-    axis.tickSize(0);
-    axis.ticks(ticks);
-    return axis;
   }
 
   /**

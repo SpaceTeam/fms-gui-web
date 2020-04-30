@@ -1,6 +1,8 @@
 import * as d3 from 'd3';
 import {NegativeNumberException} from '../../../exceptions/negative-number.exception';
 import {Point} from '../../../model/point.model';
+import {AxisEnum} from '../../../enums/axis.enum';
+import {PositionUtil} from '../../position/position.util';
 
 export namespace RadarUtil {
 
@@ -98,5 +100,31 @@ export namespace RadarUtil {
     const x = 50 * (1 + Math.cos(angle) * factor);
     const y = 50 * (1 - Math.sin(angle) * factor);
     return new Point(x, y);
+  }
+
+  export function createAxis(axisEnum: AxisEnum, scaleMax: number, ticks: number): d3.Axis<any> {
+    const domain = [];
+    for (let i = 1; i <= ticks; i++) {
+      domain.push(`${PositionUtil.roundToDecimalPlaces(scaleMax / i, 2)}m`);
+    }
+    // We need an empty tick for 0
+    domain.push('');
+    const scale = d3.scalePoint()
+      .domain(domain.reverse())
+      .range([50, 100]);
+
+    let axis;
+    switch (axisEnum) {
+      case AxisEnum.X_AXIS:
+        axis = d3.axisBottom(scale);
+        break;
+      case AxisEnum.Y_AXIS:
+        axis = d3.axisLeft(scale);
+        break;
+      default:
+        throw new Error(`Invalid axisEnum ${axisEnum}`);
+    }
+    axis.tickSize(0);
+    return axis;
   }
 }

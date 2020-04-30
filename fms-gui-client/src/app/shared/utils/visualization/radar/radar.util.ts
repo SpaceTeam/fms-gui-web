@@ -3,6 +3,7 @@ import {NegativeNumberException} from '../../../exceptions/negative-number.excep
 import {Point} from '../../../model/point.model';
 import {AxisEnum} from '../../../enums/axis.enum';
 import {PositionUtil} from '../../position/position.util';
+import {tick} from '@angular/core/testing';
 
 export namespace RadarUtil {
 
@@ -104,21 +105,26 @@ export namespace RadarUtil {
 
   export function createAxis(axisEnum: AxisEnum, scaleMax: number, ticks: number): d3.Axis<any> {
     const domain = [];
-    for (let i = 1; i <= ticks; i++) {
-      domain.push(`${PositionUtil.roundToDecimalPlaces(scaleMax / i, 2)}m`);
-    }
     // We need an empty tick for 0
     domain.push('');
+
+    const fraction = scaleMax / ticks;
+    for (let i = 1; i <= ticks; i++) {
+      const value = fraction * i;
+      domain.push(getTickText(value));
+    }
     const scale = d3.scalePoint()
-      .domain(domain.reverse())
-      .range([50, 100]);
+      .domain(domain);
 
     let axis;
     switch (axisEnum) {
       case AxisEnum.X_AXIS:
+      case AxisEnum.DIAGONAL_AXIS:
+        scale.range([50, 100]);
         axis = d3.axisBottom(scale);
         break;
       case AxisEnum.Y_AXIS:
+        scale.range([50, 0]);
         axis = d3.axisLeft(scale);
         break;
       default:
@@ -126,5 +132,16 @@ export namespace RadarUtil {
     }
     axis.tickSize(0);
     return axis;
+  }
+
+  export function getTickText(value: number): string {
+    let exponential = 0;
+    while (value > 1000) {
+      value /= 1000;
+      exponential++;
+    }
+    const unit = exponential > 0 ? 'km' : 'm';
+    const e = exponential > 1 ? `e${exponential}` : '';
+    return `${PositionUtil.roundToDecimalPlaces(value, 2)}${e}${unit}`;
   }
 }

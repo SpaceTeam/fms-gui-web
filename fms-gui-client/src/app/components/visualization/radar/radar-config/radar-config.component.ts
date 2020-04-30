@@ -1,13 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {RadarForm} from '../../../../shared/forms/radar.form';
 
-// TODO: Create a RadarService, which handles the interaction between the config, brush and radar
 @Component({
   selector: 'app-radar-config',
   templateUrl: './radar-config.component.html',
   styleUrls: ['./radar-config.component.scss']
 })
-export class RadarConfigComponent implements OnInit {
+export class RadarConfigComponent implements OnInit, AfterViewInit {
 
   /**
    * A flag for telling, if the radar configuration window is open
@@ -19,6 +18,10 @@ export class RadarConfigComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  }
+
+  ngAfterViewInit(): void {
+    this.radarForm.initCenter();
   }
 
   /**

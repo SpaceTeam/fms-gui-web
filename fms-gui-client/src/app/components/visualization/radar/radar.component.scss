@@ -28,6 +28,7 @@
   transform: translateX(50%);
 }
 
-.diagonal-axis {
-  transform: translateY(50%) translateX(50%) rotateZ(-45deg);
+.axis-diagonal {
+  transform-origin: center;
+  transform: rotateZ(-45deg) translateY(45%);
 }

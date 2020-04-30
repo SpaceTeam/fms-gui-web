@@ -9,7 +9,7 @@ import {RadarUtil} from '../../../shared/utils/visualization/radar/radar.util';
 import {PositionUtil} from '../../../shared/utils/position/position.util';
 import {AxisEnum} from '../../../shared/enums/axis.enum';
 import {Point} from '../../../shared/model/point.model';
-import {FlightConfigService} from '../../../shared/services/visualization/flight-config/flight-config.service';
+import {RadarForm} from '../../../shared/forms/radar.form';
 
 @Component({
   selector: 'app-flight-position',
@@ -27,14 +27,16 @@ export class FlightPositionComponent implements OnInit, OnDestroy, AfterViewInit
   private domainMultiplier: number;
   private minimumDomain: number;
   private numOfCircles: number;
+  private lastPosition: Position;
 
   constructor(
     private positionService: PositionService,
     private brushService: BrushService,
-    private flightConfigService: FlightConfigService
+    private radarForm: RadarForm
   ) {
     const center = environment.visualization.radar.position.center;
     this.center = new Position(center.longitude, center.latitude);
+    this.lastPosition = this.center;
 
     this.domainMax = environment.visualization.radar.position.domain.max;
     this.domainMultiplier = environment.visualization.radar.position.domain.multiplier;
@@ -52,7 +54,7 @@ export class FlightPositionComponent implements OnInit, OnDestroy, AfterViewInit
 
   ngAfterViewInit(): void {
     // Set the range axis
-    this.redrawAxis(AxisEnum.X_AXIS);
+    this.redrawAxis(AxisEnum.Y_AXIS);
   }
 
   ngOnDestroy(): void {
@@ -73,7 +75,7 @@ export class FlightPositionComponent implements OnInit, OnDestroy, AfterViewInit
    * As soon as the center changes, we want to recalculate the positions on the radar
    */
   private subscribeToCenterChange(): void {
-    const centerSubscription = this.flightConfigService.centerAnnounced$.subscribe(position => this.onNewCenter(position));
+    const centerSubscription = this.radarForm.centerChanged$.subscribe(position => this.onNewCenter(position));
     this.subscriptions.push(centerSubscription);
   }
 
@@ -82,22 +84,35 @@ export class FlightPositionComponent implements OnInit, OnDestroy, AfterViewInit
    * As soon as the rotation value changes, we want to rotate the positions on the radar
    */
   private subscribeToRotationChange(): void {
-    const rotationSubscription = this.flightConfigService.rotationAnnounced$.subscribe(rotation => this.onRotation(rotation));
+    const rotationSubscription = this.radarForm.rotationChanged$.subscribe(rotation => this.onRotation(rotation));
     this.subscriptions.push(rotationSubscription);
   }
 
   private onNewPosition(position: Position): void {
-    // Whenever a new position is received, it is possible, that we need to adjust the range
-    const radius = PositionUtil.calculateDistanceInMeters(this.center, position);
+    this.lastPosition = position;
+    this.redraw();
+  }
+
+  private onNewCenter(position: Position): void {
+    this.center = position;
+    this.redraw();
+  }
+
+  private onRotation(rotation: number): void {
+    // TODO: Implement me
+  }
+
+  private redraw(): void {
+    const radius = PositionUtil.calculateDistanceInMeters(this.center, this.lastPosition);
     const newDomainMax = RadarUtil.getNewDomainMax(radius, this.domainMax, this.numOfCircles, this.domainMultiplier);
 
     // If the range has changed, we also want to update the radar
     if (this.domainMax !== newDomainMax) {
       // Update radar range
       this.domainMax = newDomainMax;
-      this.redrawAxis(AxisEnum.X_AXIS);
+      this.redrawAxis(AxisEnum.Y_AXIS);
     }
-    this.radar.drawPositions(this.getPoints(position));
+    this.radar.drawPositions(this.getPoints(this.lastPosition));
   }
 
   private redrawAxis(axisEnum: AxisEnum): void {
@@ -114,13 +129,5 @@ export class FlightPositionComponent implements OnInit, OnDestroy, AfterViewInit
     const factor = radius / this.domainMax;
 
     return [RadarUtil.getPositionOnRadar(normalizedDirection, factor)];
-  }
-
-  private onNewCenter(position: Position): void {
-    // TODO: Implement me
-  }
-
-  private onRotation(rotation: number): void {
-    // TODO: Implement me
   }
 }

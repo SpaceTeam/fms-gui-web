@@ -99,7 +99,7 @@ export class FlightPositionComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   private onRotation(rotation: number): void {
-    // TODO: Implement me
+    this.radar.rotate(rotation);
   }
 
   private redraw(): void {

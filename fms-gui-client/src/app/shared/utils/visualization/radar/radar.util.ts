@@ -3,7 +3,6 @@ import {NegativeNumberException} from '../../../exceptions/negative-number.excep
 import {Point} from '../../../model/point.model';
 import {AxisEnum} from '../../../enums/axis.enum';
 import {PositionUtil} from '../../position/position.util';
-import {tick} from '@angular/core/testing';
 
 export namespace RadarUtil {
 

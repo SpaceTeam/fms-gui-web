@@ -22,13 +22,19 @@ export class RadarComponent implements OnInit, OnDestroy {
   private readonly containerId: string;
   private readonly svgId: string;
   private readonly equidistantCirclesId: string;
+  private readonly directionId: string;
   private readonly axisId: string;
+  private readonly circleId: string;
+  private readonly center: Point;
 
   constructor() {
     this.containerId = `${this.id}-container`;
     this.svgId = `${this.id}-g`;
     this.equidistantCirclesId = `${this.id}-equidistant-circles`;
+    this.directionId = `${this.id}-directions`;
     this.axisId = `${this.id}-axis`;
+    this.circleId = `${this.id}-circles`;
+    this.center = new Point(50, 50);
   }
 
   ngOnInit() {
@@ -112,7 +118,7 @@ export class RadarComponent implements OnInit, OnDestroy {
   private addDirections(): void {
     d3.select(`#${this.svgId}`)
       .append('g')
-      .attr('id', `${this.id}-directions`)
+      .attr('id', this.directionId)
       .classed('direction-group', true)
       .selectAll('text')
       .data(environment.visualization.radar.directions)
@@ -158,7 +164,7 @@ export class RadarComponent implements OnInit, OnDestroy {
   private addCircleGroup(): void {
     d3.select(`#${this.svgId}`)
       .append('g')
-      .attr('id', `${this.id}-circles`);
+      .attr('id', this.circleId);
   }
 
   /**
@@ -196,11 +202,11 @@ export class RadarComponent implements OnInit, OnDestroy {
 
   /**
    * Draws the given positions and their links on the radar
-   * @param positions an array of positions
+   * @param points an array of coordinates on the radar
    */
-  drawPositions(positions: Array<Point>): void {
-    this.drawDots(positions);
-    this.drawLinks(positions);
+  drawPositions(points: Array<Point>): void {
+    this.drawDots(points);
+    this.drawLinks(points);
   }
 
   /**
@@ -208,7 +214,7 @@ export class RadarComponent implements OnInit, OnDestroy {
    * @param points an array of points
    */
   private drawDots(points: Array<Point>): void {
-    const selector = `#${this.id}-circles`;
+    const selector = `#${this.circleId}`;
 
     // Append circles, if needed
     d3.select(selector)
@@ -232,7 +238,24 @@ export class RadarComponent implements OnInit, OnDestroy {
    * @param points an array of points
    */
   private drawLinks(points: Array<Point>): void {
-    // TODO: Implement me
+    const selector = `#${this.circleId}`;
+
+    // Append lines, if needed
+    d3.select(selector)
+      .selectAll('line')
+      .data(points)
+      .enter()
+      .append('line')
+      .classed('line', true);
+
+    // Update the lines
+    d3.select(selector)
+      .selectAll('line')
+      .data(points)
+      .attr('x1', (d, i) => i === 0 ? this.center.x : points[i - 1].x)
+      .attr('y1', (d, i) => i === 0 ? this.center.y : points[i - 1].y)
+      .attr('x2', d => d.x)
+      .attr('y2', d => d.y);
   }
 
   /**
@@ -267,5 +290,33 @@ export class RadarComponent implements OnInit, OnDestroy {
       .attr('r', d => d - 0.05) // We need to subtract half of the stroke-width so that it fits the svg perfectly
       .style('fill', (d, i) => RadarUtil.calculateCircleFill(i, numOfCircles))
       .classed('equidistant-circle', true);
+  }
+
+  rotate(angle: number): void {
+    this.rotateCircles(angle);
+    this.rotateDirections(angle);
+  }
+
+  /**
+   * Rotates the position circles and their links according to the angle
+   * @param angle the rotation angle
+   */
+  private rotateCircles(angle: number): void {
+    const selector = `#${this.circleId}`;
+    d3.select(selector)
+      .style('transform-origin', 'center')
+      .style('transform', `rotateZ(${angle}deg)`);
+  }
+
+  /**
+   * Rotates the directions 'N', 'W', 'S', and 'E' according to the angle
+   * @param angle the rotation angle
+   */
+  private rotateDirections(angle: number): void {
+    const selector = `#${this.directionId}`;
+    // TODO: Change me, so that only the position of the direction rotates, but not the text itself
+    d3.select(selector)
+      .style('transform-origin', 'center')
+      .style('transform', `rotateZ(${angle}deg)`);
   }
 }

@@ -90,11 +90,9 @@ export class RadarForm {
 
   /**
    * Defines the rotation functionality whenever the radar was dragged
-   * @param x the clamped x position in [-1, 1]
-   * @param y the clamped y position in [-1, 1]
+   * @param angle in radians
    */
-  public dragRotation(x: number, y: number): void {
-    const angle = Math.atan2(y, x);
+  public dragRotation(angle: number): void {
     const angleInDeg = angle * (180 / Math.PI);
 
     this.rotationChangedSource.next(angleInDeg);

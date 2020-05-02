@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit, ViewEncapsulation, Output, EventEmitter} from '@angular/core';
 
 import * as d3 from 'd3';
 import {environment} from '../../../../environments/environment';
@@ -17,6 +17,10 @@ export class RadarComponent implements OnInit, OnDestroy {
 
   @Input()
   private id: string;
+
+  @Output()
+  private rotationEmitter: EventEmitter<number>;
+
   private resizeObserver: ResizeObserver;
 
   private readonly containerId: string;
@@ -35,11 +39,14 @@ export class RadarComponent implements OnInit, OnDestroy {
     this.axisId = `${this.id}-axis`;
     this.circleId = `${this.id}-circles`;
     this.center = new Point(50, 50);
+
+    this.rotationEmitter = new EventEmitter<number>();
   }
 
   ngOnInit() {
     this.createRadar();
     this.listenToResize();
+    this.listenToDragRotate();
   }
 
   ngOnDestroy(): void {
@@ -138,12 +145,16 @@ export class RadarComponent implements OnInit, OnDestroy {
       .append('g')
       .attr('id', `${this.axisId}`);
 
-    this.createAxisGroup(AxisEnum.X_AXIS, {x1: 0, x2: 100, y1: 0, y2: 0});
-    this.createAxisGroup(AxisEnum.Y_AXIS, {x1: 0, x2: 0, y1: 0, y2: 100});
-    this.createAxisGroup(AxisEnum.DIAGONAL_AXIS, {x1: 0, x2: 0, y1: 0, y2: 0});
+    const leftTopPoint = new Point(0, 0);
+    const rightTopPoint = new Point(100, 0);
+    const bottomLeftPoint = new Point(0, 100);
+
+    this.createAxisGroup(AxisEnum.X_AXIS, leftTopPoint, rightTopPoint);
+    this.createAxisGroup(AxisEnum.Y_AXIS, leftTopPoint, bottomLeftPoint);
+    this.createAxisGroup(AxisEnum.DIAGONAL_AXIS, leftTopPoint, leftTopPoint);
   }
 
-  private createAxisGroup(axisEnum: AxisEnum, linePositions: {x1: number, x2: number, y1: number, y2: number}): void {
+  private createAxisGroup(axisEnum: AxisEnum, startPoint: Point, endPoint: Point): void {
     const axis = d3.select(`#${this.axisId}`)
       .append('g')
       .attr('id', `${this.id}-${axisEnum}`)
@@ -152,10 +163,10 @@ export class RadarComponent implements OnInit, OnDestroy {
 
     // Append the correct domain line
     axis.append('line')
-      .attr('x1', linePositions.x1)
-      .attr('x2', linePositions.x2)
-      .attr('y1', linePositions.y1)
-      .attr('y2', linePositions.y2);
+      .attr('x1', startPoint.x)
+      .attr('y1', startPoint.y)
+      .attr('x2', endPoint.x)
+      .attr('y2', endPoint.y);
   }
 
   /**
@@ -292,6 +303,23 @@ export class RadarComponent implements OnInit, OnDestroy {
       .classed('equidistant-circle', true);
   }
 
+  /**
+   * Checks if the user rotates the radar via the drag option
+   * The user is able to rotate the radar by clicking and dragging inside the radar in the desired direction
+   * CTRL + Drag
+   */
+  private listenToDragRotate(): void {
+    const dragRotate = d3.drag()
+      .filter(() => d3.event.ctrlKey)
+      .on('drag', () => this.rotationEmitter.emit(Math.atan2(this.center.y - d3.event.y, d3.event.x - this.center.x)));
+
+    d3.select(`#${this.svgId}`).call(dragRotate);
+  }
+
+  /**
+   * Rotates the dots and text elements inside the radar, according to the given angle
+   * @param angle in degrees
+   */
   rotate(angle: number): void {
     this.rotateCircles(angle);
     this.rotateDirections(angle);
@@ -305,7 +333,7 @@ export class RadarComponent implements OnInit, OnDestroy {
     const selector = `#${this.circleId}`;
     d3.select(selector)
       .style('transform-origin', 'center')
-      .style('transform', `rotateZ(${angle}deg)`);
+      .style('transform', `rotateZ(${angle * -1}deg)`);
   }
 
   /**
@@ -317,6 +345,6 @@ export class RadarComponent implements OnInit, OnDestroy {
     // TODO: Change me, so that only the position of the direction rotates, but not the text itself
     d3.select(selector)
       .style('transform-origin', 'center')
-      .style('transform', `rotateZ(${angle}deg)`);
+      .style('transform', `rotateZ(${angle * -1}deg)`);
   }
 }

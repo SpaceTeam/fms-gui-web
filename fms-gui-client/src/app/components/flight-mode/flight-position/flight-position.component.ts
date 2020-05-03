@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, ViewChild} from '@angular/core';
 import {PositionService} from '../../../shared/services/visualization/position/position.service';
 import {RadarComponent} from '../../visualization/radar/radar.component';
 import {Subscription} from 'rxjs';
@@ -16,7 +16,7 @@ import {RadarForm} from '../../../shared/forms/radar.form';
   templateUrl: './flight-position.component.html',
   styleUrls: ['./flight-position.component.scss']
 })
-export class FlightPositionComponent implements OnInit, OnDestroy, AfterViewInit {
+export class FlightPositionComponent implements OnDestroy, AfterViewInit {
 
   // TODO: Create a parent class, which tells what functions must be implemented by children, which use a radar
   // e.g. subscribe methods, listener, getPoints
@@ -73,17 +73,12 @@ export class FlightPositionComponent implements OnInit, OnDestroy, AfterViewInit
     this.numOfCircles = environment.visualization.radar.equidistant.circles;
 
     this.subscriptions = [];
+  }
+
+  ngAfterViewInit() {
     this.subscribeToPositionChange();
     this.subscribeToCenterChange();
     this.subscribeToRotationChange();
-  }
-
-  ngOnInit(): void {
-  }
-
-  ngAfterViewInit(): void {
-    // Set the range axis
-    this.redrawAxis(AxisEnum.Y_AXIS);
   }
 
   ngOnDestroy(): void {
@@ -193,5 +188,9 @@ export class FlightPositionComponent implements OnInit, OnDestroy, AfterViewInit
    */
   notifyRotationChange(angle: number): void {
     this.radarForm.dragRotation(angle);
+  }
+
+  resetZoom(): void {
+    this.radar.resetZoom();
   }
 }

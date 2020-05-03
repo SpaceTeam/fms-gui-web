@@ -22,6 +22,7 @@ export class RadarComponent implements OnInit, OnDestroy {
   private rotationEmitter: EventEmitter<number>;
 
   private resizeObserver: ResizeObserver;
+  private zoom: d3.ZoomBehavior<any, any>;
 
   private readonly containerId: string;
   private readonly svgId: string;
@@ -47,6 +48,7 @@ export class RadarComponent implements OnInit, OnDestroy {
     this.createRadar();
     this.listenToResize();
     this.listenToDragRotate();
+    this.listenToZoom();
   }
 
   ngOnDestroy(): void {
@@ -103,6 +105,7 @@ export class RadarComponent implements OnInit, OnDestroy {
   private createRadarSVG(): void {
     d3.select(`#${this.containerId}`)
       .append('svg')
+      .attr('id', `svg`)
       .attr('viewBox', '0 0 100 100')
       .append('g')
       .attr('id', `${this.svgId}`)
@@ -200,15 +203,6 @@ export class RadarComponent implements OnInit, OnDestroy {
     d3.select(`#${this.id}-${axisEnum}`)
       .call(RadarUtil.createAxis(axisEnum, scaleMax, ticks))
       .select('.domain').remove();
-  }
-
-  /**
-   * Toggles the display of the given axis
-   * @param axisEnum the selector of the axis group
-   */
-  toggleAxisDisplay(axisEnum: AxisEnum): void {
-    const axis = d3.select(`#${this.id}-${axisEnum}`);
-    axis.classed('d-none', !axis.classed('d-none'));
   }
 
   /**
@@ -318,6 +312,7 @@ export class RadarComponent implements OnInit, OnDestroy {
 
   /**
    * Rotates the dots and text elements inside the radar, according to the given angle
+   * TODO: Currently it always rotates around the center, no matter the current translation property (e.g. in the zoom)
    * @param angle in degrees
    */
   rotate(angle: number): void {
@@ -330,9 +325,8 @@ export class RadarComponent implements OnInit, OnDestroy {
    * @param angle the rotation angle
    */
   private rotateCircles(angle: number): void {
-    const selector = `#${this.circleId}`;
-    d3.select(selector)
-      .style('transform-origin', 'center')
+    d3.select(`#${this.circleId}`)
+      .classed('transform-origin-center', true)
       .style('transform', `rotateZ(${angle * -1}deg)`);
   }
 
@@ -341,10 +335,39 @@ export class RadarComponent implements OnInit, OnDestroy {
    * @param angle the rotation angle
    */
   private rotateDirections(angle: number): void {
-    const selector = `#${this.directionId}`;
     // TODO: Change me, so that only the position of the direction rotates, but not the text itself
-    d3.select(selector)
-      .style('transform-origin', 'center')
+    d3.select(`#${this.directionId}`)
+      .classed('transform-origin-center', true)
       .style('transform', `rotateZ(${angle * -1}deg)`);
+  }
+
+  /**
+   * Adds a zoom listener and performs the transform on all components of the radar
+   */
+  private listenToZoom(): void {
+    this.zoom = d3.zoom()
+      .extent([[0, 0], [100, 100]])
+      .scaleExtent([1, 100])
+      .on('zoom', () => {
+        d3.select(`#${this.circleId}`).attr('transform', d3.event.transform);
+        d3.select(`#${this.directionId}`).attr('transform', d3.event.transform);
+        d3.select(`#${this.equidistantCirclesId}`).attr('transform', d3.event.transform);
+        d3.select(`#${this.axisId}`).attr('transform', d3.event.transform);
+      });
+
+    d3.select(`#svg`).call(this.zoom);
+  }
+
+  /**
+   * Resets the zoom changes and centers the SVG
+   */
+  resetZoom(): void {
+    const svg = d3.select('#svg');
+    const node = <Element>svg.node();
+    svg.transition().duration(750).call(
+      this.zoom.transform,
+      d3.zoomIdentity,
+      d3.zoomTransform(node).invert([this.center.x, this.center.y])
+    );
   }
 }

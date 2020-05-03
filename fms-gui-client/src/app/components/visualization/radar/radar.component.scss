@@ -28,6 +28,10 @@
   transform: translateX(50%);
 }
 
+.transform-origin-center {
+  transform-origin: center;
+}
+
 .axis-diagonal {
   transform-origin: center;
   transform: rotateZ(-45deg) translateY(45%);

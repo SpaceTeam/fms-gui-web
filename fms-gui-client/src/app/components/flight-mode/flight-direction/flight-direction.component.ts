@@ -1,20 +1,15 @@
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
-import {RadarComponent} from '../../visualization/radar/radar.component';
-import {PositionService} from '../../../shared/services/visualization/position/position.service';
+import {Component, OnInit} from '@angular/core';
 
 @Component({
   selector: 'app-flight-direction',
   templateUrl: './flight-direction.component.html',
   styleUrls: ['./flight-direction.component.scss']
 })
-export class FlightDirectionComponent implements AfterViewInit {
+export class FlightDirectionComponent implements OnInit {
 
-  @ViewChild(RadarComponent)
-  private radar: RadarComponent;
-
-  constructor(private positionService: PositionService) {
+  constructor() {
   }
 
-  ngAfterViewInit(): void {
+  ngOnInit(): void {
   }
 }

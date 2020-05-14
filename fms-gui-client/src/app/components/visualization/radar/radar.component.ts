@@ -24,27 +24,29 @@ export class RadarComponent implements OnInit, OnDestroy {
   private resizeObserver: ResizeObserver;
   private zoom: d3.ZoomBehavior<any, any>;
 
-  private readonly containerId: string;
-  private readonly svgId: string;
-  private readonly equidistantCirclesId: string;
-  private readonly directionId: string;
-  private readonly axisId: string;
-  private readonly circleId: string;
+  private svgId: string;
+  private containerId: string;
+  private svgGroupId: string;
+  private equidistantCirclesId: string;
+  private directionId: string;
+  private axisId: string;
+  private circleId: string;
   private readonly center: Point;
 
   constructor() {
-    this.containerId = `${this.id}-container`;
-    this.svgId = `${this.id}-g`;
-    this.equidistantCirclesId = `${this.id}-equidistant-circles`;
-    this.directionId = `${this.id}-directions`;
-    this.axisId = `${this.id}-axis`;
-    this.circleId = `${this.id}-circles`;
     this.center = new Point(50, 50);
-
     this.rotationEmitter = new EventEmitter<number>();
   }
 
   ngOnInit() {
+    this.svgId = `${this.id}-svg`;
+    this.containerId = `${this.id}-container`;
+    this.svgGroupId = `${this.id}-g`;
+    this.equidistantCirclesId = `${this.id}-equidistant-circles`;
+    this.directionId = `${this.id}-directions`;
+    this.axisId = `${this.id}-axis`;
+    this.circleId = `${this.id}-circles`;
+
     this.createRadar();
     this.listenToResize();
     this.listenToDragRotate();
@@ -105,10 +107,10 @@ export class RadarComponent implements OnInit, OnDestroy {
   private createRadarSVG(): void {
     d3.select(`#${this.containerId}`)
       .append('svg')
-      .attr('id', `svg`)
+      .attr('id', this.svgId)
       .attr('viewBox', '0 0 100 100')
       .append('g')
-      .attr('id', `${this.svgId}`)
+      .attr('id', `${this.svgGroupId}`)
       .classed('radar-group', true);
   }
 
@@ -116,7 +118,7 @@ export class RadarComponent implements OnInit, OnDestroy {
    * Adds the equidistant circles
    */
   private addEquidistantCircleGroup(): void {
-    d3.select(`#${this.svgId}`)
+    d3.select(`#${this.svgGroupId}`)
       .append('g')
       .attr('id', `${this.equidistantCirclesId}`)
       .classed('circle-group', true);
@@ -126,10 +128,11 @@ export class RadarComponent implements OnInit, OnDestroy {
    * Adds the north, west, south, east directions to the radar
    */
   private addDirections(): void {
-    d3.select(`#${this.svgId}`)
+    d3.select(`#${this.svgGroupId}`)
       .append('g')
       .attr('id', this.directionId)
       .classed('direction-group', true)
+      .classed('transform-origin-center', true)
       .selectAll('text')
       .data(environment.visualization.radar.directions)
       .enter()
@@ -144,7 +147,7 @@ export class RadarComponent implements OnInit, OnDestroy {
    * The components, which use the radar, can then add their own axis
    */
   private addAxisGroups(): void {
-    d3.select(`#${this.svgId}`)
+    d3.select(`#${this.svgGroupId}`)
       .append('g')
       .attr('id', `${this.axisId}`);
 
@@ -176,9 +179,10 @@ export class RadarComponent implements OnInit, OnDestroy {
    * Adds the group for the position circles and their links
    */
   private addCircleGroup(): void {
-    d3.select(`#${this.svgId}`)
+    d3.select(`#${this.svgGroupId}`)
       .append('g')
-      .attr('id', this.circleId);
+      .attr('id', this.circleId)
+      .classed('transform-origin-center', true);
   }
 
   /**
@@ -307,67 +311,50 @@ export class RadarComponent implements OnInit, OnDestroy {
       .filter(() => d3.event.ctrlKey)
       .on('drag', () => this.rotationEmitter.emit(Math.atan2(this.center.y - d3.event.y, d3.event.x - this.center.x)));
 
-    d3.select(`#${this.svgId}`).call(dragRotate);
-  }
-
-  /**
-   * Rotates the dots and text elements inside the radar, according to the given angle
-   * TODO: Currently it always rotates around the center, no matter the current translation property (e.g. in the zoom)
-   * @param angle in degrees
-   */
-  rotate(angle: number): void {
-    this.rotateCircles(angle);
-    this.rotateDirections(angle);
-  }
-
-  /**
-   * Rotates the position circles and their links according to the angle
-   * @param angle the rotation angle
-   */
-  private rotateCircles(angle: number): void {
-    d3.select(`#${this.circleId}`)
-      .classed('transform-origin-center', true)
-      .style('transform', `rotateZ(${angle * -1}deg)`);
-  }
-
-  /**
-   * Rotates the directions 'N', 'W', 'S', and 'E' according to the angle
-   * @param angle the rotation angle
-   */
-  private rotateDirections(angle: number): void {
-    // TODO: Change me, so that only the position of the direction rotates, but not the text itself
-    d3.select(`#${this.directionId}`)
-      .classed('transform-origin-center', true)
-      .style('transform', `rotateZ(${angle * -1}deg)`);
+    d3.select(`#${this.svgGroupId}`).call(dragRotate);
   }
 
   /**
    * Adds a zoom listener and performs the transform on all components of the radar
    */
   private listenToZoom(): void {
+    const translateMultiplier = 2;
+
     this.zoom = d3.zoom()
       .extent([[0, 0], [100, 100]])
       .scaleExtent([1, 100])
       .on('zoom', () => {
-        d3.select(`#${this.circleId}`).attr('transform', d3.event.transform);
-        d3.select(`#${this.directionId}`).attr('transform', d3.event.transform);
-        d3.select(`#${this.equidistantCirclesId}`).attr('transform', d3.event.transform);
-        d3.select(`#${this.axisId}`).attr('transform', d3.event.transform);
+        const transform = d3.event.transform;
+        const scale = transform.k;
+        const translateX = transform.x * translateMultiplier * scale;
+        const translateY = transform.y * translateMultiplier * scale;
+        d3.select(`#${this.svgId}`).attr('transform', `translate(${translateX}, ${translateY}) scale(${scale})`);
       });
 
-    d3.select(`#svg`).call(this.zoom);
+    d3.select(`#${this.svgId}`).call(this.zoom);
   }
 
   /**
    * Resets the zoom changes and centers the SVG
    */
   resetZoom(): void {
-    const svg = d3.select('#svg');
+    const svg = d3.select(`#${this.svgId}`);
     const node = <Element>svg.node();
     svg.transition().duration(750).call(
       this.zoom.transform,
       d3.zoomIdentity,
       d3.zoomTransform(node).invert([this.center.x, this.center.y])
     );
+  }
+
+  /**
+   * Rotates the components in the radar
+   * @param angle the angle in degrees
+   */
+  rotate(angle: number): void {
+    const rotation = `rotateZ(${angle * -1}deg)`;
+    // Rotate the circles and directions
+    d3.select(`#${this.circleId}`).style('transform', rotation);
+    d3.select(`#${this.directionId}`).style('transform', rotation);
   }
 }

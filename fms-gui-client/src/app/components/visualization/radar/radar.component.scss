@@ -16,6 +16,10 @@
   }
 }
 
+.transform-origin-center {
+  transform-origin: center;
+}
+
 .axis {
   font-size: 0.2em;
 }
@@ -28,10 +32,6 @@
   transform: translateX(50%);
 }
 
-.transform-origin-center {
-  transform-origin: center;
-}
-
 .axis-diagonal {
   transform-origin: center;
   transform: rotateZ(-45deg) translateY(45%);
@@ -40,4 +40,5 @@
 .line {
   stroke: black;
   stroke-width: 0.2;
+  fill: none;
 }

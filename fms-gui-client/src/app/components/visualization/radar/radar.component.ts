@@ -18,24 +18,70 @@ export class RadarComponent implements OnInit, OnDestroy {
   @Input()
   private id: string;
 
+  // TODO: Don't use the emitter, if you only want to communicate with the config -> create a service for that
   @Output()
   private rotationEmitter: EventEmitter<number>;
 
+  /**
+   * An observer for handling resize events
+   * This one is needed for the correct resizing of the SVG
+   */
   private resizeObserver: ResizeObserver;
+
+  /**
+   * Contains the zooming behaviour for the radar
+   */
   private zoom: d3.ZoomBehavior<any, any>;
 
-  private svgId: string;
+  /**
+   * The id of the radar's container
+   */
   private containerId: string;
+
+  /**
+   * The actual radar SVG
+   */
+  private svgId: string;
+
+  /**
+   * The id of the radar's group element
+   */
   private svgGroupId: string;
+
+  /**
+   * The id of the equidistant circle group
+   */
   private equidistantCirclesId: string;
+
+  /**
+   * The id of the direction group
+   */
   private directionId: string;
+
+  /**
+   * The id of the axis group
+   */
   private axisId: string;
+
+  /**
+   * The id of the circle group (the circles which are drawn on the radar)
+   */
   private circleId: string;
+
+  /**
+   * The center of the radar SVG
+   */
   private readonly center: Point;
+
+  /**
+   * The current rotation angle of the radar
+   */
+  private currentRotationAngle: number;
 
   constructor() {
     this.center = new Point(50, 50);
     this.rotationEmitter = new EventEmitter<number>();
+    this.currentRotationAngle = 0;
   }
 
   ngOnInit() {
@@ -57,6 +103,7 @@ export class RadarComponent implements OnInit, OnDestroy {
     if (this.resizeObserver) {
       this.resizeObserver.unobserve(document.querySelector('body'));
     }
+    this.removeRadarContainer();
   }
 
   /**
@@ -85,7 +132,10 @@ export class RadarComponent implements OnInit, OnDestroy {
       d3.select(`#${this.containerId}`)
         .style('width', 0)
         .style('height', 0);
-      RadarUtil.scaleToSquare(`#${this.containerId}`, RadarUtil.getMinimumSideLength(`#${this.id}`));
+
+      // TODO: Fix the resize issue when changing the tab and then trying to resize again
+
+      this.scaleContainerToSquare();
     });
     resizeObserver.observe(document.querySelector('body'));
   }
@@ -98,7 +148,21 @@ export class RadarComponent implements OnInit, OnDestroy {
       .append('div')
       .attr('id', `${this.containerId}`);
 
+    this.scaleContainerToSquare();
+  }
+
+  /**
+   * Scales the radar container to a square
+   */
+  private scaleContainerToSquare(): void {
     RadarUtil.scaleToSquare(`#${this.containerId}`, RadarUtil.getMinimumSideLength(`#${this.id}`));
+  }
+
+  /**
+   * Removes the radar container
+   */
+  private removeRadarContainer(): void {
+    d3.select(`#${this.containerId}`).remove();
   }
 
   /**
@@ -160,6 +224,13 @@ export class RadarComponent implements OnInit, OnDestroy {
     this.createAxisGroup(AxisEnum.DIAGONAL_AXIS, leftTopPoint, leftTopPoint);
   }
 
+  /**
+   * Creates a group for the given axis
+   *
+   * @param axisEnum the type of axis (x-axis, y-axis or diagonal)
+   * @param startPoint the start point of the axis line
+   * @param endPoint the end point of the axis line
+   */
   private createAxisGroup(axisEnum: AxisEnum, startPoint: Point, endPoint: Point): void {
     const axis = d3.select(`#${this.axisId}`)
       .append('g')
@@ -307,9 +378,13 @@ export class RadarComponent implements OnInit, OnDestroy {
    * CTRL + Drag
    */
   private listenToDragRotate(): void {
+    let lastPosition: Point;
     const dragRotate = d3.drag()
       .filter(() => d3.event.ctrlKey)
-      .on('drag', () => this.rotationEmitter.emit(Math.atan2(this.center.y - d3.event.y, d3.event.x - this.center.x)));
+      .on('start', () => lastPosition = new Point(d3.event.x, d3.event.y))
+      .on('drag', () => this.rotationEmitter.emit(
+        RadarUtil.getDragRotationAngle(lastPosition, new Point(d3.event.x, d3.event.y), this.center, this.currentRotationAngle)
+      ));
 
     d3.select(`#${this.svgGroupId}`).call(dragRotate);
   }
@@ -331,6 +406,8 @@ export class RadarComponent implements OnInit, OnDestroy {
         d3.select(`#${this.svgId}`).attr('transform', `translate(${translateX}, ${translateY}) scale(${scale})`);
       });
 
+    // TODO: Zoom does not work properly -> it should zoom to the point where the cursor is and not just a random zoom
+    // TODO: The same with the translate property -> you shouldn't need the multiplier
     d3.select(`#${this.svgId}`).call(this.zoom);
   }
 
@@ -349,9 +426,11 @@ export class RadarComponent implements OnInit, OnDestroy {
 
   /**
    * Rotates the components in the radar
+   * TODO: When rotating, the text should stay not be rotated!
    * @param angle the angle in degrees
    */
   rotate(angle: number): void {
+    this.currentRotationAngle = angle;
     const rotation = `rotateZ(${angle * -1}deg)`;
     // Rotate the circles and directions
     d3.select(`#${this.circleId}`).style('transform', rotation);

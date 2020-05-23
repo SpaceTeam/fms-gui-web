@@ -8,7 +8,7 @@ import {FmsDataService} from '../../shared/services/fms-data/fms-data.service';
 })
 export class FlightModeComponent implements OnInit {
 
-  /**
+  /**vie
    * The component's title, which will be used in the toolbar
    */
   title = 'Flight mode';

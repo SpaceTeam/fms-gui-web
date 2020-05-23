@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnDestroy, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnDestroy, ViewChild} from '@angular/core';
 import {PositionService} from '../../../shared/services/visualization/position/position.service';
 import {RadarComponent} from '../../visualization/radar/radar.component';
 import {Subscription} from 'rxjs';
@@ -21,8 +21,9 @@ export class FlightPositionComponent implements OnDestroy, AfterViewInit {
   // TODO: Create a parent class, which tells what functions must be implemented by children, which use a radar
   // e.g. subscribe methods, listener, getPoints
 
-  @ViewChild(RadarComponent)
+  @ViewChild(RadarComponent, {static: true})
   private radar: RadarComponent;
+  // private radar: ElementRef;
 
   /**
    * Stores all subscriptions, from which we need to unsubscribe as soon as the component gets destroyed (to avoid memory leaks)

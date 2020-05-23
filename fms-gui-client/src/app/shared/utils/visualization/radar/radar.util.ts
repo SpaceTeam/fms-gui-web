@@ -143,4 +143,23 @@ export namespace RadarUtil {
     const e = exponential > 1 ? `e${exponential}` : '';
     return `${PositionUtil.roundToDecimalPlaces(value, 2)}${e}${unit}`;
   }
+
+  /**
+   * Returns the new angle after a drag rotation happened
+   * @param lastPosition the first mouse position (on drag start)
+   * @param currentPosition the current mouse position
+   * @param center the radar's center
+   * @param currentAngle the angle in the rotation form in degrees
+   */
+  export function getDragRotationAngle(lastPosition: Point, currentPosition: Point, center: Point, currentAngle: number): number {
+    // TODO: Correct me and test me
+    const lastAngle = Math.atan2(center.y - lastPosition.y, center.x - lastPosition.x);
+    const currAngle = Math.atan2(center.y - currentPosition.y, center.x - currentPosition.x);
+    const diffAngle = currAngle - lastAngle;
+    console.log(`lastAn: ${lastAngle}`);
+    console.log(`currAn: ${currAngle}`);
+    console.log(`diffAn: ${diffAngle}`);
+    console.log(`currentAngle: ${currentAngle}`);
+    return (currentAngle * Math.PI / 180) + diffAngle;
+  }
 }

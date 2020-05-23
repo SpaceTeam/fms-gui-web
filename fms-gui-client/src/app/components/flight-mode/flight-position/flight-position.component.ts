@@ -1,8 +1,6 @@
-import {AfterViewInit, Component, ElementRef, OnDestroy, ViewChild} from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import {PositionService} from '../../../shared/services/visualization/position/position.service';
 import {RadarComponent} from '../../visualization/radar/radar.component';
-import {Subscription} from 'rxjs';
-import {BrushService} from '../../../shared/services/visualization/brush/brush.service';
 import {Position} from '../../../shared/model/flight/position';
 import {environment} from '../../../../environments/environment';
 import {RadarUtil} from '../../../shared/utils/visualization/radar/radar.util';
@@ -10,31 +8,17 @@ import {PositionUtil} from '../../../shared/utils/position/position.util';
 import {AxisEnum} from '../../../shared/enums/axis.enum';
 import {Point} from '../../../shared/model/point.model';
 import {RadarForm} from '../../../shared/forms/radar.form';
+import {AbstractRadar} from '../../visualization/radar/radar.abstract';
 
 @Component({
   selector: 'app-flight-position',
   templateUrl: './flight-position.component.html',
   styleUrls: ['./flight-position.component.scss']
 })
-export class FlightPositionComponent implements OnDestroy, AfterViewInit {
+export class FlightPositionComponent extends AbstractRadar {
 
-  // TODO: Create a parent class, which tells what functions must be implemented by children, which use a radar
-  // e.g. subscribe methods, listener, getPoints
-
-  @ViewChild(RadarComponent, {static: true})
+  @ViewChild(RadarComponent)
   private radar: RadarComponent;
-  // private radar: ElementRef;
-
-  /**
-   * Stores all subscriptions, from which we need to unsubscribe as soon as the component gets destroyed (to avoid memory leaks)
-   */
-  private subscriptions: Array<Subscription>;
-
-  /**
-   * Describes the current center position (latitude, longitude)
-   * The user is able to change this value inside the radar config
-   */
-  private center: Position;
 
   /**
    * Stores the current range of the radar (e.g. max. 1000m)
@@ -61,91 +45,27 @@ export class FlightPositionComponent implements OnDestroy, AfterViewInit {
   private lastPosition: Position;
 
   constructor(
-    private positionService: PositionService,
-    private brushService: BrushService,
-    private radarForm: RadarForm
+    protected positionService: PositionService,
+    protected radarForm: RadarForm
   ) {
-    const center = environment.visualization.radar.position.center;
-    this.center = new Position(center.longitude, center.latitude);
+    super(positionService, radarForm);
     this.lastPosition = this.center;
 
     this.domainMax = environment.visualization.radar.position.domain.max;
     this.domainMultiplier = environment.visualization.radar.position.domain.multiplier;
     this.numOfCircles = environment.visualization.radar.equidistant.circles;
-
-    this.subscriptions = [];
   }
 
-  ngAfterViewInit() {
-    this.subscribeToPositionChange();
-    this.subscribeToCenterChange();
-    this.subscribeToRotationChange();
-  }
-
-  ngOnDestroy(): void {
-    this.subscriptions.forEach(subscription => subscription.unsubscribe());
-  }
-
-  /**
-   * Subscribes to a change of the position, sent by the FMS
-   * As soon as the position changes, we want to recalculate the position on the radar
-   */
-  private subscribeToPositionChange(): void {
-    const lastPositionSubscription = this.positionService.positionAnnounced$.subscribe(position => this.onNewPosition(position));
-    this.subscriptions.push(lastPositionSubscription);
-  }
-
-  /**
-   * Subscribes to a change of the center, put in by the user
-   * As soon as the center changes, we want to recalculate the positions on the radar
-   */
-  private subscribeToCenterChange(): void {
-    const centerSubscription = this.radarForm.centerChanged$.subscribe(position => this.onNewCenter(position));
-    this.subscriptions.push(centerSubscription);
-  }
-
-  /**
-   * Subscribes to a change of the rotation, put in by the user
-   * As soon as the rotation value changes, we want to rotate the positions on the radar
-   */
-  private subscribeToRotationChange(): void {
-    const rotationSubscription = this.radarForm.rotationChanged$.subscribe(rotation => this.onRotation(rotation));
-    this.subscriptions.push(rotationSubscription);
-  }
-
-  /**
-   * Tells what happens when we receive a new position
-   * TODO: This method should be overridden from a super class -> all children, which use the radar, have to implement this method
-   * @param position the latest position from the FMS
-   */
-  private onNewPosition(position: Position): void {
+  onNewPosition(position: Position): void {
     this.lastPosition = position;
     this.redraw();
   }
 
-  /**
-   * Tells what happens when we receive a new center
-   * TODO: This method should be overridden from a super class -> all children, which use the radar, have to implement this method
-   * @param position the new center position entered by the user
-   */
-  private onNewCenter(position: Position): void {
-    this.center = position;
-    this.redraw();
-  }
-
-  /**
-   * Tells what happens when we receive a new rotation angle
-   * TODO: This method should be overridden from a super class -> all children, which use the radar, have to implement this method
-   * @param rotation the angle in degrees
-   */
-  private onRotation(rotation: number): void {
+  onRotation(rotation: number): void {
     this.radar.rotate(rotation);
   }
 
-  /**
-   * Redraws the radar
-   */
-  private redraw(): void {
+  redraw(): void {
     this.updateDomain();
     this.redrawAxis(AxisEnum.Y_AXIS);
     this.radar.drawPositions(this.getPoints());
@@ -168,11 +88,7 @@ export class FlightPositionComponent implements OnDestroy, AfterViewInit {
     this.radar.setAxis(axisEnum, this.domainMax, this.numOfCircles);
   }
 
-  /**
-   * Returns the points that need to be drawn on the radar
-   * TODO: This method should be overridden from a super class -> all children, which use the radar, have to implement this method
-   */
-  private getPoints(): Array<Point> {
+  getPoints(): Array<Point> {
     // Get the distance from the center to the new position
     const radius = PositionUtil.calculateDistanceInMeters(this.center, this.lastPosition);
     const normalizedDirection = PositionUtil.getNormalizedDirection(this.center, this.lastPosition);

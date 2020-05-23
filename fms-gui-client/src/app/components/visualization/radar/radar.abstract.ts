@@ -82,7 +82,7 @@ export abstract class AbstractRadar implements AfterViewInit, OnDestroy {
 
   /**
    * Tells what happens when we receive a new rotation angle
-   * @param rotation the angle in degrees
+   * @param rotation the angle in radians
    */
   abstract onRotation(rotation: number): void;
 

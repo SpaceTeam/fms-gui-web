@@ -2,7 +2,8 @@ import {FormBuilder, FormGroup} from '@angular/forms';
 import {environment} from '../../../environments/environment';
 import {Position} from '../model/flight/position';
 import {Injectable} from '@angular/core';
-import {Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
+import {RadarUtil} from '../utils/visualization/radar/radar.util';
 
 /**
  * A form, which handles the configuration of the radar component
@@ -18,16 +19,16 @@ export class RadarForm {
   configurationForm: FormGroup;
 
   // Observable Position resource
-  private centerChangedSource;
+  private centerChangedSource: Subject<Position>;
 
   // Observable Position stream
-  centerChanged$;
+  centerChanged$: Observable<Position>;
 
-  // Observable number resource
-  private rotationChangedSource;
+  // Observable number (in radians) resource
+  private rotationChangedSource: Subject<number>;
 
   // Observable number stream
-  rotationChanged$;
+  rotationChanged$: Observable<number>;
 
   constructor(private fb: FormBuilder) {
     this.configurationForm = this.fb.group({
@@ -85,7 +86,7 @@ export class RadarForm {
     this.rotationChanged$ = this.rotationChangedSource.asObservable();
 
     const rotation = this.configurationForm.get('rotation');
-    rotation.valueChanges.subscribe(() => this.rotationChangedSource.next(rotation.value));
+    rotation.valueChanges.subscribe(() => this.rotationChangedSource.next(RadarUtil.toRadians(rotation.value)));
   }
 
   /**
@@ -93,9 +94,7 @@ export class RadarForm {
    * @param angle in radians
    */
   public dragRotation(angle: number): void {
-    const angleInDeg = angle * (180 / Math.PI);
-
-    this.rotationChangedSource.next(angleInDeg);
-    this.configurationForm.get('rotation').setValue(angleInDeg);
+    this.rotationChangedSource.next(angle);
+    this.configurationForm.get('rotation').setValue(RadarUtil.toDegrees(angle));
   }
 }

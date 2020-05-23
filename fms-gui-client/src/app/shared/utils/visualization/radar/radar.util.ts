@@ -146,20 +146,37 @@ export namespace RadarUtil {
 
   /**
    * Returns the new angle after a drag rotation happened
-   * @param lastPosition the first mouse position (on drag start)
+   * @param prevPosition the first mouse position (on drag start)
    * @param currentPosition the current mouse position
    * @param center the radar's center
-   * @param currentAngle the angle in the rotation form in degrees
+   * @param currentAngle the angle in the rotation form in radians
+   * @return the new angle in radians after already rotated
    */
-  export function getDragRotationAngle(lastPosition: Point, currentPosition: Point, center: Point, currentAngle: number): number {
-    // TODO: Correct me and test me
-    const lastAngle = Math.atan2(center.y - lastPosition.y, center.x - lastPosition.x);
-    const currAngle = Math.atan2(center.y - currentPosition.y, center.x - currentPosition.x);
-    const diffAngle = currAngle - lastAngle;
-    console.log(`lastAn: ${lastAngle}`);
-    console.log(`currAn: ${currAngle}`);
-    console.log(`diffAn: ${diffAngle}`);
-    console.log(`currentAngle: ${currentAngle}`);
-    return (currentAngle * Math.PI / 180) + diffAngle;
+  export function getDragRotationAngle(prevPosition: Point, currentPosition: Point, center: Point, currentAngle: number): number {
+    // 1) Transform both positions to the center and flip y -> transform to cartesian
+    prevPosition = toCartesian(prevPosition, center);
+    currentPosition = toCartesian(currentPosition, center);
+
+    // 2) Compute the angles for the two positions and the resulting difference
+    const prevAngle = Math.atan2(prevPosition.y, prevPosition.x);
+    const currAngle = Math.atan2(currentPosition.y, currentPosition.x);
+    const diffAngle = currAngle - prevAngle;
+
+    return currentAngle + diffAngle;
+  }
+
+  export function toDegrees(rad: number): number {
+    return rad * (180 / Math.PI);
+  }
+
+  export function toRadians(deg: number): number {
+    return deg * (Math.PI / 180);
+  }
+
+  export function toCartesian(point: Point, center: Point): Point {
+    return new Point(
+      point.x - center.x,
+      (point.y - center.y) * (-1)
+    );
   }
 }

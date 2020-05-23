@@ -27,7 +27,7 @@ export class RadarConfigComponent implements OnInit {
 
   /**
    * Expands or collapses the configuration window in the radar component
-   * TODO: This should the parent also know to resize the space used for the config -> use more screen space
+   * TODO: This should let the parent also know to resize the space used for the config -> use more screen space
    */
   toggleConfiguration(): void {
     const icon = <HTMLElement>document.getElementById('toggle-icon');

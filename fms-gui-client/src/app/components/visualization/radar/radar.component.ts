@@ -74,7 +74,7 @@ export class RadarComponent implements OnInit, OnDestroy {
   private readonly center: Point;
 
   /**
-   * The current rotation angle of the radar
+   * The current rotation angle of the radar in radians
    */
   private currentRotationAngle: number;
 
@@ -383,7 +383,12 @@ export class RadarComponent implements OnInit, OnDestroy {
       .filter(() => d3.event.ctrlKey)
       .on('start', () => lastPosition = new Point(d3.event.x, d3.event.y))
       .on('drag', () => this.rotationEmitter.emit(
-        RadarUtil.getDragRotationAngle(lastPosition, new Point(d3.event.x, d3.event.y), this.center, this.currentRotationAngle)
+        RadarUtil.getDragRotationAngle(
+          lastPosition,
+          new Point(d3.event.x, d3.event.y),
+          this.center,
+          this.currentRotationAngle
+        )
       ));
 
     d3.select(`#${this.svgGroupId}`).call(dragRotate);
@@ -427,11 +432,11 @@ export class RadarComponent implements OnInit, OnDestroy {
   /**
    * Rotates the components in the radar
    * TODO: When rotating, the text should stay not be rotated!
-   * @param angle the angle in degrees
+   * @param angle the angle in radians
    */
   rotate(angle: number): void {
     this.currentRotationAngle = angle;
-    const rotation = `rotateZ(${angle * -1}deg)`;
+    const rotation = `rotate(${angle * -1}rad)`;
     // Rotate the circles and directions
     d3.select(`#${this.circleId}`).style('transform', rotation);
     d3.select(`#${this.directionId}`).style('transform', rotation);

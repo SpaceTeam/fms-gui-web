@@ -396,4 +396,74 @@ describe('RadarUtil', () => {
       expect(result.y).toBeCloseTo(expected.y, epsilon);
     });
   });
+  describe('getDragRotationAngle', () => {
+    // Set the accuracy of the decimal places in the method
+    const decimalPlaces = 10;
+    const multiplier = Math.pow(10, decimalPlaces);
+
+    it('returns the correct angle if both, the current and the last angle, are positive', () => {
+      // Setup
+      const center = new Point(50, 50);
+      const lastPosition = new Point(55, 25);     // In cartesian: (5, 25)
+      const currentPosition = new Point(60, 30);  // In cartesian: (10, 20)
+      const currentAngle = 0;
+      let expected = -0.2662520491509255; // Since we go down, we get the lower angle minus the higher one (atan(2) - atan(5))
+      expected = Math.round(expected * multiplier) / multiplier;
+
+      // Execute
+      let result = RadarUtil.getDragRotationAngle(lastPosition, currentPosition, center, currentAngle);
+      result = Math.round(result * multiplier) / multiplier;
+
+      // Test
+      expect(result).toEqual(expected);
+    });
+    it('returns the correct angle if both, the current and the last angle, are negative', () => {
+      // Setup
+      const center = new Point(40, 25);
+      const lastPosition = new Point(55, 35);     // In cartesian: (15, -10)
+      const currentPosition = new Point(50, 30);  // In cartesian: (10, -5)
+      const currentAngle = 0;
+      let expected = 0.12435499454676141;  // Since we go up, we get the higher angle minus the lower one (atan(-1.5) - atan(-2))
+      expected = Math.round(expected * multiplier) / multiplier;
+
+      // Execute
+      let result = RadarUtil.getDragRotationAngle(lastPosition, currentPosition, center, currentAngle);
+      result = Math.round(result * multiplier) / multiplier;
+
+      // Test
+      expect(result).toEqual(expected);
+    });
+    it('returns the correct angle if the current angle is positive and the last angle is negative', () => {
+      // Setup
+      const center = new Point(60, 40);
+      const lastPosition = new Point(65, 45);     // In cartesian: (5, -5)
+      const currentPosition = new Point(65, 35);  // In cartesian: (5, 5)
+      const currentAngle = 0;
+      let expected = Math.PI / 2; // Since we go up, we get the higher angle minus the lower angle (atan(1) - atan(-1))
+      expected = Math.round(expected * multiplier) / multiplier;
+
+      // Execute
+      let result = RadarUtil.getDragRotationAngle(lastPosition, currentPosition, center, currentAngle);
+      result = Math.round(result * multiplier) / multiplier;
+
+      // Test
+      expect(result).toEqual(expected);
+    });
+    it('returns the correct angle if the previous angle is positive and the current angle is negative', () => {
+      // Setup
+      const center = new Point(60, 40);
+      const lastPosition = new Point(65, 35);     // In cartesian: (5, 5)
+      const currentPosition = new Point(65, 45);  // In cartesian: (5, -5)
+      const currentAngle = 0;
+      let expected = -Math.PI / 2; // Since we go down, we get the lower angle minus the higher angle (atan(-1) - atan(1))
+      expected = Math.round(expected * multiplier) / multiplier;
+
+      // Execute
+      let result = RadarUtil.getDragRotationAngle(lastPosition, currentPosition, center, currentAngle);
+      result = Math.round(result * multiplier) / multiplier;
+
+      // Test
+      expect(result).toEqual(expected);
+    });
+  });
 });

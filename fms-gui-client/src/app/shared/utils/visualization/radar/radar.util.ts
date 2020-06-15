@@ -145,14 +145,13 @@ export namespace RadarUtil {
   }
 
   /**
-   * Returns the new angle after a drag rotation happened
+   * Returns the angle between two points
    * @param prevPosition the first mouse position (on drag start)
    * @param currentPosition the current mouse position
    * @param center the radar's center
-   * @param currentAngle the angle in the rotation form in radians
-   * @return the new angle in radians after already rotated
+   * @return the angle difference between the two positions
    */
-  export function getDragRotationAngle(prevPosition: Point, currentPosition: Point, center: Point, currentAngle: number): number {
+  export function getAngleDifference(prevPosition: Point, currentPosition: Point, center: Point): number {
     // 1) Transform both positions to the center and flip y -> transform to cartesian
     prevPosition = toCartesian(prevPosition, center);
     currentPosition = toCartesian(currentPosition, center);
@@ -160,9 +159,8 @@ export namespace RadarUtil {
     // 2) Compute the angles for the two positions and the resulting difference
     const prevAngle = Math.atan2(prevPosition.y, prevPosition.x);
     const currAngle = Math.atan2(currentPosition.y, currentPosition.x);
-    const diffAngle = currAngle - prevAngle;
 
-    return currentAngle + diffAngle;
+    return currAngle - prevAngle;
   }
 
   export function toDegrees(rad: number): number {
@@ -174,9 +172,6 @@ export namespace RadarUtil {
   }
 
   export function toCartesian(point: Point, center: Point): Point {
-    return new Point(
-      point.x - center.x,
-      (point.y - center.y) * (-1)
-    );
+    return new Point(point.x - center.x, center.y - point.y);
   }
 }

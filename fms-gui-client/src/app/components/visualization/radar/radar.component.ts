@@ -379,15 +379,17 @@ export class RadarComponent implements OnInit, OnDestroy {
    */
   private listenToDragRotate(): void {
     let lastPosition: Point;
+    // TODO: Fix the drag rotation
+    // -> getting the angle difference works, but we somehow mix up setting the new angle
+    // Probably because how we set the currentRotationAngle in 'rotate'
     const dragRotate = d3.drag()
       .filter(() => d3.event.ctrlKey)
       .on('start', () => lastPosition = new Point(d3.event.x, d3.event.y))
       .on('drag', () => this.rotationEmitter.emit(
-        RadarUtil.getDragRotationAngle(
+        this.currentRotationAngle + RadarUtil.getAngleDifference(
           lastPosition,
           new Point(d3.event.x, d3.event.y),
-          this.center,
-          this.currentRotationAngle
+          this.center
         )
       ));
 

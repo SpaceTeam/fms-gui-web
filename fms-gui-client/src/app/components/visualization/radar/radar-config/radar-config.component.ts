@@ -50,4 +50,23 @@ export class RadarConfigComponent implements OnInit {
   resetZoom(): void {
     this.resetZoomClicked.emit();
   }
+
+  /**
+   * Whenever the rotation input value changes, it should modify the value in such a way, that it stays in the range of
+   * [0, 360[
+   * @param event the change event
+   */
+  bindRotationInputChangeToRange(event: Event): void {
+    const input = <HTMLInputElement>event.target;
+    let value = Number(input.value);
+    if (!isNaN(value)) {
+      while (value >= 360) {
+        value -= 360;
+      }
+      while (value < 0) {
+        value += 360;
+      }
+      input.value = value + '';
+    }
+  }
 }

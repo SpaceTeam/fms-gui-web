@@ -11,7 +11,6 @@ import {NavItem} from '../../model/nav-item.model';
 })
 export class RoutesService {
 
-  // TODO: Instead of using a JSON, use a YAML or properties file!
   /**
    * The url containing the location of the setting file
    */

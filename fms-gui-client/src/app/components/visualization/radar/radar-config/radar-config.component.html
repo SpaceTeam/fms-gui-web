@@ -27,7 +27,8 @@
       <mat-form-field>
         <mat-label>Degree</mat-label>
         <label>
-          <input type="number" formControlName="rotation" matInput placeholder="0" value="0"/>
+          <input type="number" formControlName="rotation" matInput placeholder="0" value="0"
+                 (change)="bindRotationInputChangeToRange($event)"/>
         </label>
       </mat-form-field>
     </div>

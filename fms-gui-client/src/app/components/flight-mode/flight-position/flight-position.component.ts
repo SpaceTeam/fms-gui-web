@@ -9,11 +9,13 @@ import {AxisEnum} from '../../../shared/enums/axis.enum';
 import {Point} from '../../../shared/model/point.model';
 import {RadarForm} from '../../../shared/forms/radar.form';
 import {AbstractRadar} from '../../visualization/radar/radar.abstract';
+import {RadarConfigService} from '../../../shared/services/visualization/radar-config/radar-config.service';
 
 @Component({
   selector: 'app-flight-position',
   templateUrl: './flight-position.component.html',
-  styleUrls: ['./flight-position.component.scss']
+  styleUrls: ['./flight-position.component.scss'],
+  providers: [RadarConfigService]
 })
 export class FlightPositionComponent extends AbstractRadar {
 
@@ -29,13 +31,13 @@ export class FlightPositionComponent extends AbstractRadar {
    * Tells how much the distance should get multiplied, if we are outside of the bounds or too close to the center
    * E.g. if we have a maximum of 1000m and we have a value outside of this bound, then with the multiplier = 2,
    * the new maximum should be 2000m
-   * TODO: The user should be able to change this value (maybe with advanced options)
+   * TODO: The user should be able to change this value (maybe with advanced options) -> should be changed via the radar-config
    */
   private domainMultiplier: number;
 
   /**
    * The number of equidistant circles to be displayed
-   * TODO: The user should be able to change this value (maybe with advanced options)
+   * TODO: The user should be able to change this value (maybe with advanced options) -> should be changed via the radar-config
    */
   private numOfCircles: number;
 
@@ -105,9 +107,5 @@ export class FlightPositionComponent extends AbstractRadar {
    */
   notifyRotationChange(angle: number): void {
     this.radarForm.dragRotation(angle);
-  }
-
-  resetZoom(): void {
-    this.radar.resetZoom();
   }
 }

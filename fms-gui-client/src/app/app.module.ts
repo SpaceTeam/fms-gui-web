@@ -23,11 +23,11 @@ import {SharedModule} from './shared/shared.module';
 import {MatrixComponent} from './components/status-panel/matrix/matrix.component';
 import {FlagsComponent} from './components/status-panel/flags/flags.component';
 import {AttributesListComponent} from './components/status-panel/matrix/attributes-list/attributes-list.component';
-import { LastPositionDataComponent } from './components/flight-mode/last-position-data/last-position-data.component';
-import { FlightDirectionComponent } from './components/flight-mode/flight-direction/flight-direction.component';
-import { FlightPositionComponent } from './components/flight-mode/flight-position/flight-position.component';
-import { RadarConfigComponent } from './components/visualization/radar/radar-config/radar-config.component';
-import { TimestampBrushComponent } from './components/timestamp-brush/timestamp-brush.component';
+import {LastPositionDataComponent} from './components/flight-mode/last-position-data/last-position-data.component';
+import {FlightDirectionComponent} from './components/flight-mode/flight-direction/flight-direction.component';
+import {FlightPositionComponent} from './components/flight-mode/flight-position/flight-position.component';
+import {RadarConfigComponent} from './components/visualization/radar/radar-config/radar-config.component';
+import {TimestampBrushComponent} from './components/timestamp-brush/timestamp-brush.component';
 
 @NgModule({
   imports: [

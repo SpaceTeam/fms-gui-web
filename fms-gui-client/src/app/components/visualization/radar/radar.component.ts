@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit, ViewEncapsulation, Output, EventEmitter} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewEncapsulation} from '@angular/core';
 
 import * as d3 from 'd3';
 import {environment} from '../../../../environments/environment';
@@ -6,6 +6,9 @@ import {RadarUtil} from '../../../shared/utils/visualization/radar/radar.util';
 import {ResizeObserver} from 'resize-observer';
 import {AxisEnum} from '../../../shared/enums/axis.enum';
 import {Point} from '../../../shared/model/point.model';
+import {RadarConfigService} from '../../../shared/services/visualization/radar-config/radar-config.service';
+import {Subscription} from 'rxjs';
+import {RadarIdUtil} from '../../../shared/utils/visualization/radar-id/radar-id.util';
 
 @Component({
   selector: 'app-radar',
@@ -18,7 +21,7 @@ export class RadarComponent implements OnInit, OnDestroy {
   @Input()
   private id: string;
 
-  // TODO: Don't use the emitter, if you only want to communicate with the config -> create a service for that
+  // TODO: Don't use the emitter, if you only want to communicate with the config -> use the config service for that
   @Output()
   private rotationEmitter: EventEmitter<number>;
 
@@ -34,41 +37,6 @@ export class RadarComponent implements OnInit, OnDestroy {
   private zoom: d3.ZoomBehavior<any, any>;
 
   /**
-   * The id of the radar's container
-   */
-  private containerId: string;
-
-  /**
-   * The actual radar SVG
-   */
-  private svgId: string;
-
-  /**
-   * The id of the radar's group element
-   */
-  private svgGroupId: string;
-
-  /**
-   * The id of the equidistant circle group
-   */
-  private equidistantCirclesId: string;
-
-  /**
-   * The id of the direction group
-   */
-  private directionId: string;
-
-  /**
-   * The id of the axis group
-   */
-  private axisId: string;
-
-  /**
-   * The id of the circle group (the circles which are drawn on the radar)
-   */
-  private circleId: string;
-
-  /**
    * The center of the radar SVG
    */
   private readonly center: Point;
@@ -78,25 +46,25 @@ export class RadarComponent implements OnInit, OnDestroy {
    */
   private currentRotationAngle: number;
 
-  constructor() {
+  /**
+   * The array of subscriptions inside the radar
+   * Whenever the radar gets destroyed, all subscriptions need to be unsubscribed
+   */
+  private subscriptions: Array<Subscription>;
+
+  constructor(private radarConfigService: RadarConfigService) {
     this.center = new Point(50, 50);
     this.rotationEmitter = new EventEmitter<number>();
     this.currentRotationAngle = 0;
+    this.subscriptions = [];
   }
 
   ngOnInit() {
-    this.svgId = `${this.id}-svg`;
-    this.containerId = `${this.id}-container`;
-    this.svgGroupId = `${this.id}-g`;
-    this.equidistantCirclesId = `${this.id}-equidistant-circles`;
-    this.directionId = `${this.id}-directions`;
-    this.axisId = `${this.id}-axis`;
-    this.circleId = `${this.id}-circles`;
-
     this.createRadar();
     this.listenToResize();
     this.listenToDragRotate();
     this.listenToZoom();
+    this.subscribeToRadarConfigService();
   }
 
   ngOnDestroy(): void {
@@ -104,6 +72,16 @@ export class RadarComponent implements OnInit, OnDestroy {
       this.resizeObserver.unobserve(document.querySelector('body'));
     }
     this.removeRadarContainer();
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
+  }
+
+  /**
+   * Whenever something in the radar config changes, the radar should change
+   * Subscribes to all changes in the radar config
+   */
+  private subscribeToRadarConfigService(): void {
+    const subscription = this.radarConfigService.resetZoomClicked$.subscribe(() => this.resetZoom());
+    this.subscriptions.push(subscription);
   }
 
   /**
@@ -129,7 +107,7 @@ export class RadarComponent implements OnInit, OnDestroy {
    */
   private listenToResize(): void {
     const resizeObserver = new ResizeObserver(() => {
-      d3.select(`#${this.containerId}`)
+      d3.select(`#${RadarIdUtil.getContainerId(this.id)}`)
         .style('width', 0)
         .style('height', 0);
 
@@ -146,7 +124,7 @@ export class RadarComponent implements OnInit, OnDestroy {
   private createRadarContainer(): void {
     d3.select(`#${this.id}`)
       .append('div')
-      .attr('id', `${this.containerId}`);
+      .attr('id', RadarIdUtil.getContainerId(this.id));
 
     this.scaleContainerToSquare();
   }
@@ -155,26 +133,26 @@ export class RadarComponent implements OnInit, OnDestroy {
    * Scales the radar container to a square
    */
   private scaleContainerToSquare(): void {
-    RadarUtil.scaleToSquare(`#${this.containerId}`, RadarUtil.getMinimumSideLength(`#${this.id}`));
+    RadarUtil.scaleToSquare(`#${RadarIdUtil.getContainerId(this.id)}`, RadarUtil.getMinimumSideLength(`#${this.id}`));
   }
 
   /**
    * Removes the radar container
    */
   private removeRadarContainer(): void {
-    d3.select(`#${this.containerId}`).remove();
+    d3.select(`#${RadarIdUtil.getContainerId(this.id)}`).remove();
   }
 
   /**
    * Creates the SVG, which is added to the component, and creates the container for the radar
    */
   private createRadarSVG(): void {
-    d3.select(`#${this.containerId}`)
+    d3.select(`#${RadarIdUtil.getContainerId(this.id)}`)
       .append('svg')
-      .attr('id', this.svgId)
+      .attr('id', RadarIdUtil.getSVGId(this.id))
       .attr('viewBox', '0 0 100 100')
       .append('g')
-      .attr('id', `${this.svgGroupId}`)
+      .attr('id', RadarIdUtil.getSVGGroupId(this.id))
       .classed('radar-group', true);
   }
 
@@ -182,9 +160,9 @@ export class RadarComponent implements OnInit, OnDestroy {
    * Adds the equidistant circles
    */
   private addEquidistantCircleGroup(): void {
-    d3.select(`#${this.svgGroupId}`)
+    d3.select(`#${RadarIdUtil.getSVGGroupId(this.id)}`)
       .append('g')
-      .attr('id', `${this.equidistantCirclesId}`)
+      .attr('id', RadarIdUtil.getEquidistantCirclesId(this.id))
       .classed('circle-group', true);
   }
 
@@ -192,9 +170,9 @@ export class RadarComponent implements OnInit, OnDestroy {
    * Adds the north, west, south, east directions to the radar
    */
   private addDirections(): void {
-    d3.select(`#${this.svgGroupId}`)
+    d3.select(`#${RadarIdUtil.getSVGGroupId(this.id)}`)
       .append('g')
-      .attr('id', this.directionId)
+      .attr('id', RadarIdUtil.getDirectionId(this.id))
       .classed('direction-group', true)
       .classed('transform-origin-center', true)
       .selectAll('text')
@@ -211,9 +189,9 @@ export class RadarComponent implements OnInit, OnDestroy {
    * The components, which use the radar, can then add their own axis
    */
   private addAxisGroups(): void {
-    d3.select(`#${this.svgGroupId}`)
+    d3.select(`#${RadarIdUtil.getSVGGroupId(this.id)}`)
       .append('g')
-      .attr('id', `${this.axisId}`);
+      .attr('id', RadarIdUtil.getAxisId(this.id));
 
     const leftTopPoint = new Point(0, 0);
     const rightTopPoint = new Point(100, 0);
@@ -232,7 +210,7 @@ export class RadarComponent implements OnInit, OnDestroy {
    * @param endPoint the end point of the axis line
    */
   private createAxisGroup(axisEnum: AxisEnum, startPoint: Point, endPoint: Point): void {
-    const axis = d3.select(`#${this.axisId}`)
+    const axis = d3.select(`#${RadarIdUtil.getAxisId(this.id)}`)
       .append('g')
       .attr('id', `${this.id}-${axisEnum}`)
       .classed('axis', true)
@@ -250,9 +228,9 @@ export class RadarComponent implements OnInit, OnDestroy {
    * Adds the group for the position circles and their links
    */
   private addCircleGroup(): void {
-    d3.select(`#${this.svgGroupId}`)
+    d3.select(`#${RadarIdUtil.getSVGGroupId(this.id)}`)
       .append('g')
-      .attr('id', this.circleId)
+      .attr('id', RadarIdUtil.getCircleId(this.id))
       .classed('transform-origin-center', true);
   }
 
@@ -294,7 +272,7 @@ export class RadarComponent implements OnInit, OnDestroy {
    * @param points an array of points
    */
   private drawDots(points: Array<Point>): void {
-    const selector = `#${this.circleId}`;
+    const selector = `#${RadarIdUtil.getCircleId(this.id)}`;
 
     // Append circles, if needed
     d3.select(selector)
@@ -318,7 +296,7 @@ export class RadarComponent implements OnInit, OnDestroy {
    * @param points an array of points
    */
   private drawLinks(points: Array<Point>): void {
-    const selector = `#${this.circleId}`;
+    const selector = `#${RadarIdUtil.getCircleId(this.id)}`;
 
     // Append lines, if needed
     d3.select(selector)
@@ -345,7 +323,7 @@ export class RadarComponent implements OnInit, OnDestroy {
    */
   updateNumberOfEquidistantCircles(numOfCircles: number): void {
     const arr = RadarUtil.calculateEquidistantCircleRadii(numOfCircles).reverse();
-    const selector = `#${this.equidistantCirclesId}`;
+    const selector = `#${RadarIdUtil.getEquidistantCirclesId(this.id)}`;
 
     // Append circles, if needed
     d3.select(selector)
@@ -393,7 +371,7 @@ export class RadarComponent implements OnInit, OnDestroy {
         )
       ));
 
-    d3.select(`#${this.svgGroupId}`).call(dragRotate);
+    d3.select(`#${RadarIdUtil.getSVGGroupId(this.id)}`).call(dragRotate);
   }
 
   /**
@@ -410,19 +388,19 @@ export class RadarComponent implements OnInit, OnDestroy {
         const scale = transform.k;
         const translateX = transform.x * translateMultiplier * scale;
         const translateY = transform.y * translateMultiplier * scale;
-        d3.select(`#${this.svgId}`).attr('transform', `translate(${translateX}, ${translateY}) scale(${scale})`);
+        d3.select(`#${RadarIdUtil.getSVGId(this.id)}`).attr('transform', `translate(${translateX}, ${translateY}) scale(${scale})`);
       });
 
     // TODO: Zoom does not work properly -> it should zoom to the point where the cursor is and not just a random zoom
     // TODO: The same with the translate property -> you shouldn't need the multiplier
-    d3.select(`#${this.svgId}`).call(this.zoom);
+    d3.select(`#${RadarIdUtil.getSVGId(this.id)}`).call(this.zoom);
   }
 
   /**
    * Resets the zoom changes and centers the SVG
    */
   resetZoom(): void {
-    const svg = d3.select(`#${this.svgId}`);
+    const svg = d3.select(`#${RadarIdUtil.getSVGId(this.id)}`);
     const node = <Element>svg.node();
     svg.transition().duration(750).call(
       this.zoom.transform,
@@ -440,7 +418,7 @@ export class RadarComponent implements OnInit, OnDestroy {
     this.currentRotationAngle = angle;
     const rotation = `rotate(${angle * -1}rad)`;
     // Rotate the circles and directions
-    d3.select(`#${this.circleId}`).style('transform', rotation);
-    d3.select(`#${this.directionId}`).style('transform', rotation);
+    d3.select(`#${RadarIdUtil.getCircleId(this.id)}`).style('transform', rotation);
+    d3.select(`#${RadarIdUtil.getDirectionId(this.id)}`).style('transform', rotation);
   }
 }

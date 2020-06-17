@@ -1,5 +1,6 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {RadarForm} from '../../../../shared/forms/radar.form';
+import {RadarConfigService} from '../../../../shared/services/visualization/radar-config/radar-config.service';
 
 @Component({
   selector: 'app-radar-config',
@@ -13,12 +14,8 @@ export class RadarConfigComponent implements OnInit {
    */
   public isConfigOpen;
 
-  @Output()
-  public resetZoomClicked: EventEmitter<void>;
-
-  constructor(public radarForm: RadarForm) {
+  constructor(public radarForm: RadarForm, private radarConfigService: RadarConfigService) {
     this.isConfigOpen = true;
-    this.resetZoomClicked = new EventEmitter<void>();
   }
 
   ngOnInit(): void {
@@ -45,10 +42,10 @@ export class RadarConfigComponent implements OnInit {
   }
 
   /**
-   * Lets the parent know, that the 'Reset zoom' button got clicked
+   * Lets the radar know, that the 'Reset zoom' button got clicked
    */
   resetZoom(): void {
-    this.resetZoomClicked.emit();
+    this.radarConfigService.resetZoom();
   }
 
   /**

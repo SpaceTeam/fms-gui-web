@@ -2,26 +2,31 @@
   {
     "path": "",
     "title": "Main",
-    "icon": "home"
+    "icon": "home",
+    "routerLinkActiveExact": true
   },
   {
     "path": "status-panel",
     "title": "Status Panel",
-    "icon": "show_chart"
+    "icon": "show_chart",
+    "routerLinkActiveExact": false
   },
   {
     "path": "flight-mode",
     "title": "Flight Mode",
-    "icon": "flight"
+    "icon": "flight",
+    "routerLinkActiveExact": false
   },
   {
     "path": "controls",
     "title": "Controls",
-    "icon": "games"
+    "icon": "games",
+    "routerLinkActiveExact": false
   },
   {
     "path": "cards",
     "title": "Cards",
-    "icon": "view_column"
+    "icon": "view_column",
+    "routerLinkActiveExact": false
   }
 ]

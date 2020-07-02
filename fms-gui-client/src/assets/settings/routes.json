@@ -2,16 +2,19 @@
   {
     "path": "",
     "title": "Main",
-    "icon": "home"
+    "icon": "home",
+    "routerLinkActiveExact": true
   },
   {
     "path": "status-panel",
     "title": "Status Panel",
-    "icon": "show_chart"
+    "icon": "show_chart",
+    "routerLinkActiveExact": false
   },
   {
     "path": "flight-mode",
     "title": "Flight Mode",
-    "icon": "flight"
+    "icon": "flight",
+    "routerLinkActiveExact": false
   }
 ]

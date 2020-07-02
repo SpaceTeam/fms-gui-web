@@ -1,6 +1,10 @@
 <mat-nav-list *ngIf="navItems">
   <!-- Navigation items -->
-  <mat-list-item *ngFor="let item of navItems" (click)="nav.click()">
+  <mat-list-item
+    *ngFor="let item of navItems"
+    (click)="nav.click()"
+    routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"
+  >
     <mat-icon matListIcon aria-hidden="true">{{item.icon}}</mat-icon>
     <a [routerLink]="['/' + item.path]" #nav>{{item.title}}</a>
   </mat-list-item>

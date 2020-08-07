@@ -1,6 +1,6 @@
 import {Position} from '../../../shared/model/flight/position';
 import {Subscription} from 'rxjs';
-import {AfterViewInit, OnDestroy} from '@angular/core';
+import { AfterViewInit, OnDestroy, Directive } from '@angular/core';
 import {PositionService} from '../../../shared/services/visualization/position/position.service';
 import {RadarForm} from '../../../shared/forms/radar.form';
 import {environment} from '../../../../environments/environment';
@@ -9,6 +9,7 @@ import {Point} from '../../../shared/model/point.model';
 /**
  * This is the base class for every component, which uses the radar
  */
+@Directive()
 export abstract class AbstractRadar implements AfterViewInit, OnDestroy {
 
   /**

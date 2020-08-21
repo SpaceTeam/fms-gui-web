@@ -31,6 +31,8 @@
     "jquery": "^3.5.1",
     "material-design-icons": "3.0.1",
     "moment": "2.22.2",
+    "popper": "^1.0.1",
+    "popper.js": "^1.14.7",
     "rxjs": "6.5.4",
     "typeface-roboto": "0.0.75",
     "zone.js": "0.10.3"
@@ -58,7 +60,6 @@
     "karma-jasmine": "~3.3.0",
     "karma-jasmine-html-reporter": "^1.5.0",
     "protractor": "~7.0.0",
-    "resize-observer": "^1.0.0",
     "tslint": "~6.1.0",
     "typescript": "3.9.7"
   }

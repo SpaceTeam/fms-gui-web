@@ -24,6 +24,8 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
   divId: string;
 
   private svg: any;
+  private svgGroup: any;
+  private groups: Array<any>;
 
   /**
    * Contains the zooming behaviour for the radar
@@ -50,6 +52,7 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
     this.center = new Point(50, 50);
     this.currentRotationAngle = 0;
     this.subscriptions = [];
+    this.groups = [];
   }
 
   ngOnInit() {
@@ -74,7 +77,7 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
   private createRadar(): void {
     // Append the SVG object to the body of the page
     this.createRadarSVG();
-    this.setRadarDimensions();
+    this.createRadarGroup();
 
     // Add the default number of equidistant circles to the radar
     this.addEquidistantCircleGroup();
@@ -90,32 +93,33 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   private createRadarSVG(): void {
     this.svg = d3.select(`#${this.id}`)
-      .select('svg');
+      .select('svg')
+      .attr('viewBox', '0 0 100 100');
   }
 
-  private setRadarDimensions(): void {
-    this.svg
-      .attr('viewBox', '0 0 100 100')
-      .append('g')
-      .attr('id', RadarIdUtil.getSVGGroupId(this.id))
+  private createRadarGroup(): void {
+    this.svgGroup = this.svg.append('g')
+      .attr('id', this.id + '-g')
       .classed('radar-group', true);
+    this.groups.push(this.svgGroup);
   }
 
   /**
    * Adds the equidistant circles
    */
   private addEquidistantCircleGroup(): void {
-    d3.select(`#${RadarIdUtil.getSVGGroupId(this.id)}`)
+    const circleGroup = this.svgGroup
       .append('g')
       .attr('id', RadarIdUtil.getEquidistantCirclesId(this.id))
       .classed('circle-group', true);
+    this.groups.push(circleGroup);
   }
 
   /**
    * Adds the north, west, south, east directions to the radar
    */
   private addDirections(): void {
-    d3.select(`#${RadarIdUtil.getSVGGroupId(this.id)}`)
+    const directionGroup = this.svgGroup
       .append('g')
       .attr('id', RadarIdUtil.getDirectionId(this.id))
       .classed('direction-group', true)
@@ -127,6 +131,7 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
       .attr('x', d => d.x)
       .attr('y', d => d.y)
       .text(d => d.direction);
+    this.groups.push(directionGroup);
   }
 
   /**
@@ -134,9 +139,10 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
    * The components, which use the radar, can then add their own axis
    */
   private addAxisGroups(): void {
-    d3.select(`#${RadarIdUtil.getSVGGroupId(this.id)}`)
+    const axisGroup = this.svgGroup
       .append('g')
       .attr('id', RadarIdUtil.getAxisId(this.id));
+    this.groups.push(axisGroup);
 
     const leftTopPoint = new Point(0, 0);
     const rightTopPoint = new Point(100, 0);
@@ -173,10 +179,11 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
    * Adds the group for the position circles and their links
    */
   private addCircleGroup(): void {
-    d3.select(`#${RadarIdUtil.getSVGGroupId(this.id)}`)
+    const circleGroup = this.svgGroup
       .append('g')
       .attr('id', RadarIdUtil.getCircleId(this.id))
       .classed('transform-origin-center', true);
+    this.groups.push(circleGroup);
   }
 
   /**
@@ -301,50 +308,28 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
    * CTRL + Drag
    */
   private listenToDragRotate(): void {
-    let lastPosition: Point;
-    // TODO: Fix the drag rotation
-    // -> getting the angle difference works, but we somehow mix up setting the new angle
-    // Probably because how we set the currentRotationAngle in 'rotate'
-    const dragRotate = d3.drag()
-      .filter(() => d3.event.ctrlKey)
-      .on('start', () => lastPosition = new Point(d3.event.x, d3.event.y));
-
-    d3.select(`#${RadarIdUtil.getSVGGroupId(this.id)}`).call(dragRotate);
+    // TODO: Implement me
   }
 
   /**
-   * Adds a zoom listener and performs the transform on all components of the radar
+   * Adds a listener for zooming and translating all components of the radar
    */
   private listenToZoom(): void {
-    const translateMultiplier = 2;
-
     this.zoom = d3.zoom()
       .extent([[0, 0], [100, 100]])
       .scaleExtent([1, 100])
-      .on('zoom', () => {
-        const transform = d3.event.transform;
-        const scale = transform.k;
-        const translateX = transform.x * translateMultiplier * scale;
-        const translateY = transform.y * translateMultiplier * scale;
-        d3.select(`#${RadarIdUtil.getSVGId(this.id)}`).attr('transform', `translate(${translateX}, ${translateY}) scale(${scale})`);
-      });
+      .on('zoom', () => this.groups.forEach(group => group.attr('transform', d3.event.transform)));
 
-    // TODO: Zoom does not work properly -> it should zoom to the point where the cursor is and not just a random zoom
-    // TODO: The same with the translate property -> you shouldn't need the multiplier
-    d3.select(`#${RadarIdUtil.getSVGId(this.id)}`).call(this.zoom);
+    this.svg.call(this.zoom);
   }
 
   /**
    * Resets the zoom changes and centers the SVG
    */
-  resetZoom(): void {
-    const svg = d3.select(`#${RadarIdUtil.getSVGId(this.id)}`);
-    const node = <Element>svg.node();
-    svg.transition().duration(750).call(
-      this.zoom.transform,
-      d3.zoomIdentity,
-      d3.zoomTransform(node).invert([this.center.x, this.center.y])
-    );
+  private resetZoom(): void {
+    this.svg.transition()
+      .duration(750)
+      .call(this.zoom.transform, d3.zoomIdentity, d3.zoomTransform(this.svg.node()).invert([50, 50]));
   }
 
   /**
@@ -361,11 +346,11 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   @HostListener('window:resize')
-  onResize() {
+  private onResize() {
     this.resizeSVGToFitContainer();
   }
 
-  resizeSVGToFitContainer() {
+  private resizeSVGToFitContainer() {
     const radarElem = document.getElementById(this.id);
     const divElem = document.getElementById(this.divId);
     divElem.style.display = 'none';

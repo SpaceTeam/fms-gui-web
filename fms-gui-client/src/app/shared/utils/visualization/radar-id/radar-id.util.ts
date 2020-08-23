@@ -12,22 +12,6 @@ export namespace RadarIdUtil {
   }
 
   /**
-   * Returns the id of the radar's container
-   * @param id the radar's id
-   */
-  export function getContainerId(id: string): string {
-    return `${id}-container`;
-  }
-
-  /**
-   * Returns the id of the radar's group element
-   * @param id the radar's id
-   */
-  export function getSVGGroupId(id: string): string {
-    return `${id}-g`;
-  }
-
-  /**
    * Returns the id of the equidistant circle group
    * @param id the radar's id
    */

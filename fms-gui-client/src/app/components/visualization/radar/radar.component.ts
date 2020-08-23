@@ -1,13 +1,13 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewEncapsulation} from '@angular/core';
+import {AfterViewInit, Component, HostListener, Input, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core';
 
 import * as d3 from 'd3';
+import {Subscription} from 'rxjs';
+
 import {environment} from '../../../../environments/environment';
 import {RadarUtil} from '../../../shared/utils/visualization/radar/radar.util';
-import {ResizeObserver} from 'resize-observer';
 import {AxisEnum} from '../../../shared/enums/axis.enum';
 import {Point} from '../../../shared/model/point.model';
 import {RadarConfigService} from '../../../shared/services/visualization/radar-config/radar-config.service';
-import {Subscription} from 'rxjs';
 import {RadarIdUtil} from '../../../shared/utils/visualization/radar-id/radar-id.util';
 
 @Component({
@@ -16,20 +16,14 @@ import {RadarIdUtil} from '../../../shared/utils/visualization/radar-id/radar-id
   styleUrls: ['./radar.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class RadarComponent implements OnInit, OnDestroy {
+export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @Input()
   private id: string;
 
-  // TODO: Don't use the emitter, if you only want to communicate with the config -> use the config service for that
-  @Output()
-  private rotationEmitter: EventEmitter<number>;
+  divId: string;
 
-  /**
-   * An observer for handling resize events
-   * This one is needed for the correct resizing of the SVG
-   */
-  private resizeObserver: ResizeObserver;
+  private svg: any;
 
   /**
    * Contains the zooming behaviour for the radar
@@ -54,44 +48,33 @@ export class RadarComponent implements OnInit, OnDestroy {
 
   constructor(private radarConfigService: RadarConfigService) {
     this.center = new Point(50, 50);
-    this.rotationEmitter = new EventEmitter<number>();
     this.currentRotationAngle = 0;
     this.subscriptions = [];
   }
 
   ngOnInit() {
+    this.divId = this.id + '-div';
+  }
+
+  ngAfterViewInit() {
+    this.resizeSVGToFitContainer();
     this.createRadar();
-    this.listenToResize();
     this.listenToDragRotate();
     this.listenToZoom();
     this.subscribeToRadarConfigService();
   }
 
   ngOnDestroy(): void {
-    if (this.resizeObserver) {
-      this.resizeObserver.unobserve(document.querySelector('body'));
-    }
-    this.removeRadarContainer();
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
-  }
-
-  /**
-   * Whenever something in the radar config changes, the radar should change
-   * Subscribes to all changes in the radar config
-   */
-  private subscribeToRadarConfigService(): void {
-    const subscription = this.radarConfigService.resetZoomClicked$.subscribe(() => this.resetZoom());
-    this.subscriptions.push(subscription);
   }
 
   /**
    * Creates the radar and all its components (e.g. the equidistant circles and directions)
    */
   private createRadar(): void {
-    this.createRadarContainer();
-
     // Append the SVG object to the body of the page
     this.createRadarSVG();
+    this.setRadarDimensions();
 
     // Add the default number of equidistant circles to the radar
     this.addEquidistantCircleGroup();
@@ -103,53 +86,15 @@ export class RadarComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Checks if the browser gets resized and adjusts the container size according to the new available width and height
-   */
-  private listenToResize(): void {
-    const resizeObserver = new ResizeObserver(() => {
-      d3.select(`#${RadarIdUtil.getContainerId(this.id)}`)
-        .style('width', 0)
-        .style('height', 0);
-
-      // TODO: Fix the resize issue when changing the tab and then trying to resize again
-
-      this.scaleContainerToSquare();
-    });
-    resizeObserver.observe(document.querySelector('body'));
-  }
-
-  /**
-   * Appends a div to the radar component, which we can resize according to the radar dimensions
-   */
-  private createRadarContainer(): void {
-    d3.select(`#${this.id}`)
-      .append('div')
-      .attr('id', RadarIdUtil.getContainerId(this.id));
-
-    this.scaleContainerToSquare();
-  }
-
-  /**
-   * Scales the radar container to a square
-   */
-  private scaleContainerToSquare(): void {
-    RadarUtil.scaleToSquare(`#${RadarIdUtil.getContainerId(this.id)}`, RadarUtil.getMinimumSideLength(`#${this.id}`));
-  }
-
-  /**
-   * Removes the radar container
-   */
-  private removeRadarContainer(): void {
-    d3.select(`#${RadarIdUtil.getContainerId(this.id)}`).remove();
-  }
-
-  /**
    * Creates the SVG, which is added to the component, and creates the container for the radar
    */
   private createRadarSVG(): void {
-    d3.select(`#${RadarIdUtil.getContainerId(this.id)}`)
-      .append('svg')
-      .attr('id', RadarIdUtil.getSVGId(this.id))
+    this.svg = d3.select(`#${this.id}`)
+      .select('svg');
+  }
+
+  private setRadarDimensions(): void {
+    this.svg
       .attr('viewBox', '0 0 100 100')
       .append('g')
       .attr('id', RadarIdUtil.getSVGGroupId(this.id))
@@ -362,14 +307,7 @@ export class RadarComponent implements OnInit, OnDestroy {
     // Probably because how we set the currentRotationAngle in 'rotate'
     const dragRotate = d3.drag()
       .filter(() => d3.event.ctrlKey)
-      .on('start', () => lastPosition = new Point(d3.event.x, d3.event.y))
-      .on('drag', () => this.rotationEmitter.emit(
-        this.currentRotationAngle + RadarUtil.getAngleDifference(
-          lastPosition,
-          new Point(d3.event.x, d3.event.y),
-          this.center
-        )
-      ));
+      .on('start', () => lastPosition = new Point(d3.event.x, d3.event.y));
 
     d3.select(`#${RadarIdUtil.getSVGGroupId(this.id)}`).call(dragRotate);
   }
@@ -420,5 +358,39 @@ export class RadarComponent implements OnInit, OnDestroy {
     // Rotate the circles and directions
     d3.select(`#${RadarIdUtil.getCircleId(this.id)}`).style('transform', rotation);
     d3.select(`#${RadarIdUtil.getDirectionId(this.id)}`).style('transform', rotation);
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.resizeSVGToFitContainer();
+  }
+
+  resizeSVGToFitContainer() {
+    const radarElem = document.getElementById(this.id);
+    const divElem = document.getElementById(this.divId);
+    divElem.style.display = 'none';
+    const radarWidth = radarElem.clientWidth;
+    const radarHeight = radarElem.clientHeight;
+    const radarSize = Math.min(radarWidth, radarHeight);
+    divElem.style.width = radarSize + 'px';
+    divElem.style.height = radarHeight + 'px';
+    divElem.style.display = '';
+  }
+
+  /**
+   * Whenever something in the radar config changes, the radar should change
+   * Subscribes to all changes in the radar config
+   */
+  private subscribeToRadarConfigService(): void {
+    const subscription = this.radarConfigService.resetZoomClicked$.subscribe(() => this.resetZoom());
+    this.subscriptions.push(subscription);
+  }
+
+  get height(): number {
+    return parseInt(d3.select(this.id).style('height'), 10);
+  }
+
+  get width(): number {
+    return parseInt(d3.select(this.id).style('width'), 10);
   }
 }

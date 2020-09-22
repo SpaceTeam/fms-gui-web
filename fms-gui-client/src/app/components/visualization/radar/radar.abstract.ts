@@ -1,6 +1,6 @@
 import {Position} from '../../../shared/model/flight/position';
 import {Subscription} from 'rxjs';
-import { AfterViewInit, OnDestroy, Directive } from '@angular/core';
+import {AfterViewInit, Directive, OnDestroy} from '@angular/core';
 import {PositionService} from '../../../shared/services/visualization/position/position.service';
 import {RadarForm} from '../../../shared/forms/radar.form';
 import {environment} from '../../../../environments/environment';
@@ -32,7 +32,6 @@ export abstract class AbstractRadar implements AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.subscribeToPositionChange();
     this.subscribeToCenterChange();
-    this.subscribeToRotationChange();
   }
 
   ngOnDestroy(): void {
@@ -55,15 +54,6 @@ export abstract class AbstractRadar implements AfterViewInit, OnDestroy {
   private subscribeToCenterChange(): void {
     const centerSubscription = this.radarForm.centerChanged$.subscribe(position => this.onNewCenter(position));
     this.subscriptions.push(centerSubscription);
-  }
-
-  /**
-   * Subscribes to a change of the rotation, put in by the user
-   * As soon as the rotation value changes, we want to rotate the positions on the radar
-   */
-  private subscribeToRotationChange(): void {
-    const rotationSubscription = this.radarForm.rotationChanged$.subscribe(rotation => this.onRotation(rotation));
-    this.subscriptions.push(rotationSubscription);
   }
 
   /**

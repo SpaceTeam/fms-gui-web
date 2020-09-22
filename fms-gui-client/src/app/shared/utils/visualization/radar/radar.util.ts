@@ -1,7 +1,6 @@
 import * as d3 from 'd3';
 import {NegativeNumberException} from '../../../exceptions/negative-number.exception';
 import {Point} from '../../../model/point.model';
-import {AxisEnum} from '../../../enums/axis.enum';
 import {PositionUtil} from '../../position/position.util';
 
 export namespace RadarUtil {
@@ -17,14 +16,11 @@ export namespace RadarUtil {
       throw new NegativeNumberException('No negative numbers allowed');
     }
 
-    const circleRadii = [];
+    const margin = 5;
+    const circleRadiiInterpolate = d3.interpolateNumber(0, 50 - margin);
 
-    // We use 50, since we only need the radius and not the diameter (50%)
-    const r = 50 / numOfCircles;
-    for (let i = 1; i <= numOfCircles; i++) {
-      circleRadii[i - 1] = r * i;
-    }
-    return circleRadii;
+    return Array.from(Array(numOfCircles).keys())
+      .map(val => circleRadiiInterpolate((val + 1) / numOfCircles));
   }
 
   /**
@@ -100,37 +96,6 @@ export namespace RadarUtil {
     const x = 50 * (1 + Math.cos(angle) * factor);
     const y = 50 * (1 - Math.sin(angle) * factor);
     return new Point(x, y);
-  }
-
-  export function createAxis(axisEnum: AxisEnum, scaleMax: number, ticks: number): d3.Axis<any> {
-    const domain = [];
-    // We need an empty tick for 0
-    domain.push('');
-
-    const fraction = scaleMax / ticks;
-    for (let i = 1; i <= ticks; i++) {
-      const value = fraction * i;
-      domain.push(getTickText(value));
-    }
-    const scale = d3.scalePoint()
-      .domain(domain);
-
-    let axis;
-    switch (axisEnum) {
-      case AxisEnum.X_AXIS:
-      case AxisEnum.DIAGONAL_AXIS:
-        scale.range([50, 100]);
-        axis = d3.axisBottom(scale);
-        break;
-      case AxisEnum.Y_AXIS:
-        scale.range([50, 0]);
-        axis = d3.axisLeft(scale);
-        break;
-      default:
-        throw new Error(`Invalid axisEnum ${axisEnum}`);
-    }
-    axis.tickSize(0);
-    return axis;
   }
 
   export function getTickText(value: number): string {

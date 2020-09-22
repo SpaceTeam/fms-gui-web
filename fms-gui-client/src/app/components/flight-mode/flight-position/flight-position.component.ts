@@ -5,7 +5,6 @@ import {Position} from '../../../shared/model/flight/position';
 import {environment} from '../../../../environments/environment';
 import {RadarUtil} from '../../../shared/utils/visualization/radar/radar.util';
 import {PositionUtil} from '../../../shared/utils/position/position.util';
-import {AxisEnum} from '../../../shared/enums/axis.enum';
 import {Point} from '../../../shared/model/point.model';
 import {RadarForm} from '../../../shared/forms/radar.form';
 import {AbstractRadar} from '../../visualization/radar/radar.abstract';
@@ -69,7 +68,6 @@ export class FlightPositionComponent extends AbstractRadar {
 
   redraw(): void {
     this.updateDomain();
-    this.redrawAxis(AxisEnum.Y_AXIS);
     this.radar.drawPositions(this.getPoints());
   }
 
@@ -81,15 +79,6 @@ export class FlightPositionComponent extends AbstractRadar {
     this.domainMax = RadarUtil.getNewDomainMax(radius, this.domainMax, this.numOfCircles, this.domainMultiplier);
   }
 
-  /**
-   * Clears all existing axis and draws only the given axis
-   * @param axisEnum the axis to be drawn
-   */
-  private redrawAxis(axisEnum: AxisEnum): void {
-    this.radar.clearAxis();
-    this.radar.setAxis(axisEnum, this.domainMax, this.numOfCircles);
-  }
-
   getPoints(): Array<Point> {
     // Get the distance from the center to the new position
     const radius = PositionUtil.calculateDistanceInMeters(this.center, this.lastPosition);
@@ -99,13 +88,5 @@ export class FlightPositionComponent extends AbstractRadar {
     const factor = radius / this.domainMax;
 
     return [RadarUtil.getPositionOnRadar(normalizedDirection, factor)];
-  }
-
-  /**
-   * Notifies the radar form, that the rotation inside the radar has changed (when the user dragged the radar)
-   * @param angle the rotation angle in radians
-   */
-  notifyRotationChange(angle: number): void {
-    this.radarForm.dragRotation(angle);
   }
 }

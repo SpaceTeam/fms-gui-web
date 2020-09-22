@@ -76,31 +76,33 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   private createRadar(): void {
     // Append the SVG object to the body of the page
-    this.createRadarSVG();
+    this.setSVGProperties();
     this.createRadarGroup();
 
     // Add the default number of equidistant circles to the radar
     this.addEquidistantCircleGroup();
     this.updateNumberOfEquidistantCircles(environment.visualization.radar.equidistant.circles);
 
-    this.addDirections();
     this.addAxisGroups();
     this.addCircleGroup();
   }
 
   /**
-   * Creates the SVG, which is added to the component, and creates the container for the radar
+   * Loads the SVG and sets its properties (currently only the viewbox)
    */
-  private createRadarSVG(): void {
+  private setSVGProperties(): void {
     this.svg = d3.select(`#${this.id}`)
       .select('svg')
       .attr('viewBox', '0 0 100 100');
   }
 
+  /**
+   * Creates the group inside the radar, which handles all sub groups and components
+   */
   private createRadarGroup(): void {
     this.svgGroup = this.svg.append('g')
       .attr('id', this.id + '-g')
-      .classed('radar-group', true);
+      .classed('transform-origin-center', true);
     this.groups.push(this.svgGroup);
   }
 
@@ -110,28 +112,8 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
   private addEquidistantCircleGroup(): void {
     const circleGroup = this.svgGroup
       .append('g')
-      .attr('id', RadarIdUtil.getEquidistantCirclesId(this.id))
-      .classed('circle-group', true);
+      .attr('id', RadarIdUtil.getEquidistantCirclesId(this.id));
     this.groups.push(circleGroup);
-  }
-
-  /**
-   * Adds the north, west, south, east directions to the radar
-   */
-  private addDirections(): void {
-    const directionGroup = this.svgGroup
-      .append('g')
-      .attr('id', RadarIdUtil.getDirectionId(this.id))
-      .classed('direction-group', true)
-      .classed('transform-origin-center', true)
-      .selectAll('text')
-      .data(environment.visualization.radar.directions)
-      .enter()
-      .append('text')
-      .attr('x', d => d.x)
-      .attr('y', d => d.y)
-      .text(d => d.direction);
-    this.groups.push(directionGroup);
   }
 
   /**
@@ -144,35 +126,60 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
       .attr('id', RadarIdUtil.getAxisId(this.id));
     this.groups.push(axisGroup);
 
-    const leftTopPoint = new Point(0, 0);
-    const rightTopPoint = new Point(100, 0);
-    const bottomLeftPoint = new Point(0, 100);
-
-    this.createAxisGroup(AxisEnum.X_AXIS, leftTopPoint, rightTopPoint);
-    this.createAxisGroup(AxisEnum.Y_AXIS, leftTopPoint, bottomLeftPoint);
-    this.createAxisGroup(AxisEnum.DIAGONAL_AXIS, leftTopPoint, leftTopPoint);
+    this.createAxis(AxisEnum.X_AXIS);
+    this.createAxis(AxisEnum.Y_AXIS);
+    this.createAxis(AxisEnum.DIAGONAL_AXIS);
   }
 
   /**
-   * Creates a group for the given axis
-   *
-   * @param axisEnum the type of axis (x-axis, y-axis or diagonal)
-   * @param startPoint the start point of the axis line
-   * @param endPoint the end point of the axis line
+   * Creates an axis
+   * @param axisEnum an axis enum
    */
-  private createAxisGroup(axisEnum: AxisEnum, startPoint: Point, endPoint: Point): void {
-    const axis = d3.select(`#${RadarIdUtil.getAxisId(this.id)}`)
-      .append('g')
-      .attr('id', `${this.id}-${axisEnum}`)
-      .classed('axis', true)
-      .classed(axisEnum, true);
+  private createAxis(axisEnum: AxisEnum): void {
+    let domain: Array<string>;
+    let transformString: string;
+    let axisMethod;
+    let dx: string;
 
-    // Append the correct domain line
-    axis.append('line')
-      .attr('x1', startPoint.x)
-      .attr('y1', startPoint.y)
-      .attr('x2', endPoint.x)
-      .attr('y2', endPoint.y);
+    switch (axisEnum) {
+      case AxisEnum.X_AXIS:
+        domain = ['W', 'E'];
+        axisMethod = d3.axisBottom;
+        // Since the path element moves the axis 0.5 to the right, we need to move it 0.5 to the left
+        transformString = 'translate(-0.5, 50)';
+        dx = '';
+        break;
+      case AxisEnum.Y_AXIS:
+        domain = ['N', 'S'];
+        axisMethod = d3.axisLeft;
+        // Since the path element moves the axis 0.5 to the bottom, we need to move it 0.5 to the top
+        transformString = 'translate(50, -0.5)';
+        dx = '0.5em';
+        break;
+      default:
+        return;
+    }
+
+    const margin = 5;
+
+    const scale = d3.scalePoint()
+      .range([margin, 100 - margin])
+      .domain(domain);
+
+    const axis = axisMethod(scale)
+      .tickSize(0);
+
+    d3.select('#' + RadarIdUtil.getAxisId(this.id))
+      .append('g')
+      .attr('transform', transformString)
+      .classed('axis', true)
+      .call(axis)
+      // Update the text position
+      .selectAll('.tick text')
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('dy', '0.5em')
+      .attr('dx', dx);
   }
 
   /**
@@ -181,33 +188,8 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
   private addCircleGroup(): void {
     const circleGroup = this.svgGroup
       .append('g')
-      .attr('id', RadarIdUtil.getCircleId(this.id))
-      .classed('transform-origin-center', true);
+      .attr('id', RadarIdUtil.getCircleId(this.id));
     this.groups.push(circleGroup);
-  }
-
-  /**
-   * Removes all d3 axis ticks from the radar
-   */
-  clearAxis(): void {
-    Object.values(AxisEnum).forEach(axisEnum =>
-      d3.select(`#${this.id}-${axisEnum}`)
-        .selectAll('.tick')
-        .remove()
-    );
-  }
-
-  /**
-   * Calls the given axis on the axis group with the given id
-   *
-   * @param axisEnum the selector of the axis group
-   * @param scaleMax a number describing the maximum value of the axis scale
-   * @param ticks the number of ticks to be displayed on the axis
-   */
-  setAxis(axisEnum: AxisEnum, scaleMax: number, ticks: number): void {
-    d3.select(`#${this.id}-${axisEnum}`)
-      .call(RadarUtil.createAxis(axisEnum, scaleMax, ticks))
-      .select('.domain').remove();
   }
 
   /**
@@ -273,7 +255,7 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
    * This method does not update any axis
    * @param numOfCircles the number of equidistant circles to be displayed
    */
-  updateNumberOfEquidistantCircles(numOfCircles: number): void {
+  private updateNumberOfEquidistantCircles(numOfCircles: number): void {
     const arr = RadarUtil.calculateEquidistantCircleRadii(numOfCircles).reverse();
     const selector = `#${RadarIdUtil.getEquidistantCirclesId(this.id)}`;
 
@@ -295,9 +277,9 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
     d3.select(selector)
       .selectAll('circle')
       .data(arr)
-      .attr('cx', '50%')
-      .attr('cy', '50%')
-      .attr('r', d => d - 0.05) // We need to subtract half of the stroke-width so that it fits the svg perfectly
+      .attr('cx', '50')
+      .attr('cy', '50')
+      .attr('r', d => d)
       .style('fill', (d, i) => RadarUtil.calculateCircleFill(i, numOfCircles))
       .classed('equidistant-circle', true);
   }
@@ -308,7 +290,21 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
    * CTRL + Drag
    */
   private listenToDragRotate(): void {
-    // TODO: Implement me
+    const drag = d3.drag()
+      .filter(() => d3.event.ctrlKey)
+      .on('start', () => this.radarConfigService.setStartPosition(d3.event.x, d3.event.y))
+      .on('drag', () => this.radarConfigService.rotateTo(d3.event.x, d3.event.y));
+    this.svg.call(drag);
+  }
+
+  /**
+   * Rotates the components in the radar
+   * @param angle the angle difference to be rotated in radians
+   */
+  rotate(angle: number): void {
+    this.currentRotationAngle += angle;
+    this.svgGroup.style('transform', `rotate(${this.currentRotationAngle}rad)`);
+    // TODO: Rotate '.axis text' in the counter direction
   }
 
   /**
@@ -330,19 +326,6 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
     this.svg.transition()
       .duration(750)
       .call(this.zoom.transform, d3.zoomIdentity, d3.zoomTransform(this.svg.node()).invert([50, 50]));
-  }
-
-  /**
-   * Rotates the components in the radar
-   * TODO: When rotating, the text should stay not be rotated!
-   * @param angle the angle in radians
-   */
-  rotate(angle: number): void {
-    this.currentRotationAngle = angle;
-    const rotation = `rotate(${angle * -1}rad)`;
-    // Rotate the circles and directions
-    d3.select(`#${RadarIdUtil.getCircleId(this.id)}`).style('transform', rotation);
-    d3.select(`#${RadarIdUtil.getDirectionId(this.id)}`).style('transform', rotation);
   }
 
   @HostListener('window:resize')
@@ -367,8 +350,11 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
    * Subscribes to all changes in the radar config
    */
   private subscribeToRadarConfigService(): void {
-    const subscription = this.radarConfigService.resetZoomClicked$.subscribe(() => this.resetZoom());
-    this.subscriptions.push(subscription);
+    const zoomSubscription = this.radarConfigService.resetZoomClicked$.subscribe(() => this.resetZoom());
+    this.subscriptions.push(zoomSubscription);
+
+    const rotationSubscription = this.radarConfigService.rotationChanged$.subscribe(angleDifference => this.rotate(angleDifference));
+    this.subscriptions.push(rotationSubscription);
   }
 
   get height(): number {

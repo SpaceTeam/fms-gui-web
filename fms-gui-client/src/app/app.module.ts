@@ -11,9 +11,7 @@ import {NavComponent} from './components/nav/nav.component';
 import {FlightModeComponent} from './components/flight-mode/flight-mode.component';
 import {MainComponent} from './components/main/main.component';
 import {StatusPanelComponent} from './components/status-panel/status-panel.component';
-import {ControlsComponent} from './components/controls/controls.component';
 import {PageNotFoundComponent} from './components/page-not-found/page-not-found.component';
-import {CardsComponent} from './components/cards/cards.component';
 import {LoadingComponent} from './components/loading/loading.component';
 import {AlertComponent} from './components/alert/alert.component';
 import {StatusHighlightDirective} from './shared/directives/status-highlight/status-highlight.directive';
@@ -46,9 +44,7 @@ import {TimestampBrushComponent} from './components/timestamp-brush/timestamp-br
     FlightModeComponent,
     StatusPanelComponent,
     MainComponent,
-    ControlsComponent,
     PageNotFoundComponent,
-    CardsComponent,
     LoadingComponent,
     AlertComponent,
     StatusHighlightDirective,

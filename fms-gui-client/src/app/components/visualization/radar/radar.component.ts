@@ -38,11 +38,6 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly center: Point;
 
   /**
-   * The current rotation angle of the radar in radians
-   */
-  private currentRotationAngle: number;
-
-  /**
    * The array of subscriptions inside the radar
    * Whenever the radar gets destroyed, all subscriptions need to be unsubscribed
    */
@@ -50,7 +45,6 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(private radarConfigService: RadarConfigService) {
     this.center = new Point(50, 50);
-    this.currentRotationAngle = 0;
     this.subscriptions = [];
     this.groups = [];
   }
@@ -292,8 +286,10 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
   private listenToDragRotate(): void {
     const drag = d3.drag()
       .filter(() => d3.event.ctrlKey)
-      .on('start', () => this.radarConfigService.setStartPosition(d3.event.x, d3.event.y))
-      .on('drag', () => this.radarConfigService.rotateTo(d3.event.x, d3.event.y));
+      .on('drag', () => {
+        const mouse = d3.mouse(this.svg.node());
+        this.radarConfigService.rotateTo(mouse[0], mouse[1]);
+      });
     this.svg.call(drag);
   }
 
@@ -302,9 +298,9 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
    * @param angle the angle difference to be rotated in radians
    */
   rotate(angle: number): void {
-    this.currentRotationAngle += angle;
-    this.svgGroup.style('transform', `rotate(${this.currentRotationAngle}rad)`);
-    // TODO: Rotate '.axis text' in the counter direction
+    this.svgGroup.style('transform', `rotateZ(${-angle})`);
+
+    d3.selectAll('.axis text').style('transform', `rotate(${angle}rad)`);
   }
 
   /**

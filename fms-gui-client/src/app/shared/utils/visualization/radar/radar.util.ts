@@ -5,6 +5,10 @@ import {PositionUtil} from '../../position/position.util';
 
 export namespace RadarUtil {
 
+  const translateRegex = /translate\(-?\d+(\.\d+)?,-?\d+(\.\d+)?\)/gm;
+  const scaleRegex = /scale\(-?\d+(\.\d+)?\)/gm;
+  const numberRegex = /-?\d+(\.\d+)?/gm;
+
   /**
    * Calculates the radii for the correct drawing of the equidistant circles
    * Works only with positive numbers (zero will return an empty array)
@@ -138,5 +142,16 @@ export namespace RadarUtil {
 
   export function toCartesian(point: Point, center: Point): Point {
     return new Point(point.x - center.x, center.y - point.y);
+  }
+
+  export function getTransformObject(transformString: string): { x: number, y: number, k: number } {
+    console.log(transformString);
+    if (transformString === null) {
+      return {x: 0, y: 0, k: 1};
+    }
+    const translate = transformString.match(translateRegex)[0].match(numberRegex);
+    const scale = transformString.match(scaleRegex)[0].match(numberRegex);
+
+    return {x: Number(translate[0]), y: Number(translate[1]), k: Number(scale[0])};
   }
 }

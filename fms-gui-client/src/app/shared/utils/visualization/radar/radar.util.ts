@@ -6,6 +6,7 @@ import {PositionUtil} from '../../position/position.util';
 export namespace RadarUtil {
 
   const translateRegex = /translate\(-?\d+(\.\d+)?,-?\d+(\.\d+)?\)/gm;
+  const rotateRegex = /rotate\(-?\d+(\.\d+)?\)/gm;
   const scaleRegex = /scale\(-?\d+(\.\d+)?\)/gm;
   const numberRegex = /-?\d+(\.\d+)?/gm;
 
@@ -144,14 +145,32 @@ export namespace RadarUtil {
     return new Point(point.x - center.x, center.y - point.y);
   }
 
-  export function getTransformObject(transformString: string): { x: number, y: number, k: number } {
-    console.log(transformString);
-    if (transformString === null) {
-      return {x: 0, y: 0, k: 1};
-    }
-    const translate = transformString.match(translateRegex)[0].match(numberRegex);
-    const scale = transformString.match(scaleRegex)[0].match(numberRegex);
+  export function getTransformObject(transformString: string): { x: number, y: number, k: number, r: number } {
+    let x = 0;
+    let y = 0;
+    let k = 1;
+    let r = 0;
+    let numbers;
 
-    return {x: Number(translate[0]), y: Number(translate[1]), k: Number(scale[0])};
+    if (transformString !== null) {
+      const translate = transformString.match(translateRegex);
+      const scale = transformString.match(scaleRegex);
+      const rotate = transformString.match(rotateRegex);
+
+      if (translate) {
+        numbers = translate[0].match(numberRegex);
+        x = Number(numbers[0]);
+        y = Number(numbers[1]);
+      }
+      if (scale) {
+        numbers = scale[0].match(numberRegex);
+        k = Number(numbers[0]);
+      }
+      if (rotate) {
+        numbers = rotate[0].match(numberRegex);
+        r = Number(numbers[0]);
+      }
+    }
+    return {x, y, k, r};
   }
 }

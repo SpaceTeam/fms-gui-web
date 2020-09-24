@@ -295,12 +295,14 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /**
    * Rotates the components in the radar
-   * @param angle the angle difference to be rotated in radians
+   * @param angleInRadians the angle difference to be rotated in radians
    */
-  rotate(angle: number): void {
-    this.svgGroup.style('transform', `rotateZ(${-angle})`);
+  rotate(angleInRadians: number): void {
+    const transform = RadarUtil.getTransformObject(this.svgGroup.attr('transform'));
+    const angle = -RadarUtil.toDegrees(angleInRadians);
+    this.svgGroup.attr('transform', `scale(${transform.k}) translate(${transform.x},${transform.y}) rotate(${angle})`);
 
-    d3.selectAll('.axis text').style('transform', `rotate(${angle}rad)`);
+    d3.selectAll('.axis text').style('transform', `rotate(${angleInRadians}rad)`);
   }
 
   /**
@@ -310,7 +312,11 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
     this.zoom = d3.zoom()
       .extent([[0, 0], [100, 100]])
       .scaleExtent([1, 100])
-      .on('zoom', () => this.groups.forEach(group => group.attr('transform', d3.event.transform)));
+      .on('zoom', () => {
+        const event = d3.event.transform;
+        const transform = RadarUtil.getTransformObject(this.svgGroup.attr('transform'));
+        this.svgGroup.attr('transform', `scale(${event.k}) translate(${event.x},${event.y}) rotate(${transform.r})`);
+      });
 
     this.svg.call(this.zoom);
   }

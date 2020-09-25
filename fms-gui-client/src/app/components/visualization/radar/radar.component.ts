@@ -36,6 +36,9 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   private readonly center: Point;
 
+  /**
+   * The margin value inside the radar -> actually used as a padding for the overall radar
+   */
   private readonly margin: number;
 
   /**

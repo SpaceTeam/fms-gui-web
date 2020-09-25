@@ -5,6 +5,7 @@ import {PositionService} from '../../../shared/services/visualization/position/p
 import {RadarForm} from '../../../shared/forms/radar.form';
 import {environment} from '../../../../environments/environment';
 import {Point} from '../../../shared/model/point.model';
+import {RadarUtil} from "../../../shared/utils/visualization/radar/radar.util";
 
 /**
  * This is the base class for every component, which uses the radar
@@ -32,6 +33,7 @@ export abstract class AbstractRadar implements AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.subscribeToPositionChange();
     this.subscribeToCenterChange();
+    this.subscribeToRotationChange();
   }
 
   ngOnDestroy(): void {
@@ -54,6 +56,16 @@ export abstract class AbstractRadar implements AfterViewInit, OnDestroy {
   private subscribeToCenterChange(): void {
     const centerSubscription = this.radarForm.centerChanged$.subscribe(position => this.onNewCenter(position));
     this.subscriptions.push(centerSubscription);
+  }
+
+  /**
+   * Subscribes to a change of the angle, put in by the user
+   * As soon as the angle changes, we want to recalculate the positions on the radar
+   */
+  private subscribeToRotationChange(): void {
+    const rotationSubscription = this.radarForm.rotationChanged$
+      .subscribe(angleInDegrees => this.onRotation(RadarUtil.toRadians(angleInDegrees)));
+    this.subscriptions.push(rotationSubscription);
   }
 
   /**

@@ -45,10 +45,7 @@ export class FlightPositionComponent extends AbstractRadar {
    */
   private lastPosition: Position;
 
-  constructor(
-    protected positionService: PositionService,
-    protected radarForm: RadarForm
-  ) {
+  constructor(protected positionService: PositionService, protected radarForm: RadarForm) {
     super(positionService, radarForm);
     this.lastPosition = this.center;
 

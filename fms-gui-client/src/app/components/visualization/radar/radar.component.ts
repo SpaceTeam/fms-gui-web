@@ -25,7 +25,6 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private svg: any;
   private svgGroup: any;
-  private groups: Array<any>;
 
   /**
    * Contains the zooming behaviour for the radar
@@ -37,6 +36,8 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   private readonly center: Point;
 
+  private readonly margin: number;
+
   /**
    * The array of subscriptions inside the radar
    * Whenever the radar gets destroyed, all subscriptions need to be unsubscribed
@@ -45,8 +46,8 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(private radarConfigService: RadarConfigService) {
     this.center = new Point(50, 50);
+    this.margin = 5;
     this.subscriptions = [];
-    this.groups = [];
   }
 
   ngOnInit() {
@@ -97,17 +98,15 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
     this.svgGroup = this.svg.append('g')
       .attr('id', this.id + '-g')
       .classed('transform-origin-center', true);
-    this.groups.push(this.svgGroup);
   }
 
   /**
    * Adds the equidistant circles
    */
   private addEquidistantCircleGroup(): void {
-    const circleGroup = this.svgGroup
+    this.svgGroup
       .append('g')
       .attr('id', RadarIdUtil.getEquidistantCirclesId(this.id));
-    this.groups.push(circleGroup);
   }
 
   /**
@@ -115,10 +114,9 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
    * The components, which use the radar, can then add their own axis
    */
   private addAxisGroups(): void {
-    const axisGroup = this.svgGroup
+    this.svgGroup
       .append('g')
       .attr('id', RadarIdUtil.getAxisId(this.id));
-    this.groups.push(axisGroup);
 
     this.createAxis(AxisEnum.X_AXIS);
     this.createAxis(AxisEnum.Y_AXIS);
@@ -131,33 +129,39 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   private createAxis(axisEnum: AxisEnum): void {
     let domain: Array<string>;
-    let transformString: string;
     let axisMethod;
     let dx: string;
+    let x = 0;
+    let y = 0;
 
     switch (axisEnum) {
       case AxisEnum.X_AXIS:
         domain = ['W', 'E'];
         axisMethod = d3.axisBottom;
-        // Since the path element moves the axis 0.5 to the right, we need to move it 0.5 to the left
-        transformString = 'translate(-0.5, 50)';
+        x = 0;
+        y = 50;
         dx = '';
         break;
       case AxisEnum.Y_AXIS:
         domain = ['N', 'S'];
         axisMethod = d3.axisLeft;
         // Since the path element moves the axis 0.5 to the bottom, we need to move it 0.5 to the top
-        transformString = 'translate(50, -0.5)';
+        x = 50;
+        y = 0;
         dx = '0.5em';
         break;
       default:
         return;
     }
 
-    const margin = 5;
+    // The path element always moves the axis 0.5 to the right and bottom, so we need to move it 0.5 to the left and top
+    x -= 0.5;
+    y -= 0.5;
+
+    const transformString = `translate(${x},${y})`;
 
     const scale = d3.scalePoint()
-      .range([margin, 100 - margin])
+      .range([this.margin, 100 - this.margin])
       .domain(domain);
 
     const axis = axisMethod(scale)
@@ -180,10 +184,9 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
    * Adds the group for the position circles and their links
    */
   private addCircleGroup(): void {
-    const circleGroup = this.svgGroup
+    this.svgGroup
       .append('g')
       .attr('id', RadarIdUtil.getCircleId(this.id));
-    this.groups.push(circleGroup);
   }
 
   /**
@@ -338,10 +341,13 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
   private resizeSVGToFitContainer() {
     const radarElem = document.getElementById(this.id);
     const divElem = document.getElementById(this.divId);
+
     divElem.style.display = 'none';
+
     const radarWidth = radarElem.clientWidth;
     const radarHeight = radarElem.clientHeight;
     const radarSize = Math.min(radarWidth, radarHeight);
+
     divElem.style.width = radarSize + 'px';
     divElem.style.height = radarHeight + 'px';
     divElem.style.display = '';

@@ -30,8 +30,12 @@ export class FlightDirectionComponent extends AbstractRadar {
     // TODO: Implement me
   }
 
-  getPoints(): Array<Point> {
+  getNewPoint(): Point {
     // TODO: Implement me
-    return undefined;
+    return null;
+  }
+
+  onRangeChange(newDomain: number): void {
+    // TODO: Implement me
   }
 }

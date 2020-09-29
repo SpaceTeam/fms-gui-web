@@ -24,21 +24,16 @@ export class FlightPositionComponent extends AbstractRadar {
   /**
    * Stores the current range of the radar (e.g. max. 1000m)
    */
-  private domainMax: number;
+  private range: number;
 
   /**
    * Tells how much the distance should get multiplied, if we are outside of the bounds or too close to the center
    * E.g. if we have a maximum of 1000m and we have a value outside of this bound, then with the multiplier = 2,
    * the new maximum should be 2000m
-   * TODO: The user should be able to change this value (maybe with advanced options) -> should be changed via the radar-config
+   * TODO: The user should be able to change this value (maybe with advanced options)
+   * -> should be changed via the radar-config
    */
-  private domainMultiplier: number;
-
-  /**
-   * The number of equidistant circles to be displayed
-   * TODO: The user should be able to change this value (maybe with advanced options) -> should be changed via the radar-config
-   */
-  private numOfCircles: number;
+  private rangeMultiplier: number;
 
   /**
    * Stores the last position received from the FMS
@@ -49,41 +44,54 @@ export class FlightPositionComponent extends AbstractRadar {
     super(positionService, radarForm);
     this.lastPosition = this.center;
 
-    this.domainMax = environment.visualization.radar.position.domain.max;
-    this.domainMultiplier = environment.visualization.radar.position.domain.multiplier;
+    this.range = environment.visualization.radar.position.range.max;
+    this.rangeMultiplier = environment.visualization.radar.position.range.multiplier;
     this.numOfCircles = environment.visualization.radar.equidistant.circles;
   }
 
   onNewPosition(position: Position): void {
     this.lastPosition = position;
-    this.redraw();
+    this.calculateNewDomain();
+
+    this.radar.addPoint(this.getNewPoint());
+  }
+
+  private calculateNewDomain(): void {
+    const radius = PositionUtil.calculateDistanceInMeters(this.center, this.lastPosition);
+    const domainMax = RadarUtil.getNewDomainMax(radius, this.range, this.numOfCircles, this.rangeMultiplier);
+    if (this.range < domainMax) {
+      this.domainChangedSource.next(domainMax);
+    }
   }
 
   onRotation(rotation: number): void {
     this.radar.rotate(rotation);
   }
 
+  onRangeChange(range: number): void {
+    this.range = range;
+  }
+
+  // Will be called by the subscriptions, no need to call it in this component manually
   redraw(): void {
-    this.updateDomain();
-    this.radar.drawPositions(this.getPoints());
+    this.radar.redraw();
   }
 
   /**
-   * Updates the domain max, if needed
+   * Returns the latest point to be drawn on the radar
    */
-  private updateDomain(): void {
-    const radius = PositionUtil.calculateDistanceInMeters(this.center, this.lastPosition);
-    this.domainMax = RadarUtil.getNewDomainMax(radius, this.domainMax, this.numOfCircles, this.domainMultiplier);
+  getNewPoint(): Point {
+    return this.calculatePointOnRadar(this.lastPosition);
   }
 
-  getPoints(): Array<Point> {
+  private calculatePointOnRadar(position: Position): Point {
     // Get the distance from the center to the new position
-    const radius = PositionUtil.calculateDistanceInMeters(this.center, this.lastPosition);
-    const normalizedDirection = PositionUtil.getNormalizedDirection(this.center, this.lastPosition);
+    const radius = PositionUtil.calculateDistanceInMeters(this.center, position);
+    const normalizedDirection = PositionUtil.getNormalizedDirection(this.center, position);
 
     // We need the factor to adjust the radar distance from the center
-    const factor = radius / this.domainMax;
+    const factor = radius / this.range;
 
-    return [RadarUtil.getPositionOnRadar(normalizedDirection, factor)];
+    return RadarUtil.getPositionOnRadar(normalizedDirection, factor);
   }
 }

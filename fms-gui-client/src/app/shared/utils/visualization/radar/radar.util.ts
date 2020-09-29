@@ -21,8 +21,7 @@ export namespace RadarUtil {
       throw new NegativeNumberException('No negative numbers allowed');
     }
 
-    const margin = 5;
-    const circleRadiiInterpolate = d3.interpolateNumber(0, 50 - margin);
+    const circleRadiiInterpolate = d3.interpolateNumber(0, 50);
 
     return Array.from(Array(numOfCircles).keys())
       .map(val => circleRadiiInterpolate((val + 1) / numOfCircles));
@@ -73,7 +72,7 @@ export namespace RadarUtil {
       throw new Error(`Number of circles cannot be ${numOfCircles}`);
     }
 
-    // If the radius is too close to the center, we want to adjust the radar make the distances between the circles smaller
+    // If the radius is too close to the center, we want to adjust the radar and make the distances between the circles smaller
     let adjustRadarThreshold = (max / numOfCircles) * 0.5;
     while (radius < adjustRadarThreshold) {
       max /= domainMultiplier;
@@ -103,6 +102,15 @@ export namespace RadarUtil {
     return new Point(x, y);
   }
 
+  export function getDistanceRange(maxValue: number, numOfEquidistantCircles: number): Array<string> {
+    // TODO: Implement me
+    return [];
+  }
+
+  /**
+   * Returns the adjusted distance text for a numeric value the distance axis
+   * @param value the distance which needs to be converted to a distance text
+   */
   export function getTickText(value: number): string {
     let exponential = 0;
     while (value > 1000) {
@@ -145,6 +153,10 @@ export namespace RadarUtil {
     return new Point(point.x - center.x, center.y - point.y);
   }
 
+  /**
+   * Converts a string representation of a transformation into an object
+   * @param transformString the string containing the transformation
+   */
   export function getTransformObject(transformString: string): { x: number, y: number, k: number, r: number } {
     let x = 0;
     let y = 0;
@@ -172,5 +184,9 @@ export namespace RadarUtil {
       }
     }
     return {x, y, k, r};
+  }
+
+  export function buildTransformString(x: number, y: number, k: number, r: number): string {
+    return `scale(${k}) translate(${x},${y}) rotate(${r})`;
   }
 }

@@ -9,7 +9,7 @@
  *  - key
  *  - cert
  * options:
- *  - period: The WebSocket update period
+ *  - period: The WebSocket redraw period
  */
 export const environment = {
     production: false,
@@ -19,10 +19,10 @@ export const environment = {
         port: 9000,
         paths: {
             subscribe: {
-                basePath: "/",
-                fms: "",
-                cards: "cards",
-                controls: "controls"
+                basePath: '/',
+                fms: '',
+                cards: 'cards',
+                controls: 'controls'
             },
             data: {
                 fms: '/assets/json/fms-name-value-pairs-with-gnss.json',
@@ -31,8 +31,8 @@ export const environment = {
             }
         },
         serverOptions: {
-            key: "",
-            cert: ""
+            key: '',
+            cert: ''
         },
         options: {
             period: 1000,

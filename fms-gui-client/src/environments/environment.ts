@@ -24,34 +24,12 @@ export const environment = {
       equidistant: {
         circles: 5
       },
-      directions: [
-        {
-          direction: 'N',
-          x: 50,
-          y: 0
-        },
-        {
-          direction: 'S',
-          x: 50,
-          y: 100
-        },
-        {
-          direction: 'W',
-          x: 0,
-          y: 50
-        },
-        {
-          direction: 'E',
-          x: 100,
-          y: 50
-        }
-      ],
       position: {
         center: {
           longitude: 50,
           latitude: 15
         },
-        domain: {
+        range: {
           max: 100,
           multiplier: 2,
           min: 10

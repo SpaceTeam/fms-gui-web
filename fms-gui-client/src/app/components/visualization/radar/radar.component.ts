@@ -239,22 +239,25 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
   private drawLinks(): void {
     const selector = `#${RadarIdUtil.getCircleId(this.id)}`;
 
-    // Append lines, if needed
-    d3.select(selector)
+    const lines = d3.select(selector)
       .selectAll('line')
-      .data(this.points)
+      .data(this.points);
+
+    // Append lines, if needed
+    // ts-ignore is needed, since merge complains about lines not being of type SVGLineElement
+    lines
       .enter()
       .append('line')
-      .classed('line', true);
-
-    // Update the lines
-    d3.select(selector)
-      .selectAll('line')
-      .data(this.points)
+      // @ts-ignore
+      .merge(lines)
+      .classed('line', true)
       .attr('x1', (d, i) => i === 0 ? this.center.x : this.points[i - 1].x)
       .attr('y1', (d, i) => i === 0 ? this.center.y : this.points[i - 1].y)
       .attr('x2', d => d.x)
       .attr('y2', d => d.y);
+
+    // Remove unnecessary lines
+    lines.exit().remove();
   }
 
   /**
@@ -267,28 +270,24 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
     const selector = `#${RadarIdUtil.getEquidistantCirclesId(this.id)}`;
 
     // Append circles, if needed
-    d3.select(selector)
+    const circles = d3.select(selector)
       .selectAll('circle')
-      .data(arr)
-      .enter()
-      .append('circle');
-
-    // Remove unnecessary circles
-    d3.select(selector)
-      .selectAll('circle')
-      .data(arr)
-      .exit()
-      .remove();
+      .data(arr);
 
     // Adjust values
-    d3.select(selector)
-      .selectAll('circle')
-      .data(arr)
+    circles
+      .enter()
+      .append('circle')
+      // @ts-ignore
+      .merge(circles)
       .attr('cx', this.center.x)
       .attr('cy', this.center.y)
       .attr('r', d => d)
       .style('fill', (d, i) => RadarUtil.calculateCircleFill(i, numOfCircles))
       .classed('equidistant-circle', true);
+
+    // Remove unnecessary circles
+    circles.exit().remove();
   }
 
   /**
@@ -352,7 +351,8 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
     const angle = -RadarUtil.toDegrees(angleInRadians);
     this.svgGroup.attr('transform', RadarUtil.buildTransformString(transform.x, transform.y, transform.k, angle));
 
-    d3.selectAll('.axis text').style('transform', `rotate(${angleInRadians}rad)`);
+    d3.selectAll('.axis text')
+      .style('transform', `rotate(${angleInRadians}rad)`);
   }
 
   @HostListener('window:resize')

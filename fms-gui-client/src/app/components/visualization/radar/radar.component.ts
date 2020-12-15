@@ -10,6 +10,11 @@ import {Point} from '../../../shared/model/point.model';
 import {RadarConfigService} from '../../../shared/services/visualization/radar-config/radar-config.service';
 import {RadarIdUtil} from '../../../shared/utils/visualization/radar-id/radar-id.util';
 
+// TODO: Listen to the brush service and update the chart when a change has occurred
+// TODO: When you rotate, the value inside the input should also change
+// TODO: You should be able to zoom into the region where your mouse is, not a random zoom
+// TODO: Add the distances to the radar
+// TODO: Add tooltips to each dot
 @Component({
   selector: 'app-radar',
   templateUrl: './radar.component.html',
@@ -18,9 +23,16 @@ import {RadarIdUtil} from '../../../shared/utils/visualization/radar-id/radar-id
 })
 export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
 
+  /**
+   * The parameter/attribute used to pass the div's id around
+   */
   @Input()
   private id: string;
 
+  /**
+   * The id of the div used to store the SVG
+   * Since we can include a radar dynamically, we pass this id around to ensure that the right SVG is selected
+   */
   divId: string;
 
   private svg: any;
@@ -45,7 +57,7 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
   /**
    * Stores the points to be drawn on the radar
    */
-  private points: Array<Point>;
+  private readonly points: Array<Point>;
 
   constructor(private radarConfigService: RadarConfigService) {
     this.center = new Point(50, 50);
@@ -86,7 +98,7 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /**
-   * Loads the SVG and sets its properties (currently only the viewbox)
+   * Loads the SVG and sets its properties (currently only the viewBox)
    */
   private setSVGProperties(): void {
     this.svg = d3.select(`#${this.id}`)
@@ -196,9 +208,14 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
    * @param point the new point to be drawn on the radar
    */
   addPoint(point: Point): void {
+    // TODO: Do we really need this check, or can we not just push it to the array
     const hasPoint = this.points.find(p => point.x === p.x && point.y === p.y);
+
+    // If the point does not exist, add it to the graph
     if (!hasPoint) {
       this.points.push(point);
+    } else {
+      // TODO: Update the point with the latest information
     }
   }
 
@@ -214,29 +231,34 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
    * Draws the position dots on the radar
    */
   private drawDots(): void {
+    // The selector for the 'circles' group element
     const selector = `#${RadarIdUtil.getCircleId(this.id)}`;
 
     // Append circles, if needed
-    d3.select(selector)
+    const dots = d3.select(selector)
       .selectAll('circle')
-      .data(this.points)
-      .enter()
-      .append('circle');
+      .data(this.points);
 
     // Update the dots
-    d3.select(selector)
-      .selectAll('circle')
-      .data(this.points)
+    // ts-ignore is needed, since 'merge' complains about lines not being of type SVGLineElement
+    dots.enter()
+      .append('circle')
+      // @ts-ignore
+      .merge(dots)
       .attr('r', 0.75)
       .attr('cx', d => d.x)
       .attr('cy', d => d.y)
       .attr('fill', 'black');
+
+    // Remove unnecessary dots
+    dots.exit().remove();
   }
 
   /**
    * Draws the connecting lines between the dots on the radar
    */
   private drawLinks(): void {
+    // The selector for the 'circles' group element
     const selector = `#${RadarIdUtil.getCircleId(this.id)}`;
 
     const lines = d3.select(selector)
@@ -244,7 +266,7 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
       .data(this.points);
 
     // Append lines, if needed
-    // ts-ignore is needed, since merge complains about lines not being of type SVGLineElement
+    // ts-ignore is needed, since 'merge' complains about lines not being of type SVGLineElement
     lines
       .enter()
       .append('line')
@@ -262,7 +284,6 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /**
    * Adjusts the number of displayed equidistant circles
-   * This method does not redraw any axis
    * @param numOfCircles the number of equidistant circles to be displayed
    */
   private updateNumberOfEquidistantCircles(numOfCircles: number): void {
@@ -270,24 +291,24 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
     const selector = `#${RadarIdUtil.getEquidistantCirclesId(this.id)}`;
 
     // Append circles, if needed
-    const circles = d3.select(selector)
+    const equidistantCircles = d3.select(selector)
       .selectAll('circle')
       .data(arr);
 
     // Adjust values
-    circles
+    equidistantCircles
       .enter()
       .append('circle')
       // @ts-ignore
-      .merge(circles)
+      .merge(equidistantCircles)
       .attr('cx', this.center.x)
       .attr('cy', this.center.y)
       .attr('r', d => d)
       .style('fill', (d, i) => RadarUtil.calculateCircleFill(i, numOfCircles))
       .classed('equidistant-circle', true);
 
-    // Remove unnecessary circles
-    circles.exit().remove();
+    // Remove unnecessary equidistant circles
+    equidistantCircles.exit().remove();
   }
 
   /**
@@ -360,6 +381,10 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
     this.resizeSVGToFitContainer();
   }
 
+  /**
+   * Scales the SVG to fit the div and therefore use the most space available
+   * This method is used when the window is resize (shrink or expand the SVG when needed)
+   */
   private resizeSVGToFitContainer() {
     const radarElem = document.getElementById(this.id);
     const divElem = document.getElementById(this.divId);

@@ -15,7 +15,7 @@ export class BrushService {
   constructor() {}
 
   /**
-   * Publishes the selected timestamp range to all subscribers of the BrushService
+   * Publishes the selected range to all subscribers of the BrushService
    * @param x0 the start of the range
    * @param x1 the end of the range
    */

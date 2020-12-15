@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Observable, Subject} from 'rxjs';
 import {Point} from '../../../model/point.model';
-import {RadarUtil} from "../../../utils/visualization/radar/radar.util";
+import {RadarUtil} from '../../../utils/visualization/radar/radar.util';
 
 /**
  * This service manages the communication between the radar and its config

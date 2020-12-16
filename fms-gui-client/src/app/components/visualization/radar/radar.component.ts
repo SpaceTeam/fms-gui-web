@@ -318,11 +318,8 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   private listenToDragRotate(): void {
     const drag = d3.drag()
-      .filter(() => d3.event.ctrlKey)
-      .on('drag', () => {
-        const mouse = d3.mouse(this.svg.node());
-        this.radarConfigService.rotateTo(mouse[0], mouse[1]);
-      });
+      .filter(event => event.ctrlKey)
+      .on('drag', event => this.radarConfigService.rotateTo(d3.pointer(event)));
     this.svg.call(drag);
   }
 
@@ -333,10 +330,9 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
     this.zoom = d3.zoom()
       .extent([[0, 0], [100, 100]])
       .scaleExtent([1, 100])
-      .on('zoom', () => {
-        const event = d3.event.transform;
-        const transform = RadarUtil.getTransformObject(this.svgGroup.attr('transform'));
-        this.svgGroup.attr('transform', RadarUtil.buildTransformString(event.x, event.y, event.k, transform.r));
+      .on('zoom', ({ transform }) => {
+        const transformObj = RadarUtil.getTransformObject(this.svgGroup.attr('transform'));
+        this.svgGroup.attr('transform', RadarUtil.buildTransformString(transform.x, transform.y, transform.k, transformObj.r));
       });
 
     this.svg.call(this.zoom);

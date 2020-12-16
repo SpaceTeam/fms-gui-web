@@ -77,9 +77,9 @@ export class TimestampBrushComponent implements OnInit, OnDestroy {
   private addBrush(): void {
     this.brush = d3.brushX()
       .extent([[0, 0], [this.getComponentWidth(), this.height - this.axisHeight - 1]]) // -1 for a gap between brush and axis
-      .on('end', (d, i, n) => {
-        this.updateBrush(d, i, n);
-        this.publishSelectedRange();
+      .on('end', event => {
+        this.updateBrush(event);
+        this.publishSelectedRange(event);
       });
 
     d3.select(`#${this.id}-g`).call(this.brush);
@@ -89,24 +89,25 @@ export class TimestampBrushComponent implements OnInit, OnDestroy {
    * Updates the position of the brush as soon as something gets selected
    * For this we need the 'index' and 'nodes' param, which tells us on what element we need to perform the 'brush.move' method
    */
-  private updateBrush(datum, index: number, nodes): void {
-    const selection = d3.event.selection;
-    if (!d3.event.sourceEvent || !selection) {
+  private updateBrush({sourceEvent, selection}): void {
+    if (!sourceEvent || !selection) {
       return;
     }
-    const elem = nodes[index];
     const [x0, x1] = selection.map(d => this.findClosestTimestamp(this.scale.invert(d)));
+    // TODO: Fix me!
+    /*
+    const elem = nodes[index];
     d3.select(elem)
       .transition()
       .call(this.brush.move, x1 > x0 ? [x0, x1].map(this.scale) : null);
+     */
   }
 
   /**
    * Publishes the selected timestamp range to all subscribers of the BrushService
    */
-  private publishSelectedRange(): void {
-    const selection = d3.event.selection;
-    if (!d3.event.sourceEvent || !selection) {
+  private publishSelectedRange({sourceEvent, selection}): void {
+    if (!sourceEvent || !selection) {
       return;
     }
     const [x0, x1] = selection.map(d => this.findClosestTimestamp(this.scale.invert(d)));

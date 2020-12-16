@@ -319,7 +319,7 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
   private listenToDragRotate(): void {
     const drag = d3.drag()
       .filter(event => event.ctrlKey)
-      .on('drag', event => this.radarConfigService.rotateTo(d3.pointer(event)));
+      .on('drag', event => this.radarConfigService.rotateTo(d3.pointer(event, this.svg.node())));
     this.svg.call(drag);
   }
 

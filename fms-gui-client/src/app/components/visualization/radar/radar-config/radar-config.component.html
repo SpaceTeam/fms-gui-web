@@ -1,7 +1,7 @@
 <mat-icon id="toggle-icon" class="pointer" (click)="toggleConfiguration()" title="Collapse radar configuration">
   keyboard_arrow_down
 </mat-icon>
-<form [formGroup]="radarForm.configurationForm">
+<form [formGroup]="configurationForm">
   <div class="d-flex flex-column align-items-end" id="radar-config-container" *ngIf="isConfigOpen">
     <div formGroupName="center" class="d-flex flex-column">
       <h3 class="mat-h3">Center</h3>
@@ -9,14 +9,14 @@
       <mat-form-field>
         <mat-label>Latitude</mat-label>
         <label>
-          <input type="number" formControlName="latitude" matInput placeholder="0" min="-90" max="90"/>
+          <input type="number" formControlName="latitude" matInput placeholder="0" min="-90" max="90" />
         </label>
       </mat-form-field>
 
       <mat-form-field>
         <mat-label>Longitude</mat-label>
         <label>
-          <input type="number" formControlName="longitude" matInput placeholder="0" min="-180" max="180"/>
+          <input type="number" formControlName="longitude" matInput placeholder="0" min="-180" max="180" />
         </label>
       </mat-form-field>
     </div>
@@ -27,8 +27,7 @@
       <mat-form-field>
         <mat-label>Degree</mat-label>
         <label>
-          <input type="number" formControlName="rotation" matInput placeholder="0" value="0"
-                 (change)="bindRotationInputChangeToRange($event)"/>
+          <input type="number" formControlName="rotation" matInput placeholder="0" />
         </label>
       </mat-form-field>
     </div>

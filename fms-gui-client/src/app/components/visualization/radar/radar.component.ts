@@ -11,7 +11,6 @@ import {RadarConfigService} from '../../../shared/services/visualization/radar-c
 import {RadarIdUtil} from '../../../shared/utils/visualization/radar-id/radar-id.util';
 
 // TODO: Listen to the brush service and update the chart when a change has occurred
-// TODO: When you rotate, the value inside the input should also change
 // TODO: You should be able to zoom into the region where your mouse is, not a random zoom
 // TODO: Add the distances to the radar
 // TODO: Add tooltips to each dot
@@ -229,6 +228,7 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /**
    * Draws the position dots on the radar
+   * TODO: Somehow the circles are only added, but never removed when the center changes! Needs to be fixed
    */
   private drawDots(): void {
     // The selector for the 'circles' group element
@@ -319,16 +319,22 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
   private listenToDragRotate(): void {
     const drag = d3.drag()
       .filter(event => event.ctrlKey)
-      .on('drag', event => this.radarConfigService.rotateTo(d3.pointer(event, this.svg.node())));
+      .on('drag', event => {
+        // Get the point inside the radar where we started the drag (between 0 and 100 with the second parameter)
+        const [x, y] = d3.pointer(event, this.svg.node());
+        const point = RadarUtil.toCartesian(new Point(x, y), this.center);
+        // We need two pi, so that the angle is always positive
+        this.radarConfigService.publishNewRotation(Math.atan2(point.y, point.x) + 2 * Math.PI);
+      });
     this.svg.call(drag);
   }
 
   /**
    * Adds a listener for zooming and translating all components of the radar
+   * TODO: Fix the zooming (zooms randomly, but not where the pointer is)
    */
   private listenToZoom(): void {
     this.zoom = d3.zoom()
-      .extent([[0, 0], [100, 100]])
       .scaleExtent([1, 100])
       .on('zoom', ({ transform }) => {
         const transformObj = RadarUtil.getTransformObject(this.svgGroup.attr('transform'));

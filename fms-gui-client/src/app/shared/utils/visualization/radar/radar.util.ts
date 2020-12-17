@@ -10,6 +10,8 @@ export namespace RadarUtil {
   const scaleRegex = /scale\(-?\d+(\.\d+)?\)/gm;
   const numberRegex = /-?\d+(\.\d+)?/gm;
 
+  const epsilon = 0.00001;
+
   /**
    * Calculates the radii for the correct drawing of the equidistant circles
    * Works only with positive numbers (zero will return an empty array)
@@ -142,11 +144,32 @@ export namespace RadarUtil {
   }
 
   export function toDegrees(rad: number): number {
-    return rad * (180 / Math.PI);
+    // We need to make sure, that the returned value is in the range [0, 360[
+    return putAngleInRange(rad * (180 / Math.PI), 360);
   }
 
   export function toRadians(deg: number): number {
-    return deg * (Math.PI / 180);
+    // We need to make sure, that the returned value is in the range [0, 2pi[
+    return putAngleInRange(deg * (Math.PI / 180), 2 * Math.PI);
+  }
+
+  function putAngleInRange(angle: number, base: number) {
+    // We need to make sure, that the returned value is in the range [0, 360[ or [0, 2pi[
+    while (angle >= base) {
+      angle -= base;
+    }
+    while (angle < 0) {
+      angle += base;
+    }
+    const ceiled = Math.ceil(angle);
+    const floored = Math.floor(angle);
+    if ((ceiled - angle) < epsilon) {
+      angle = ceiled;
+    }
+    if ((angle - floored) < epsilon) {
+      angle = floored;
+    }
+    return angle;
   }
 
   export function toCartesian(point: Point, center: Point): Point {

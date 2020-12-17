@@ -13,6 +13,7 @@ import {Position} from '../model/flight/position';
 })
 export class RadarForm {
 
+  // TODO: Check if you really need this form or if the radar-config.service.ts file is enough -> one should be removed
   /**
    * Stores the elements for the reactive form with the configuration parameters
    */

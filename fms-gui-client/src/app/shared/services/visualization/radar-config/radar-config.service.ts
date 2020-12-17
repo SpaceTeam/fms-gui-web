@@ -35,12 +35,10 @@ export class RadarConfigService {
     this.resetZoomClickedSource.next();
   }
 
-  rotateTo(pointer): void {
-    const [x, y] = pointer;
-    // TODO: You have to convert the x and y values to be within the range of the SVG and not the total display size
-    const point = RadarUtil.toCartesian(new Point(x, y), new Point(50, 50));
-    // We need two pi, so that the angle is always positive
-    const twoPi = 2 * Math.PI;
-    this.rotationChangedSource.next(Math.atan2(point.y, point.x) + twoPi);
+  /**
+   * Publishes a new rotation value to all subscribers of the rotation observable
+   */
+  publishNewRotation(angleInRadians: number): void {
+    this.rotationChangedSource.next(angleInRadians);
   }
 }

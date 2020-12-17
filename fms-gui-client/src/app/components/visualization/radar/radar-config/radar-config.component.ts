@@ -1,25 +1,49 @@
-import {Component, OnInit} from '@angular/core';
-import {RadarForm} from '../../../../shared/forms/radar.form';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {RadarConfigService} from '../../../../shared/services/visualization/radar-config/radar-config.service';
+import {FormBuilder, FormGroup} from '@angular/forms';
+import {RadarUtil} from '../../../../shared/utils/visualization/radar/radar.util';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-radar-config',
   templateUrl: './radar-config.component.html',
   styleUrls: ['./radar-config.component.scss']
 })
-export class RadarConfigComponent implements OnInit {
+export class RadarConfigComponent implements OnInit, OnDestroy {
 
   /**
    * A flag for telling, if the radar configuration window is open
    */
   public isConfigOpen;
 
-  constructor(public radarForm: RadarForm, private radarConfigService: RadarConfigService) {
+  /**
+   * Stores the elements for the reactive form with the configuration parameters
+   */
+  configurationForm: FormGroup;
+
+  private readonly subscriptions: Array<Subscription>;
+
+  constructor(private fb: FormBuilder, private radarConfigService: RadarConfigService) {
     this.isConfigOpen = true;
+    this.subscriptions = [];
   }
 
   ngOnInit(): void {
-    this.radarForm.initCenter();
+    this.configurationForm = this.fb.group({
+      center: this.fb.group({
+        longitude: [''],
+        latitude: ['']
+      }),
+      rotation: ['']
+    });
+
+    this.initRotation();
+    this.addRotationInputListener();
+    this.addRotationListener();
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
   /**
@@ -49,21 +73,39 @@ export class RadarConfigComponent implements OnInit {
   }
 
   /**
-   * Whenever the rotation input value changes, it should modify the value in such a way, that it stays in the range of
-   * [0, 360[
-   * @param event the change event
+   * Initializes the rotation input with the default value of 0
+   * @private
    */
-  bindRotationInputChangeToRange(event: Event): void {
-    const input = <HTMLInputElement>event.target;
-    let value = Number(input.value);
-    if (!isNaN(value)) {
-      while (value >= 360) {
-        value -= 360;
-      }
-      while (value < 0) {
-        value += 360;
-      }
-      input.value = value + '';
-    }
+  private initRotation(): void {
+    const rotation = this.configurationForm.get('rotation');
+    rotation.setValue(0);
+  }
+
+  /**
+   * Listens to any input changes inside the rotation input and updates all other components
+   * @private
+   */
+  private addRotationInputListener(): void {
+    const rotation = this.configurationForm.get('rotation');
+    rotation.valueChanges.subscribe(angleInDegrees => this.radarConfigService.publishNewRotation(RadarUtil.toRadians(angleInDegrees)));
+  }
+
+  /**
+   * Whenever we receive a new rotation value from the rotation observable, we need to update the rotation input
+   * @private
+   */
+  private addRotationListener(): void {
+    const rotationSubscription = this.radarConfigService.rotationChanged$.subscribe(angleInRadians => this.rotate(angleInRadians));
+    this.subscriptions.push(rotationSubscription);
+  }
+
+  /**
+   * Updates the value inside the rotation input
+   */
+  private rotate(angleInRadians: number): void {
+    const rotation = this.configurationForm.get('rotation');
+
+    // We need 'emitEvent: false' so that we don't end up in an endless loop when updating angle inside the input
+    rotation.patchValue(RadarUtil.toDegrees(angleInRadians), {emitEvent: false});
   }
 }

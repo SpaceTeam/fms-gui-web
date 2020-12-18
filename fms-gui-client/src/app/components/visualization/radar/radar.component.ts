@@ -260,25 +260,25 @@ export class RadarComponent implements OnInit, AfterViewInit {
     // The selector for the 'circles' group element
     const selector = `#${RadarIdUtil.getCircleId(this.id)}`;
 
-    const lines = d3.select(selector)
-      .selectAll('line')
-      .data(this.points);
-
-    // Append lines, if needed
-    // ts-ignore is needed, since 'merge' complains about lines not being of type SVGLineElement
-    lines
+    const data = [this.center, ...this.points];
+    const path = d3.select(selector)
+      .select('path')
+      .data(data)
       .enter()
-      .append('line')
-      // @ts-ignore
-      .merge(lines)
+      .append('path')
       .classed('line', true)
-      .attr('x1', (d, i) => i === 0 ? this.center.x : this.points[i - 1].x)
-      .attr('y1', (d, i) => i === 0 ? this.center.y : this.points[i - 1].y)
-      .attr('x2', d => d.x)
-      .attr('y2', d => d.y);
+      .attr('d', d => {
+        console.log(`x: ${d.x}, y: ${d.y}`);
+        return '';
+      });
 
-    // Remove unnecessary lines
-    lines.exit().remove();
+    /*
+    const line = d3.line()
+      .x(d => this.x(d[0]))
+      .y(d => this.y(d[1]));
+    path.attr('d', line(data));
+
+     */
   }
 
   /**

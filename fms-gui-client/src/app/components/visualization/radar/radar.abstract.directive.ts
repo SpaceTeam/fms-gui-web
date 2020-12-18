@@ -2,17 +2,15 @@ import {Position} from '../../../shared/model/flight/position';
 import {Observable, Subject, Subscription} from 'rxjs';
 import {AfterViewInit, Directive, OnDestroy} from '@angular/core';
 import {PositionService} from '../../../shared/services/visualization/position/position.service';
-import {RadarForm} from '../../../shared/forms/radar.form';
-import {environment} from '../../../../environments/environment';
 import {Point} from '../../../shared/model/point.model';
-import {RadarUtil} from '../../../shared/utils/visualization/radar/radar.util';
+import {RadarConfigService} from '../../../shared/services/visualization/radar-config/radar-config.service';
+import {environment} from '../../../../environments/environment';
 
 /**
  * This is the base class for every component, which uses the radar
  */
 @Directive()
-// tslint:disable-next-line:directive-class-suffix
-export abstract class AbstractRadar implements AfterViewInit, OnDestroy {
+export abstract class AbstractRadarDirective implements AfterViewInit, OnDestroy {
 
   /**
    * Stores all subscriptions, from which we need to unsubscribe as soon as the component gets destroyed (to avoid memory leaks)
@@ -37,7 +35,7 @@ export abstract class AbstractRadar implements AfterViewInit, OnDestroy {
   // Observable number stream
   domainChanged$: Observable<number>;
 
-  protected constructor(protected positionService: PositionService, protected radarForm: RadarForm) {
+  protected constructor(protected positionService: PositionService, protected radarConfigService: RadarConfigService) {
     this.subscriptions = [];
     const center = environment.visualization.radar.position.center;
     this.center = new Position(center.longitude, center.latitude);
@@ -51,6 +49,7 @@ export abstract class AbstractRadar implements AfterViewInit, OnDestroy {
     this.subscribeToCenterChange();
     this.subscribeToRotationChange();
     this.subscribeToDomainChange();
+    this.subscribeToResetZoom();
     // this.subscribeToEquidistantCircleChange();
   }
 
@@ -76,25 +75,25 @@ export abstract class AbstractRadar implements AfterViewInit, OnDestroy {
    * As soon as the center changes, we want to recalculate the positions on the radar
    */
   private subscribeToCenterChange(): void {
-    const centerSubscription = this.radarForm.centerChanged$
-      .subscribe(position => {
-        this.onNewCenter(position);
-        this.redraw();
-      });
-    this.subscriptions.push(centerSubscription);
+    const latitudeSubscription = this.radarConfigService.latitudeChanged$.subscribe(latitude => {
+      this.center.latitude = latitude;
+      this.redraw();
+    });
+    const longitudeSubscription = this.radarConfigService.longitudeChanged$.subscribe(longitude => {
+      this.center.longitude = longitude;
+      this.redraw();
+    });
+    this.subscriptions.push(latitudeSubscription, longitudeSubscription);
   }
 
-  /**
-   * Subscribes to a change of the angle, put in by the user
-   * As soon as the angle changes, we want to recalculate the positions on the radar
-   */
   private subscribeToRotationChange(): void {
-    const rotationSubscription = this.radarForm.rotationChanged$
-      .subscribe(angleInDegrees => {
-        this.onRotation(RadarUtil.toRadians(angleInDegrees));
-        this.redraw();
-      });
+    const rotationSubscription = this.radarConfigService.rotationChanged$.subscribe(angleDifference => this.onRotation(angleDifference));
     this.subscriptions.push(rotationSubscription);
+  }
+
+  private subscribeToResetZoom(): void {
+    const resetZoomSubscription = this.radarConfigService.resetZoomClicked$.subscribe(() => this.onZoomReset());
+    this.subscriptions.push(resetZoomSubscription);
   }
 
   /**
@@ -117,14 +116,6 @@ export abstract class AbstractRadar implements AfterViewInit, OnDestroy {
   abstract onNewPosition(position: Position): void;
 
   /**
-   * Tells what happens when we receive a new center
-   * @param position the new center position entered by the user
-   */
-  private onNewCenter(position: Position): void {
-    this.center = position;
-  }
-
-  /**
    * Tells what happens when we receive a new rotation angle
    * @param rotation the angle in radians
    */
@@ -135,6 +126,11 @@ export abstract class AbstractRadar implements AfterViewInit, OnDestroy {
    * @param newDomain the new domain max value
    */
   abstract onRangeChange(newDomain: number): void;
+
+  /**
+   * Tells what happens when we receive a 'reset zoom' event
+   */
+  abstract onZoomReset(): void;
 
   /**
    * Redraws the radar

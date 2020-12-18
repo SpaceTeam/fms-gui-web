@@ -17,6 +17,18 @@ export class RadarConfigService {
   // Observable zoom stream
   resetZoomClicked$: Observable<void>;
 
+  // Observable number resource
+  private longitudeChangedSource: Subject<number>;
+
+  // Observable number stream
+  longitudeChanged$: Observable<number>;
+
+  // Observable number resource
+  private latitudeChangedSource: Subject<number>;
+
+  // Observable number stream
+  latitudeChanged$: Observable<number>;
+
   // Observable number (in radians) resource
   private rotationChangedSource: Subject<number>;
 
@@ -29,10 +41,30 @@ export class RadarConfigService {
 
     this.rotationChangedSource = new Subject<number>();
     this.rotationChanged$ = this.rotationChangedSource.asObservable();
+
+    this.longitudeChangedSource = new Subject<number>();
+    this.longitudeChanged$ = this.longitudeChangedSource.asObservable();
+
+    this.latitudeChangedSource = new Subject<number>();
+    this.latitudeChanged$ = this.latitudeChangedSource.asObservable();
   }
 
   resetZoom(): void {
     this.resetZoomClickedSource.next();
+  }
+
+  /**
+   * Publishes a new longitude value to all subscribers of the longitude observable
+   */
+  publishNewLongitude(longitude: number): void {
+    this.longitudeChangedSource.next(longitude);
+  }
+
+  /**
+   * Publishes a new latitude value to all subscribers of the latitude observable
+   */
+  publishNewLatitude(latitude: number): void {
+    this.latitudeChangedSource.next(latitude);
   }
 
   /**

@@ -6,8 +6,7 @@ import {environment} from '../../../../environments/environment';
 import {RadarUtil} from '../../../shared/utils/visualization/radar/radar.util';
 import {PositionUtil} from '../../../shared/utils/position/position.util';
 import {Point} from '../../../shared/model/point.model';
-import {RadarForm} from '../../../shared/forms/radar.form';
-import {AbstractRadar} from '../../visualization/radar/radar.abstract';
+import {AbstractRadarDirective} from '../../visualization/radar/radar.abstract.directive';
 import {RadarConfigService} from '../../../shared/services/visualization/radar-config/radar-config.service';
 
 @Component({
@@ -16,7 +15,7 @@ import {RadarConfigService} from '../../../shared/services/visualization/radar-c
   styleUrls: ['./flight-position.component.scss'],
   providers: [RadarConfigService]
 })
-export class FlightPositionComponent extends AbstractRadar {
+export class FlightPositionComponent extends AbstractRadarDirective {
 
   @ViewChild(RadarComponent)
   private radar: RadarComponent;
@@ -40,8 +39,8 @@ export class FlightPositionComponent extends AbstractRadar {
    */
   private lastPosition: Position;
 
-  constructor(protected positionService: PositionService, protected radarForm: RadarForm) {
-    super(positionService, radarForm);
+  constructor(protected positionService: PositionService, protected radarConfigService: RadarConfigService) {
+    super(positionService, radarConfigService);
     this.lastPosition = this.center;
 
     this.range = environment.visualization.radar.position.range.max;
@@ -70,6 +69,10 @@ export class FlightPositionComponent extends AbstractRadar {
 
   onRangeChange(range: number): void {
     this.range = range;
+  }
+
+  onZoomReset(): void {
+    this.radar.resetZoom();
   }
 
   // Will be called by the subscriptions, no need to call it in this component manually

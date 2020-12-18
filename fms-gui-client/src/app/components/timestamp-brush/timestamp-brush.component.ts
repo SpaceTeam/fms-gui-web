@@ -94,13 +94,11 @@ export class TimestampBrushComponent implements OnInit, OnDestroy {
       return;
     }
     const [x0, x1] = selection.map(d => this.findClosestTimestamp(this.scale.invert(d)));
-    // TODO: Fix me!
-    /*
-    const elem = nodes[index];
-    d3.select(elem)
+    // We need ts-ignore, since it somehow doesn't recognize the combination of a group element and the transition
+    d3.select(`#${this.id}-g`)
       .transition()
+      // @ts-ignore
       .call(this.brush.move, x1 > x0 ? [x0, x1].map(this.scale) : null);
-     */
   }
 
   /**

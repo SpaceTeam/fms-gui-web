@@ -1,9 +1,8 @@
 import {Component} from '@angular/core';
-import {AbstractRadar} from '../../visualization/radar/radar.abstract';
+import {AbstractRadarDirective} from '../../visualization/radar/radar.abstract.directive';
 import {Point} from '../../../shared/model/point.model';
 import {Position} from '../../../shared/model/flight/position';
 import {PositionService} from '../../../shared/services/visualization/position/position.service';
-import {RadarForm} from '../../../shared/forms/radar.form';
 import {RadarConfigService} from '../../../shared/services/visualization/radar-config/radar-config.service';
 
 @Component({
@@ -12,30 +11,29 @@ import {RadarConfigService} from '../../../shared/services/visualization/radar-c
   styleUrls: ['./flight-direction.component.scss'],
   providers: [RadarConfigService]
 })
-export class FlightDirectionComponent extends AbstractRadar {
+export class FlightDirectionComponent extends AbstractRadarDirective {
 
-  constructor(protected positionService: PositionService, protected radarForm: RadarForm) {
-    super(positionService, radarForm);
+  // TODO: Implement the flight direction component
+  constructor(protected positionService: PositionService, protected radarConfigService: RadarConfigService) {
+    super(positionService, radarConfigService);
   }
 
   onNewPosition(position: Position): void {
-    // TODO: Implement me
   }
 
   onRotation(rotation: number): void {
-    // TODO: Implement me
   }
 
   redraw(): void {
-    // TODO: Implement me
   }
 
   getNewPoint(): Point {
-    // TODO: Implement me
     return null;
   }
 
   onRangeChange(newDomain: number): void {
-    // TODO: Implement me
+  }
+
+  onZoomReset(): void {
   }
 }

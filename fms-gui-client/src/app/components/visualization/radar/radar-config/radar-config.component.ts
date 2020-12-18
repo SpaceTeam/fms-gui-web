@@ -3,6 +3,7 @@ import {RadarConfigService} from '../../../../shared/services/visualization/rada
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {RadarUtil} from '../../../../shared/utils/visualization/radar/radar.util';
 import {Subscription} from 'rxjs';
+import {environment} from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-radar-config',
@@ -37,6 +38,12 @@ export class RadarConfigComponent implements OnInit, OnDestroy {
       rotation: ['']
     });
 
+    // Longitude and latitude
+    this.initCenter();
+    this.addCenterInputListener();
+    this.addCenterListener();
+
+    // Rotation
     this.initRotation();
     this.addRotationInputListener();
     this.addRotationListener();
@@ -73,6 +80,44 @@ export class RadarConfigComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Initializes the center inputs with the default values declared in the environment file
+   * @private
+   */
+  private initCenter() {
+    const center = this.configurationForm.get('center');
+    const longitude = center.get('longitude');
+    const latitude = center.get('latitude');
+
+    longitude.setValue(environment.visualization.radar.position.center.longitude);
+    latitude.setValue(environment.visualization.radar.position.center.latitude);
+  }
+
+  /**
+   * Listens to any input changes inside the longitude and latitude inputs and updates all other components
+   * @private
+   */
+  private addCenterInputListener() {
+    const center = this.configurationForm.get('center');
+    const longitude = center.get('longitude');
+    const latitude = center.get('latitude');
+
+    longitude.valueChanges.subscribe(lon => this.radarConfigService.publishNewLongitude(lon));
+    latitude.valueChanges.subscribe(lat => this.radarConfigService.publishNewLatitude(lat));
+  }
+
+  /**
+   * Whenever we receive a new longitude or latitude value from the two observables, we need to update the inputs
+   * @private
+   */
+  private addCenterListener() {
+    const longitudeSubscription = this.radarConfigService.longitudeChanged$
+      .subscribe(longitude => this.updateInput('center.longitude', longitude));
+    const latitudeSubscription = this.radarConfigService.latitudeChanged$
+      .subscribe(latitude => this.updateInput('center.latitude', latitude));
+    this.subscriptions.push(longitudeSubscription, latitudeSubscription);
+  }
+
+  /**
    * Initializes the rotation input with the default value of 0
    * @private
    */
@@ -95,17 +140,18 @@ export class RadarConfigComponent implements OnInit, OnDestroy {
    * @private
    */
   private addRotationListener(): void {
-    const rotationSubscription = this.radarConfigService.rotationChanged$.subscribe(angleInRadians => this.rotate(angleInRadians));
+    const rotationSubscription = this.radarConfigService.rotationChanged$
+      .subscribe(angleInRadians => this.updateInput('rotation', RadarUtil.toDegrees(angleInRadians)));
     this.subscriptions.push(rotationSubscription);
   }
 
   /**
    * Updates the value inside the rotation input
    */
-  private rotate(angleInRadians: number): void {
-    const rotation = this.configurationForm.get('rotation');
+  private updateInput(path: string, value: number): void {
+    const input = this.configurationForm.get(path);
 
     // We need 'emitEvent: false' so that we don't end up in an endless loop when updating angle inside the input
-    rotation.patchValue(RadarUtil.toDegrees(angleInRadians), {emitEvent: false});
+    input.patchValue(value, {emitEvent: false});
   }
 }

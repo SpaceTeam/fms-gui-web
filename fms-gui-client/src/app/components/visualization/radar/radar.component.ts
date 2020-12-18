@@ -20,7 +20,7 @@ import {RadarIdUtil} from '../../../shared/utils/visualization/radar-id/radar-id
   styleUrls: ['./radar.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
+export class RadarComponent implements OnInit, AfterViewInit {
 
   /**
    * The parameter/attribute used to pass the div's id around
@@ -48,19 +48,15 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly center: Point;
 
   /**
-   * The array of subscriptions inside the radar
-   * Whenever the radar gets destroyed, all subscriptions need to be unsubscribed
-   */
-  private subscriptions: Array<Subscription>;
-
-  /**
    * Stores the points to be drawn on the radar
    */
   private readonly points: Array<Point>;
 
+  private x: d3.ScalePoint<string>;
+  private y: d3.ScalePoint<string>;
+
   constructor(private radarConfigService: RadarConfigService) {
     this.center = new Point(50, 50);
-    this.subscriptions = [];
     this.points = [];
   }
 
@@ -73,11 +69,6 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
     this.createRadar();
     this.listenToDragRotate();
     this.listenToZoom();
-    this.subscribeToRadarConfigService();
-  }
-
-  ngOnDestroy(): void {
-    this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
   /**
@@ -92,6 +83,7 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
     this.addEquidistantCircleGroup();
     this.updateNumberOfEquidistantCircles(environment.visualization.radar.equidistant.circles);
 
+    this.initScales();
     this.addAxisGroups();
     this.addCircleGroup();
   }
@@ -123,6 +115,21 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
       .attr('id', RadarIdUtil.getEquidistantCirclesId(this.id));
   }
 
+  private initScales(): void {
+    const xDomain = ['W', 'E'];
+    const yDomain = ['N', 'S'];
+
+    const range = [0, 100];
+
+    this.x = d3.scalePoint()
+      .domain(xDomain)
+      .range(range);
+
+    this.y = d3.scalePoint()
+      .domain(yDomain)
+      .range(range);
+  }
+
   /**
    * Adds the x- and y-, and diagonal axis groups
    * The components, which use the radar, can then add their own axis
@@ -141,27 +148,33 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
    * @param axisEnum an axis enum
    */
   private createDirectionAxis(axisEnum: AxisEnum): void {
-    let domain: Array<string>;
     let axisMethod;
     let dx: string;
     let x = 0;
     let y = 0;
+    let scale;
+    let axis;
+    let id: string;
 
     switch (axisEnum) {
       case AxisEnum.X_AXIS:
-        domain = ['W', 'E'];
         axisMethod = d3.axisBottom;
+        scale = this.x;
         x = 0;
         y = 50;
         dx = '';
+        axis = RadarUtil.xAxis;
+        id = 'x-axis';
         break;
       case AxisEnum.Y_AXIS:
-        domain = ['N', 'S'];
         axisMethod = d3.axisLeft;
+        scale = this.y;
         // Since the path element moves the axis 0.5 to the bottom, we need to move it 0.5 to the top
         x = 50;
         y = 0;
         dx = '0.5em';
+        axis = RadarUtil.yAxis;
+        id = 'y-axis';
         break;
       default:
         return;
@@ -171,26 +184,11 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
     x -= 0.5;
     y -= 0.5;
 
-    const transformString = `translate(${x},${y})`;
-
-    const scale = d3.scalePoint()
-      .range([0, 100])
-      .domain(domain);
-
-    const axis = axisMethod(scale)
-      .tickSize(0);
-
     d3.select('#' + RadarIdUtil.getAxisId(this.id))
       .append('g')
-      .attr('transform', transformString)
-      .classed('axis', true)
-      .call(axis)
-      // Update the text position
-      .selectAll('.tick text')
-      .attr('x', 0)
-      .attr('y', 0)
-      .attr('dy', '0.5em')
-      .attr('dx', dx);
+      .attr('id', id)
+      .call(axis, scale, `translate(${x},${y})`)
+      .call(RadarUtil.updateTextPosition, dx);
   }
 
   /**
@@ -256,6 +254,7 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /**
    * Draws the connecting lines between the dots on the radar
+   * TODO: Maybe instead of drawing links, we could use a path element and redraw it with the dots as their base -> only one element instead of n
    */
   private drawLinks(): void {
     // The selector for the 'circles' group element
@@ -339,27 +338,20 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
       .on('zoom', ({ transform }) => {
         const transformObj = RadarUtil.getTransformObject(this.svgGroup.attr('transform'));
         this.svgGroup.attr('transform', RadarUtil.buildTransformString(transform.x, transform.y, transform.k, transformObj.r));
+
+        // TODO: There is no 'invert' for d3.scalePoint -> you have to come up with another solution!
+        // const zx = transform.rescaleX(this.x);
+        // const zy = transform.rescaleY(this.y);
+
       });
 
     this.svg.call(this.zoom);
   }
 
   /**
-   * Whenever something in the radar config changes, the radar should change
-   * Subscribes to all changes in the radar config
-   */
-  private subscribeToRadarConfigService(): void {
-    const zoomSubscription = this.radarConfigService.resetZoomClicked$.subscribe(() => this.resetZoom());
-    this.subscriptions.push(zoomSubscription);
-
-    const rotationSubscription = this.radarConfigService.rotationChanged$.subscribe(angleDifference => this.rotate(angleDifference));
-    this.subscriptions.push(rotationSubscription);
-  }
-
-  /**
    * Resets the zoom changes and centers the SVG
    */
-  private resetZoom(): void {
+  resetZoom(): void {
     this.svg.transition()
       .duration(750)
       .call(this.zoom.transform, d3.zoomIdentity, d3.zoomTransform(this.svg.node()).invert([50, 50]));

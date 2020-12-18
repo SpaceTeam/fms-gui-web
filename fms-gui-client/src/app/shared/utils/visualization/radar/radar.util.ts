@@ -104,11 +104,6 @@ export namespace RadarUtil {
     return new Point(x, y);
   }
 
-  export function getDistanceRange(maxValue: number, numOfEquidistantCircles: number): Array<string> {
-    // TODO: Implement me
-    return [];
-  }
-
   /**
    * Returns the adjusted distance text for a numeric value the distance axis
    * @param value the distance which needs to be converted to a distance text
@@ -174,6 +169,28 @@ export namespace RadarUtil {
 
   export function toCartesian(point: Point, center: Point): Point {
     return new Point(point.x - center.x, center.y - point.y);
+  }
+
+  export function xAxis(g, x, translateString) {
+    return g
+      .attr('transform', translateString)
+      .classed('axis', true)
+      .call(d3.axisBottom(x).tickSize(0));
+  }
+
+  export function yAxis(g, y, translateString) {
+    return g
+      .attr('transform', translateString)
+      .classed('axis', true)
+      .call(d3.axisLeft(y).tickSize(0));
+  }
+
+  export function updateTextPosition(g, dx) {
+    return g.selectAll('.tick text')
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('dy', '0.5em')
+      .attr('dx', dx);
   }
 
   /**

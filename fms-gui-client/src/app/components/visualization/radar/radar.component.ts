@@ -86,6 +86,7 @@ export class RadarComponent implements OnInit, AfterViewInit {
     this.initScales();
     this.addAxisGroups();
     this.addCircleGroup();
+    this.addPathGroup();
   }
 
   /**
@@ -200,6 +201,15 @@ export class RadarComponent implements OnInit, AfterViewInit {
       .attr('id', RadarIdUtil.getCircleId(this.id));
   }
 
+  private addPathGroup(): void {
+    const pathGroup = this.svgGroup
+      .append('g')
+      .attr('id', RadarIdUtil.getPathId(this.id));
+
+    // We only have one path, therefore we append it already here
+    pathGroup.append('path');
+  }
+
   /**
    * Adds the new point to the radar
    * @param point the new point to be drawn on the radar
@@ -254,31 +264,21 @@ export class RadarComponent implements OnInit, AfterViewInit {
 
   /**
    * Draws the connecting lines between the dots on the radar
-   * TODO: Maybe instead of drawing links, we could use a path element and redraw it with the dots as their base -> only one element instead of n
+   * TODO: Maybe instead of drawing links, we could use a path element and redraw it with the dots as their base
+   * -> only one element instead of n
    */
   private drawLinks(): void {
     // The selector for the 'circles' group element
-    const selector = `#${RadarIdUtil.getCircleId(this.id)}`;
+    const selector = `#${RadarIdUtil.getPathId(this.id)}`;
 
     const data = [this.center, ...this.points];
-    const path = d3.select(selector)
+    const p = d3.line()(data.map(point => [point.x, point.y]));
+
+    const paths = d3.select(selector)
       .select('path')
-      .data(data)
-      .enter()
-      .append('path')
+      .data([])
       .classed('line', true)
-      .attr('d', d => {
-        console.log(`x: ${d.x}, y: ${d.y}`);
-        return '';
-      });
-
-    /*
-    const line = d3.line()
-      .x(d => this.x(d[0]))
-      .y(d => this.y(d[1]));
-    path.attr('d', line(data));
-
-     */
+      .attr('d', p);
   }
 
   /**

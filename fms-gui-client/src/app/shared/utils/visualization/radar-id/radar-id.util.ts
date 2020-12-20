@@ -4,27 +4,11 @@
 export namespace RadarIdUtil {
 
   /**
-   * Returns the id of the radar SVG
-   * @param id the radar's id
-   */
-  export function getSVGId(id: string): string {
-    return `${id}-svg`;
-  }
-
-  /**
    * Returns the id of the equidistant circle group
    * @param id the radar's id
    */
   export function getEquidistantCirclesId(id: string): string {
     return `${id}-equidistant-circles`;
-  }
-
-  /**
-   * Returns the id of the direction group
-   * @param id the radar's id
-   */
-  export function getDirectionId(id: string): string {
-    return `${id}-directions`;
   }
 
   /**
@@ -41,5 +25,13 @@ export namespace RadarIdUtil {
    */
   export function getCircleId(id: string): string {
     return `${id}-circles`;
+  }
+
+  /**
+   * Returns the id of the circle group (the path which is drawn on the radar)
+   * @param id the radar's id
+   */
+  export function getPathId(id: string): string {
+    return `${id}-path`;
   }
 }
